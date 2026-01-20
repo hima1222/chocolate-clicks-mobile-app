@@ -18,7 +18,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
-
       body: Stack(
         children: [
           // Background image
@@ -45,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Spacer(
-                    flex: 4,
+                    flex: 12,
                   ), // Increased spacer to push content lower
 
                   const Text(
@@ -62,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           blurRadius: 6,
                         ),
                       ],
-                      fontFamily: 'Roboto', // Changed font
+                      fontFamily: 'kalnia', // Changed font
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -195,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE65100),
+                            backgroundColor: const Color.fromARGB(159, 243, 102, 27),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(

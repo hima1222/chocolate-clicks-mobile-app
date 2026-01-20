@@ -62,13 +62,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 28),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 235),
+                    // const Spacer(
+                    //   flex: 8,
+                    // ), 
 
                     const Text(
                       "Create an account",
@@ -190,10 +193,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE65100),
+                        backgroundColor: const Color.fromARGB(159, 243, 102, 27),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
-                          vertical: 14,
+                          vertical: 18,
                         ), // Reduced padding
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
