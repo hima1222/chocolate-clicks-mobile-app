@@ -3,6 +3,11 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/otp_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/edit_profile_screen.dart';
+import 'screens/favourites_screen.dart';
+import 'screens/upcoming_events_screen.dart';
+import 'screens/events_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,6 +29,11 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const SignUpScreen(),
         '/otp': (context) => const OtpVerificationScreen(),
         '/home': (context) => const HomeScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/edit_profile': (context) => const EditProfileScreen(),
+        '/favourites': (context) => const FavouritesScreen(),
+        '/upcoming_events': (context) => const UpcomingEventsScreen(),
+        '/events': (context) => const EventsScreen(),
       },
     );
   }

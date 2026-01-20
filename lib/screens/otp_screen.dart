@@ -163,7 +163,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             border: Border.all(
                               color: _controllers[index].text.isNotEmpty
                                   ? const Color(0xFFFFC107)
-                                  : Colors.transparent,
+                                  : const Color.fromARGB(0, 209, 206, 206),
                               width: 1.8,
                             ),
                           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/cafe_background.jpeg'),
+                image: AssetImage('assets/images/profile_background.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -25,31 +25,44 @@ class HomeScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 50),
-                    const Text(
-                      'Welcome to Chocolate Clicks!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Roboto',
+                    // Back button
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    ),
+                    const SizedBox(height: 20),
+                    // Profile content will be added based on the provided image
+                    const Center(
+                      child: Text(
+                        'Profile Page',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Roboto',
+                        ),
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 40),
-                    // Navigation buttons
+                    // Navigation buttons to other pages
                     _buildNavigationButton(
                       context,
-                      'Profile',
-                      () => Navigator.pushNamed(context, '/profile'),
+                      'Edit Profile',
+                      () => Navigator.pushNamed(context, '/edit_profile'),
                     ),
                     const SizedBox(height: 20),
                     _buildNavigationButton(
                       context,
-                      'Events',
-                      () => Navigator.pushNamed(context, '/events'),
+                      'Favourites',
+                      () => Navigator.pushNamed(context, '/favourites'),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildNavigationButton(
+                      context,
+                      'Upcoming Events',
+                      () => Navigator.pushNamed(context, '/upcoming_events'),
                     ),
                   ],
                 ),
