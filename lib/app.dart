@@ -8,6 +8,9 @@ import 'screens/welcome_profile.dart';
 import 'screens/cake_items_screen.dart';
 import 'screens/brownies_items_screen.dart';
 import 'screens/cookies_items_screen.dart';
+import 'screens/cake_type1.dart';
+import 'screens/brownies_type1.dart';
+import 'screens/cookies_type1.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,11 +30,14 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const SignUpScreen(),
         '/otp': (context) => const OtpVerificationScreen(),
-        '/welcome_profile': (context) => const WelcomeProfileScreen(),
+        '/welcome_profile': (context) => WelcomeProfileScreen(),
         '/home': (context) => const HomeScreen(),
         '/cake': (context) => const CakeItemsScreen(),
         '/brownies': (context) => const BrowniesItemsScreen(),
         '/cookies': (context) => const CookiesItemsScreen(),
+        '/cake_type1': (context) => const CakeType1Screen(),
+        '/brownies_type1': (context) => const BrowniesType1Screen(),
+        '/cookies_type1': (context) => const CookiesType1Screen(),
       },
     );
   }

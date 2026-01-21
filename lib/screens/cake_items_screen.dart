@@ -17,6 +17,7 @@ class CakeItemsScreen extends StatelessWidget {
     {'image': 'assets/images/cake9.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
     {'image': 'assets/images/cake10.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
     {'image': 'assets/images/cake11.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
+    {'image': 'assets/images/cake13.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
 
 
   ];
@@ -77,6 +78,9 @@ class CakeItemsScreen extends StatelessWidget {
                     rating: product['rating'],
                     reviewCount: product['reviews'],
                     price: product['price'],
+                    onTap: () {
+                      Navigator.pushNamed(context, '/cake_type1');
+                    },
                   );
                 },
               ),

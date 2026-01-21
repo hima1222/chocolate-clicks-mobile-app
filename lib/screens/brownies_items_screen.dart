@@ -69,6 +69,9 @@ class BrowniesItemsScreen extends StatelessWidget {
                     rating: product['rating'],
                     reviewCount: product['reviews'],
                     price: product['price'],
+                    onTap: () {
+                      Navigator.pushNamed(context, '/brownies_type1');
+                    },
                   );
                 },
               ),
