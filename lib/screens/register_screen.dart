@@ -29,11 +29,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onSignUpComplete() {
-    // Navigate directly to OTP screen without popup
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => OtpVerificationScreen()),
-    );
+    // Navigate directly to welcome profile screen
+    Navigator.pushReplacementNamed(context, '/welcome_profile');
   }
 
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'register_screen.dart';
-import 'home_screen.dart';
+import 'package:chocolate_clicks/screens/register_screen.dart';
+import 'package:chocolate_clicks/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -185,12 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
-                                ),
-                              );
+                              Navigator.pushReplacementNamed(context, '/welcome_profile');
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -232,12 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
-                            ),
-                          );
+                          Navigator.pushNamed(context, '/register');
                         },
                         child: const Text(
                           "Sign up here",

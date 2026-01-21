@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'home_screen.dart';
+import 'package:chocolate_clicks/screens/home_screen.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   const OtpVerificationScreen({super.key});
@@ -52,10 +52,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
+                Navigator.pushReplacementNamed(context, '/welcome_profile');
               },
             ),
           ],
@@ -163,7 +160,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             border: Border.all(
                               color: _controllers[index].text.isNotEmpty
                                   ? const Color(0xFFFFC107)
-                                  : const Color.fromARGB(0, 209, 206, 206),
+                                  : Colors.transparent,
                               width: 1.8,
                             ),
                           ),
