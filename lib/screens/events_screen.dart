@@ -27,24 +27,29 @@ class EventsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Back button
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    // Back button and title in same row
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        const Text(
+                          'Events',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'serif',
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
-                    const Center(
-                      child: Text(
-                        'Events',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'serif',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
                     // Subtopic
                     const Center(
                       child: Text(
@@ -69,13 +74,9 @@ class EventsScreen extends StatelessWidget {
                           'Mask Painting Workshop..',
                           'Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.',
                           () {
-                            // Navigate to Mask Painting Workshop page
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Navigating to Mask Painting Workshop',
-                                ),
-                              ),
+                            Navigator.pushNamed(
+                              context,
+                              '/mask_painting_workshop',
                             );
                           },
                         ),
@@ -86,12 +87,7 @@ class EventsScreen extends StatelessWidget {
                           'Tasting LUXE..',
                           'Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.',
                           () {
-                            // Navigate to Tasting LUXE page
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Navigating to Tasting LUXE'),
-                              ),
-                            );
+                            Navigator.pushNamed(context, '/tasting_luxe');
                           },
                         ),
                         const SizedBox(height: 15),
@@ -101,12 +97,7 @@ class EventsScreen extends StatelessWidget {
                           'Bake It Happen..',
                           'Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.',
                           () {
-                            // Navigate to Bake It Happen page
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Navigating to Bake It Happen'),
-                              ),
-                            );
+                            Navigator.pushNamed(context, '/bake_it_happen');
                           },
                         ),
                         const SizedBox(height: 15),
@@ -116,13 +107,9 @@ class EventsScreen extends StatelessWidget {
                           'Summer Cake Picnics..',
                           'Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.',
                           () {
-                            // Navigate to Summer Cake Picnics page
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Navigating to Summer Cake Picnics',
-                                ),
-                              ),
+                            Navigator.pushNamed(
+                              context,
+                              '/summer_cake_picnics',
                             );
                           },
                         ),
@@ -133,12 +120,7 @@ class EventsScreen extends StatelessWidget {
                           'Cake Dates..',
                           'Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.',
                           () {
-                            // Navigate to Cake Dates page
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Navigating to Cake Dates'),
-                              ),
-                            );
+                            Navigator.pushNamed(context, '/cake_dates');
                           },
                         ),
                       ],
@@ -164,9 +146,7 @@ class EventsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color.fromARGB(49, 0, 0, 0),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: const Color.fromARGB(159, 245, 157, 74),
-        ),
+        border: Border.all(color: const Color.fromARGB(159, 245, 157, 74)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),

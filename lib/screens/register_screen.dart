@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'otp_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -29,8 +28,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onSignUpComplete() {
-    // Navigate directly to welcome profile screen
-    Navigator.pushReplacementNamed(context, '/welcome_profile');
+    // Navigate to OTP verification screen
+    Navigator.pushReplacementNamed(context, '/otp');
   }
 
   @override
@@ -66,10 +65,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 235),
+
                     // const Spacer(
                     //   flex: 8,
-                    // ), 
-
+                    // ),
                     const Text(
                       "Create an account",
                       style: TextStyle(
@@ -190,7 +189,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(159, 243, 102, 27),
+                        backgroundColor: const Color.fromARGB(
+                          159,
+                          243,
+                          102,
+                          27,
+                        ),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           vertical: 18,
