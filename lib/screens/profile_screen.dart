@@ -18,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           // Overlay
-          Container(color: Colors.black.withOpacity(0.3)),
+          Container(color: Colors.black.withValues(alpha: 0.3)),
           // Content
           SafeArea(
             child: SingleChildScrollView(
@@ -85,7 +85,7 @@ class ProfileScreen extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withOpacity(0.9),
+          backgroundColor: Colors.white.withValues(alpha: 0.9),
           foregroundColor: Colors.black,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),

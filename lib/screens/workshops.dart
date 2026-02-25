@@ -24,7 +24,7 @@ class WorkshopsScreen extends StatelessWidget {
           ),
 
           // Dark overlay for text readability
-          Container(color: Colors.black.withOpacity(0.6)),
+          Container(color: Colors.black.withValues(alpha: 0.6)),
 
           // Collage top right
           Positioned(
@@ -92,7 +92,7 @@ class WorkshopsScreen extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.8),
+                          color: Colors.black.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: const Text(

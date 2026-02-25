@@ -18,7 +18,7 @@ class UpcomingEventsScreen extends StatelessWidget {
             ),
           ),
           // Overlay
-          Container(color: Colors.black.withOpacity(0.3)),
+          Container(color: Colors.black.withValues(alpha: 0.3)),
           // Content
           SafeArea(
             child: SingleChildScrollView(
@@ -54,7 +54,7 @@ class UpcomingEventsScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Column(
@@ -73,7 +73,7 @@ class UpcomingEventsScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(15),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(

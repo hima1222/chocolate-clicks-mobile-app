@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class LandingScreen extends StatefulWidget {
 
@@ -95,67 +95,75 @@ class _LandingScreenState extends State<LandingScreen>
                   position: _slideAnimation,
                   child: FadeTransition(
                     opacity: _fadeAnimation,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Logo circle
-                        Container(
-                          width: logoSize,
-                          height: logoSize,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.brown[900]?.withValues(alpha: 0.85) ??
-                                Colors.brown,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.5),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Logo circle
+                          Center(
+                            child: Container(
+                              width: logoSize,
+                              height: logoSize,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.brown[900]?.withValues(alpha: 0.85) ??
+                                    Colors.brown,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/images/logo.jpg',
-                              fit: BoxFit.cover,
+                              child: ClipOval(
+                                child: Image.asset(
+                                  'assets/images/logo.jpg',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: isSmallScreen ? 20 : 40),
-                        // Tagline
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: isSmallScreen ? 20 : 40),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'We believe in the',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.white70,
-                                      fontSize: fontSizeLarge,
-                                      letterSpacing: 0.5,
-                                    ),
-                              ),
-                              SizedBox(height: isSmallScreen ? 2 : 4),
-                              Text(
-                                'Power of Backed Goods',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontSize: fontSizeHeadline,
-                                      letterSpacing: 0.5,
-                                    ),
-                              ),
-                            ],
+                          SizedBox(height: isSmallScreen ? 20 : 40),
+                          // Tagline
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: isSmallScreen ? 20 : 40),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'We believe in the',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        color: Colors.white70,
+                                        fontSize: fontSizeLarge,
+                                        letterSpacing: 0.5,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: isSmallScreen ? 2 : 4),
+                                Text(
+                                  'Power of Backed Goods',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontSize: fontSizeHeadline,
+                                        letterSpacing: 0.5,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -163,29 +171,32 @@ class _LandingScreenState extends State<LandingScreen>
                 // Call to action button
                 FadeTransition(
                   opacity: _fadeAnimation,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: isSmallScreen ? 30 : 50),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Navigate to next screen
-                        Navigator.of(context).pushNamed('/home');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown[700],
-                        padding: buttonPadding,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: isSmallScreen ? 30 : 50),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Navigate to next screen
+                          Navigator.of(context).pushNamed('/home');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.brown[700],
+                          padding: buttonPadding,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          elevation: 8,
                         ),
-                        elevation: 8,
-                      ),
-                      child: Text(
-                        'Get Started',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: isSmallScreen ? 14 : 16,
-                              letterSpacing: 1,
-                            ),
+                        child: Text(
+                          'Get Started',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: isSmallScreen ? 14 : 16,
+                                letterSpacing: 1,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
