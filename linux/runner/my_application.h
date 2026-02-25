@@ -1,7 +1,8 @@
-#ifndef FLUTTER_MY_APPLICATION_H_
+﻿#ifndef FLUTTER_MY_APPLICATION_H_
 #define FLUTTER_MY_APPLICATION_H_
 
-#include <gtk-3.0/gtk/gtk.h>
+
+#include <gtk/gtk.h>
 
 G_DECLARE_FINAL_TYPE(MyApplication,
                      my_application,
@@ -19,3 +20,4 @@ G_DECLARE_FINAL_TYPE(MyApplication,
 MyApplication* my_application_new();
 
 #endif  // FLUTTER_MY_APPLICATION_H_
+

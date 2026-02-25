@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:chocolate_clicks/screens/home_screen.dart';
+
 
 class OtpVerificationScreen extends StatefulWidget {
   const OtpVerificationScreen({super.key});
@@ -45,7 +45,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Sign Up Complete'),
+
+          title: Text('OTP Verified Successfully'),
           content: Text('Your account has been created successfully.'),
           actions: <Widget>[
             TextButton(
@@ -82,7 +83,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
           // Dark overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.52)),
+            child: Container(color: Colors.black.withValues(alpha: 0.52)),
           ),
 
           SafeArea(
@@ -134,7 +135,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     Text(
                       "OTP has sent to you mobile number",
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.85),
+                        color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 12, // Smaller font
                         fontFamily: 'Roboto',
                       ),
@@ -153,7 +154,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             horizontal: 4,
                           ), // Smaller margin
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.45),
+                            color: Colors.black.withValues(alpha: 0.45),
                             borderRadius: BorderRadius.circular(
                               8,
                             ), // Smaller border radius
@@ -198,7 +199,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     ElevatedButton(
                       onPressed: _otp.length == 6
                           ? () {
-                              _onOtpVerified();
+
+                              if (_otp == '123456') {
+                                _onOtpVerified();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Invalid OTP. Please try again.',
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
@@ -206,7 +219,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         foregroundColor: Colors.white,
                         disabledBackgroundColor: const Color(
                           0xFFE65100,
-                        ).withOpacity(0.45),
+                        ).withValues(alpha: 0.45),
                         padding: const EdgeInsets.symmetric(
                           vertical: 14,
                         ), // Reduced padding
@@ -256,4 +269,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       ),
     );
   }
+
 }
+

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'otp_screen.dart';
+
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -29,8 +29,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onSignUpComplete() {
-    // Navigate directly to welcome profile screen
-    Navigator.pushReplacementNamed(context, '/welcome_profile');
+
+    // Navigate to OTP verification screen
+    Navigator.pushReplacementNamed(context, '/otp');
   }
 
   @override
@@ -54,7 +55,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           // Dark overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.52)),
+            child: Container(color: Colors.black.withValues(alpha: 0.52)),
           ),
 
           SafeArea(
@@ -66,10 +67,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 235),
+
+
                     // const Spacer(
                     //   flex: 8,
-                    // ), 
-
+                    // ),
                     const Text(
                       "Create an account",
                       style: TextStyle(
@@ -94,7 +96,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Text(
                       "Welcome to Cafe Chocolate please login your account.",
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.85),
+                        color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 12, // Smaller font
                         fontFamily: 'Roboto',
                       ),
@@ -148,7 +150,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hintText: "password",
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: Colors.white.withOpacity(0.18),
+                        fillColor: Colors.white.withValues(alpha: 0.18),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -190,7 +192,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(159, 243, 102, 27),
+
+                        backgroundColor: const Color.fromARGB(
+                          159,
+                          243,
+                          102,
+                          27,
+                        ),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           vertical: 18,
@@ -252,7 +260,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           fontFamily: 'Roboto',
         ), // Smaller hint
         filled: true,
-        fillColor: Colors.white.withOpacity(0.18),
+        fillColor: Colors.white.withValues(alpha: 0.18),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8), // Smaller border radius
           borderSide: BorderSide.none,
@@ -268,4 +276,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
 }
+

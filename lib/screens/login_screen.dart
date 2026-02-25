@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chocolate_clicks/screens/register_screen.dart';
-import 'package:chocolate_clicks/screens/home_screen.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           // Dark overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.52)),
+            child: Container(color: Colors.black.withValues(alpha: 0.52)),
           ),
 
           SafeArea(
@@ -71,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     "Welcome back! Please login to your account",
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.85),
+                      color: Colors.white.withValues(alpha: 0.85),
                       fontSize: 14, // Reduced font size
                       fontFamily: 'Roboto',
                     ),
@@ -92,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ), // Added font
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: Colors.white.withOpacity(0.92),
+                            fillColor: Colors.white.withValues(alpha: 0.92),
                             hintText: "Username / Mobile Number / Email",
                             hintStyle: const TextStyle(
                               fontSize: 14,
@@ -127,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: Colors.white.withOpacity(0.92),
+                            fillColor: Colors.white.withValues(alpha: 0.92),
                             hintText: "Password",
                             hintStyle: const TextStyle(
                               fontSize: 14,

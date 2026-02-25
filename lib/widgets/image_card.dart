@@ -1,3 +1,5 @@
+
+// lib/widgets/image_card.dart
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -6,7 +8,7 @@ class ProductCard extends StatelessWidget {
   final double rating;
   final int reviewCount;
   final double price;
-  final VoidCallback? onTap;
+
 
   const ProductCard({
     super.key,
@@ -15,19 +17,24 @@ class ProductCard extends StatelessWidget {
     required this.rating,
     required this.reviewCount,
     required this.price,
-    this.onTap,
+
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 6,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+
+    return Card(
+      elevation: 6,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () {
+          // TODO: Navigate to product detail screen when ready
+          // Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(...)));
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -1,18 +1,24 @@
-import 'package:flutter/material.dart';
-import '../../widgets/primary_button.dart';
-import '../../screens/cake_items_screen.dart';
-import '../../screens/brownies_items_screen.dart';
-import '../../screens/cookies_items_screen.dart';
-import '../../screens/backing_goods.dart';
+﻿import 'package:flutter/material.dart';
 
-/* ------------------ DATA ------------------ */
+import '../widgets/primary_button.dart'; // Keep this - we'll use it for "Shop Here"
+import 'cake_items_screen.dart';
+import 'brownies_items_screen.dart';
+import 'cookies_items_screen.dart';
+import 'backing_goods.dart';
+// Add these later when you create the screens
+// import '../../screens/donuts_items_screen.dart';
+// import '../../screens/croissants_items_screen.dart';
 
 final List<Map<String, dynamic>> categories = [
   {'name': 'Cake', 'screen': const CakeItemsScreen()},
   {'name': 'Brownies', 'screen': const BrowniesItemsScreen()},
   {'name': 'Cookies', 'screen': const CookiesItemsScreen()},
-  {'name': 'Donuts', 'screen': null},
-  {'name': 'Croissants', 'screen': null},
+
+  {'name': 'Donuts', 'screen': null}, // Replace with actual screen when ready
+  {
+    'name': 'Croissants',
+    'screen': null,
+  }, // Replace with actual screen when ready
 ];
 
 final List<Map<String, dynamic>> menuItems = [
@@ -23,20 +29,72 @@ final List<Map<String, dynamic>> menuItems = [
   {'title': 'Privacy Policy', 'icon': Icons.privacy_tip_outlined},
 ];
 
-/* ------------------ MAIN SCREEN ------------------ */
-
 class WelcomeProfileScreen extends StatelessWidget {
-  WelcomeProfileScreen({super.key});
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  const WelcomeProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    void showMenuModal() {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return DraggableScrollableSheet(
+            initialChildSize: 0.6,
+            minChildSize: 0.3,
+            maxChildSize: 0.95,
+            expand: false,
+            builder: (_, controller) => Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: controller,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: const [
+                          CircleAvatar(radius: 28, backgroundColor: Colors.brown, child: Icon(Icons.person, color: Colors.white)),
+                          SizedBox(width: 12),
+                          Text('Subhani', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Divider(),
+                  ...menuItems.map((item) => ListTile(
+                        leading: Icon(item['icon'] as IconData, color: Colors.brown[800]),
+                        title: Text(item['title'] as String),
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (item['title'] == 'About Us') {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const BakingGoodsScreen()));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${item['title']} tapped')));
+                          }
+                        },
+                      )),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: const AppDrawer(),
+
+      extendBody: true,
       body: Stack(
         children: [
           Image.asset(
@@ -45,40 +103,48 @@ class WelcomeProfileScreen extends StatelessWidget {
             height: double.infinity,
             fit: BoxFit.cover,
           ),
-          Container(color: Colors.black.withOpacity(0.5)),
+          Container(color: Colors.black.withValues(alpha: 0.5)),
 
           SafeArea(
-            child: SingleChildScrollView(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 10.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /* -------- TOP BAR -------- */
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Hello Subhani!',
+
+                        children: [
+                          const Text(
+                            'Hello Subhani !', // Personalized based on your name (change if needed)
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
+
+                          const SizedBox(height: 8),
                           Row(
-                            children: [
-                              Icon(Icons.location_on,
-                                  color: Colors.white, size: 18),
-                              SizedBox(width: 6),
+                            children: const [
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
                               Text(
                                 '40/J, MC Road, Matale',
                                 style: TextStyle(
-                                    color: Colors.white70, fontSize: 15),
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
                               ),
                             ],
                           ),
@@ -87,14 +153,25 @@ class WelcomeProfileScreen extends StatelessWidget {
                       Row(
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.notifications_outlined,
-                                color: Colors.white),
-                            onPressed: () {},
+
+                            icon: const Icon(
+                              Icons.notifications_outlined,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                            onPressed: () {
+                              // TODO: Navigate to notifications
+                            },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.shopping_bag_outlined,
-                                color: Colors.white),
-                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.shopping_bag_outlined,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                            onPressed: () {
+                              // TODO: Navigate to cart
+                            },
                           ),
                         ],
                       ),
@@ -103,93 +180,114 @@ class WelcomeProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  /* -------- SEARCH BAR -------- */
+
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
+                      color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(30),
                     ),
+
                     child: TextField(
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         hintText: 'Search Here...',
-                        hintStyle:
-                            const TextStyle(color: Colors.white70),
-                        prefixIcon:
-                            const Icon(Icons.search, color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white70),
+                        prefixIcon: const Icon(Icons.search, color: Colors.white),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.menu, color: Colors.white),
-                          onPressed: () {
-                            _scaffoldKey.currentState?.openDrawer();
-                          },
+                          onPressed: showMenuModal,
                         ),
                         border: InputBorder.none,
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 16),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 40),
 
-                  /* -------- SHOP BUTTON -------- */
+
+                  // Replaced custom InkWell with PrimaryButton for consistency & reusability
                   Center(
                     child: PrimaryButton(
                       text: 'Shop Here',
                       width: size.width * 0.7,
                       backgroundColor: Colors.white,
-                      textColor: Colors.black,
-                      onPressed: () {},
+
+                      textColor: Colors.black87,
+                      onPressed: () {
+                        // Optional action (e.g., scroll to categories or show featured)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Start shopping!')),
+                        );
+                      },
                     ),
                   ),
 
                   const SizedBox(height: 30),
 
-                  /* -------- CATEGORIES -------- */
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      final Widget? screen =
-                          category['screen'] as Widget?;
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
-                        child: Center(
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(30),
-                            onTap: screen != null
-                                ? () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => screen),
-                                    );
-                                  }
-                                : null,
-                            child: Container(
-                              width: size.width * 0.8,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  category['name'],
-                                  style: const TextStyle(
+                  Expanded(
+                    child: ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        final category = categories[index];
+                        final Widget? screen = category['screen'] as Widget?;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Center(
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(30),
+                              onTap: screen != null
+                                  ? () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => screen,
+                                        ),
+                                      );
+                                    }
+                                  : () {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '${category['name']} coming soon!',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                              child: Container(
+                                width: size.width * 0.8,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: screen != null
+                                      ? Colors.black.withValues(alpha: 0.6)
+                                      : Colors.grey.withValues(
+                                          alpha: 0.4,
+                                        ), // Dimmed if not ready
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    category['name'],
+                                    style: const TextStyle(
                                       color: Colors.white,
-                                      fontSize: 16),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -198,97 +296,51 @@ class WelcomeProfileScreen extends StatelessWidget {
         ],
       ),
 
-      /* -------- BOTTOM NAV -------- */
+
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black.withOpacity(0.85),
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.black.withValues(alpha: 0.8),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
         showSelectedLabels: false,
         showUnselectedLabels: false,
+
+        currentIndex: 0,
+        onTap: (index) {
+          switch (index) {
+            case 0: // Home - already here
+              break;
+            case 1: // Categories - stay on this screen
+              break;
+            case 2: // Events
+              Navigator.pushNamed(context, '/events');
+              break;
+            case 3: // Messages - TODO: implement messages screen
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Messages coming soon!')),
+              );
+              break;
+            case 4: // Profile
+              Navigator.pushNamed(context, '/profile');
+              break;
+          }
+        },
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.grid_view), label: ''),
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined), label: ''),
+            icon: Icon(Icons.calendar_today_outlined),
+            label: '',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view), label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined), label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.message_outlined), label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: ''),
+            icon: Icon(Icons.message_outlined),
+            label: '',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
         ],
       ),
     );
   }
 }
 
-/* ------------------ DRAWER ------------------ */
 
-class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.horizontal(right: Radius.circular(30)),
-      ),
-      child: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CircleAvatar(
-                    radius: 45,
-                    backgroundColor: Colors.brown,
-                    child:
-                        Icon(Icons.person, size: 50, color: Colors.white),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Subhani',
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Baked Goods Lover',
-                    style: TextStyle(
-                        color: Colors.grey[600], fontSize: 15),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            ...menuItems.map((item) => ListTile(
-                  leading: Icon(item['icon'] as IconData,
-                      color: Colors.brown[800]),
-                  title: Text(item['title'] as String),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 30),
-                  onTap: () {
-                    Navigator.pop(context);
-                    if (item['title'] == 'About Us') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const BakingGoodsScreen(),
-                        ),
-                      );
-                    }
-                  },
-                )),
-
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-}
