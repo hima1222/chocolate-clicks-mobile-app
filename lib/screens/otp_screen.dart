@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:chocolate_clicks/screens/home_screen.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   const OtpVerificationScreen({super.key});
@@ -44,7 +45,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('OTP Verified Successfully'),
+          title: Text('Sign Up Complete'),
           content: Text('Your account has been created successfully.'),
           actions: <Widget>[
             TextButton(
@@ -197,18 +198,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     ElevatedButton(
                       onPressed: _otp.length == 6
                           ? () {
-                              if (_otp == '123456') {
-                                _onOtpVerified();
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Invalid OTP. Please try again.',
-                                    ),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
+                              _onOtpVerified();
                             }
                           : null,
                       style: ElevatedButton.styleFrom(

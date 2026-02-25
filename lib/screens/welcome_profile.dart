@@ -8,18 +8,16 @@ import '../../screens/cookies_items_screen.dart';
 // import '../../screens/croissants_items_screen.dart';
 
 final List<Map<String, dynamic>> categories = [
-  {'name': 'Cake', 'screen': const CakeItemsScreen()},
-  {'name': 'Brownies', 'screen': const BrowniesItemsScreen()},
-  {'name': 'Cookies', 'screen': const CookiesItemsScreen()},
-  {'name': 'Donuts', 'screen': null}, // Replace with actual screen when ready
-  {
-    'name': 'Croissants',
-    'screen': null,
-  }, // Replace with actual screen when ready
-];
-
+    {'name': 'Cake', 'screen': const CakeItemsScreen()},
+    {'name': 'Brownies', 'screen': const BrowniesItemsScreen()},
+    {'name': 'Cookies', 'screen': const CookiesItemsScreen()},
+    {'name': 'Donuts', 'screen': null}, // Replace with actual screen when ready
+    {'name': 'Croissants', 'screen': null}, // Replace with actual screen when ready
+  ];
 class WelcomeProfileScreen extends StatelessWidget {
   const WelcomeProfileScreen({super.key});
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +33,12 @@ class WelcomeProfileScreen extends StatelessWidget {
             height: double.infinity,
             fit: BoxFit.cover,
           ),
-          Container(color: Colors.black.withOpacity(0.5)),
+          Container(
+            color: Colors.black.withOpacity(0.5),
+          ),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 10.0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -62,18 +59,11 @@ class WelcomeProfileScreen extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             children: const [
-                              Icon(
-                                Icons.location_on,
-                                color: Colors.white,
-                                size: 20,
-                              ),
+                              Icon(Icons.location_on, color: Colors.white, size: 20),
                               SizedBox(width: 8),
                               Text(
                                 '40/J, MC Road, Matale',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
+                                style: TextStyle(color: Colors.white, fontSize: 16),
                               ),
                             ],
                           ),
@@ -82,21 +72,13 @@ class WelcomeProfileScreen extends StatelessWidget {
                       Row(
                         children: [
                           IconButton(
-                            icon: const Icon(
-                              Icons.notifications_outlined,
-                              color: Colors.white,
-                              size: 28,
-                            ),
+                            icon: const Icon(Icons.notifications_outlined, color: Colors.white, size: 28),
                             onPressed: () {
                               // TODO: Navigate to notifications
                             },
                           ),
                           IconButton(
-                            icon: const Icon(
-                              Icons.shopping_bag_outlined,
-                              color: Colors.white,
-                              size: 28,
-                            ),
+                            icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 28),
                             onPressed: () {
                               // TODO: Navigate to cart
                             },
@@ -162,33 +144,21 @@ class WelcomeProfileScreen extends StatelessWidget {
                                   ? () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (_) => screen,
-                                        ),
+                                        MaterialPageRoute(builder: (_) => screen),
                                       );
                                     }
                                   : () {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            '${category['name']} coming soon!',
-                                          ),
-                                        ),
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('${category['name']} coming soon!')),
                                       );
                                     },
                               child: Container(
                                 width: size.width * 0.8,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
                                 decoration: BoxDecoration(
                                   color: screen != null
                                       ? Colors.black.withOpacity(0.6)
-                                      : Colors.grey.withOpacity(
-                                          0.4,
-                                        ), // Dimmed if not ready
+                                      : Colors.grey.withOpacity(0.4), // Dimmed if not ready
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Center(
@@ -224,35 +194,17 @@ class WelcomeProfileScreen extends StatelessWidget {
         showUnselectedLabels: false,
         currentIndex: 0,
         onTap: (index) {
-          switch (index) {
-            case 0: // Home - already here
-              break;
-            case 1: // Categories - stay on this screen
-              break;
-            case 2: // Events
-              Navigator.pushNamed(context, '/events');
-              break;
-            case 3: // Messages - TODO: implement messages screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Messages coming soon!')),
-              );
-              break;
-            case 4: // Profile
-              Navigator.pushNamed(context, '/profile');
-              break;
-          }
+          // TODO: Implement full bottom nav (e.g., replace current screen with other tabs)
+          final tabs = ['Home', 'Categories', 'Events', 'Messages', 'Profile'];
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${tabs[index]} tapped')),
+          );
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.grid_view), label: ''),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_outlined),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message_outlined),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.message_outlined), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
         ],
       ),
