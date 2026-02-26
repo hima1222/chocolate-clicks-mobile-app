@@ -55,36 +55,56 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _buildNavigationButton(
-                    context,
-                    'Edit Profile',
-                    () => Navigator.pushNamed(context, '/edit_profile'),
+                  // menu card
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.edit,
+                          label: 'Edit Profile',
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/edit_profile'),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.favorite_border,
+                          label: 'Favourites',
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/favourites'),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.shopping_cart_outlined,
+                          label: 'Cart',
+                          onTap: () => Navigator.pushNamed(context, '/cart'),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.calendar_today,
+                          label: 'Upcoming Events',
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/upcoming_events'),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.payment,
+                          label: 'Payment Info',
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/payment_info'),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  _buildNavigationButton(
-                    context,
-                    'Favourites',
-                    () => Navigator.pushNamed(context, '/favourites'),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildNavigationButton(
-                    context,
-                    'Cart',
-                    () => Navigator.pushNamed(context, '/cart'),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildNavigationButton(
-                    context,
-                    'Upcoming Events',
-                    () => Navigator.pushNamed(context, '/upcoming_events'),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildNavigationButton(
-                    context,
-                    'Payment Info',
-                    () => Navigator.pushNamed(context, '/payment_info'),
-                  ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -114,33 +134,21 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationButton(
-    BuildContext context,
-    String title,
-    VoidCallback onPressed,
-  ) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withOpacity(0.9),
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          elevation: 5,
-        ),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            fontFamily: 'Roboto',
-          ),
-        ),
-      ),
+  Widget _buildMenuItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.brown[700]),
+      title: Text(label),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
     );
+  }
+
+  Widget _buildDivider() {
+    return const Divider(height: 1, color: Colors.grey);
   }
 }
