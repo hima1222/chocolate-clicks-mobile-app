@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/screens/register_screen.dart';
+import 'package:chocolate_clicks/screens/home_screen.dart';
 
 
 class LoginScreen extends StatefulWidget {

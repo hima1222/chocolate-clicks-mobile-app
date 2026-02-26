@@ -8,7 +8,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Background image
+          // background
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -17,55 +17,89 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Overlay
-          Container(color: Colors.black.withValues(alpha: 0.3)),
-          // Content
+          Container(color: Colors.black.withOpacity(0.3)),
           SafeArea(
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Back button
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    ),
-                    const SizedBox(height: 20),
-                    // Profile content will be added based on the provided image
-                    const Center(
-                      child: Text(
-                        'Profile Page',
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Profile',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Roboto',
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  const CircleAvatar(
+                    radius: 50,
+                    child: Icon(Icons.person, size: 48),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Subhani',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                    const SizedBox(height: 40),
-                    // Navigation buttons to other pages
-                    _buildNavigationButton(
-                      context,
-                      'Edit Profile',
-                      () => Navigator.pushNamed(context, '/edit_profile'),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildNavigationButton(
+                    context,
+                    'Edit Profile',
+                    () => Navigator.pushNamed(context, '/edit_profile'),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildNavigationButton(
+                    context,
+                    'Favourites',
+                    () => Navigator.pushNamed(context, '/favourites'),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildNavigationButton(
+                    context,
+                    'Upcoming Events',
+                    () => Navigator.pushNamed(context, '/upcoming_events'),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildNavigationButton(
+                    context,
+                    'Payment Info',
+                    () => Navigator.pushNamed(context, '/payment_info'),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/landing');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: const Text(
+                        'Logout',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
-                    const SizedBox(height: 20),
-                    _buildNavigationButton(
-                      context,
-                      'Favourites',
-                      () => Navigator.pushNamed(context, '/favourites'),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildNavigationButton(
-                      context,
-                      'Upcoming Events',
-                      () => Navigator.pushNamed(context, '/upcoming_events'),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
