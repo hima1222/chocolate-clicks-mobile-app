@@ -28,18 +28,21 @@ class ProductCard extends StatelessWidget {
       elevation: 6,
       shadowColor: Colors.black12,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: Image.asset(
-              imageAsset,
-              height: 140,
-              width: double.infinity,
-              fit: BoxFit.cover,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Image.asset(
+                imageAsset,
+                height: 140,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.all(14.0),
             child: Column(
@@ -102,6 +105,7 @@ class ProductCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
