@@ -69,6 +69,12 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   _buildNavigationButton(
                     context,
+                    'Cart',
+                    () => Navigator.pushNamed(context, '/cart'),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildNavigationButton(
+                    context,
                     'Upcoming Events',
                     () => Navigator.pushNamed(context, '/upcoming_events'),
                   ),
@@ -87,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
                         Navigator.pushReplacementNamed(context, '/landing');
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 202, 38, 38)ARGB(255, 212, 40, 40),
+                        backgroundColor: const Color.fromARGB(255, 202, 38, 38),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),

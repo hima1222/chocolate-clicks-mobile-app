@@ -8,6 +8,7 @@ import 'screens/welcome_profile.dart';
 import 'screens/categories_screen.dart';
 import 'screens/events_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/cart_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/favourites_screen.dart';
 import 'screens/upcoming_events_screen.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         '/edit_profile': (context) => const EditProfileScreen(),
         '/favourites': (context) => const FavouritesScreen(),
         '/upcoming_events': (context) => const UpcomingEventsScreen(),
+        '/cart': (context) => const CartScreen(),
         '/payment_info': (context) => const PaymentInfoScreen(),
         '/mask_painting_workshop': (context) =>
             const MaskPaintingWorkshopScreen(),

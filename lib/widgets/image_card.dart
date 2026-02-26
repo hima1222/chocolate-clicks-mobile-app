@@ -1,6 +1,7 @@
 // lib/widgets/image_card.dart
 import 'package:flutter/material.dart';
 import '../services/payment_manager.dart';
+import '../services/cart_manager.dart';
 
 class ProductCard extends StatelessWidget {
   final String imageAsset;
@@ -71,28 +72,53 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      PaymentManager.initiatePayment(context, price);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 245, 157, 74),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          PaymentManager.initiatePayment(context, price);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            245,
+                            157,
+                            74,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Buy Now',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                    child: const Text(
-                      'Buy Now',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: () {
+                        CartManager().add(
+                          CartItem(
+                            image: imageAsset,
+                            title: title,
+                            price: price,
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Added to cart')),
+                        );
+                      },
+                      icon: const Icon(Icons.add_shopping_cart),
+                      color: Colors.brown,
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
