@@ -8,7 +8,7 @@ class ProductCard extends StatelessWidget {
   final double rating;
   final int reviewCount;
   final double price;
-
+  final VoidCallback? onTap;
 
   const ProductCard({
     super.key,
@@ -17,7 +17,7 @@ class ProductCard extends StatelessWidget {
     required this.rating,
     required this.reviewCount,
     required this.price,
-
+    this.onTap,
   });
 
   @override
@@ -31,10 +31,7 @@ class ProductCard extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
-        onTap: () {
-          // TODO: Navigate to product detail screen when ready
-          // Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(...)));
-        },
+        onTap: onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
