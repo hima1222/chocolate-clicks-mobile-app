@@ -87,7 +87,7 @@ class ProfileScreen extends StatelessWidget {
                         Navigator.pushReplacementNamed(context, '/landing');
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
+                        backgroundColor: const Color.fromARGB(255, 202, 38, 38)ARGB(255, 212, 40, 40),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
