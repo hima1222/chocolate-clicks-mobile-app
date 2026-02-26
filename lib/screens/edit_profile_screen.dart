@@ -114,6 +114,36 @@ class EditProfileScreen extends StatelessWidget {
                               fillColor: Colors.white.withOpacity(0.8),
                             ),
                           ),
+                          const SizedBox(height: 15),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Address',
+                              labelStyle: TextStyle(
+                                fontFamily: 'serif',
+                                color: Colors.white,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white.withOpacity(0.8),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Card Info',
+                              labelStyle: TextStyle(
+                                fontFamily: 'serif',
+                                color: Colors.white,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white.withOpacity(0.8),
+                            ),
+                          ),
                           const SizedBox(height: 20),
                           SizedBox(
                             width: double.infinity,
@@ -121,6 +151,11 @@ class EditProfileScreen extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: () {
                                 // Save profile logic
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Profile information saved'),
+                                  ),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.brown[700],

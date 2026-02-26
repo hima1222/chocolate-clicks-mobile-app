@@ -8,6 +8,10 @@ import 'screens/welcome_profile.dart';
 import 'screens/categories_screen.dart';
 import 'screens/events_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/edit_profile_screen.dart';
+import 'screens/favourites_screen.dart';
+import 'screens/upcoming_events_screen.dart';
+import 'screens/payment_info_screen.dart';
 import 'screens/mask_painting_workshop_screen.dart';
 import 'screens/tasting_luxe_screen.dart';
 import 'screens/bake_it_happen_screen.dart';
@@ -46,6 +50,10 @@ class MyApp extends StatelessWidget {
         '/welcome_profile': (context) => const WelcomeProfileScreen(),
         '/categories': (context) => const CategoriesScreen(),
         '/events': (context) => const EventsScreen(),
+        '/edit_profile': (context) => const EditProfileScreen(),
+        '/favourites': (context) => const FavouritesScreen(),
+        '/upcoming_events': (context) => const UpcomingEventsScreen(),
+        '/payment_info': (context) => const PaymentInfoScreen(),
         '/mask_painting_workshop': (context) =>
             const MaskPaintingWorkshopScreen(),
         '/tasting_luxe': (context) => const TastingLuxeScreen(),
