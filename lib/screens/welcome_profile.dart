@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
-import '../../widgets/primary_button.dart'; // Keep this – we'll use it for "Shop Here"
+import '../../widgets/primary_button.dart'; 
 import '../../screens/cake_items_screen.dart';
 import '../../screens/brownies_items_screen.dart';
 import '../../screens/cookies_items_screen.dart';
 import '../../screens/categories_screen.dart';
 import '../../screens/events_screen.dart';
 import '../../screens/profile_screen.dart';
-// Add these later when you create the screens
-// import '../../screens/donuts_items_screen.dart';
-// import '../../screens/croissants_items_screen.dart';
 
 final List<Map<String, dynamic>> categories = [
   {'name': 'Cake', 'screen': const CakeItemsScreen()},
   {'name': 'Brownies', 'screen': const BrowniesItemsScreen()},
   {'name': 'Cookies', 'screen': const CookiesItemsScreen()},
+
   {'name': 'Donuts', 'screen': null}, // Replace with actual screen when ready
   {
     'name': 'Croissants',
@@ -227,7 +225,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black.withOpacity(0.8),
+        backgroundColor: Colors.black.withValues(alpha: 0.8),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
         showSelectedLabels: false,
@@ -255,3 +253,5 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
     );
   }
 }
+
+

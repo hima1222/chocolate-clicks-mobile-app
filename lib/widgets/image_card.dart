@@ -1,3 +1,4 @@
+
 // lib/widgets/image_card.dart
 import 'package:flutter/material.dart';
 import '../services/payment_manager.dart';
@@ -9,6 +10,7 @@ class ProductCard extends StatelessWidget {
   final double rating;
   final int reviewCount;
   final double price;
+  final VoidCallback? onTap;
 
   const ProductCard({
     super.key,
@@ -17,26 +19,31 @@ class ProductCard extends StatelessWidget {
     required this.rating,
     required this.reviewCount,
     required this.price,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+
     return Card(
       elevation: 6,
       shadowColor: Colors.black12,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: Image.asset(
-              imageAsset,
-              height: 140,
-              width: double.infinity,
-              fit: BoxFit.cover,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Image.asset(
+                imageAsset,
+                height: 140,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.all(14.0),
             child: Column(
@@ -124,6 +131,7 @@ class ProductCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

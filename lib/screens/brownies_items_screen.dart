@@ -1,6 +1,7 @@
 // lib/screens/brownies_items_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/image_card.dart';
+import 'brownies_type1.dart';
 
 class BrowniesItemsScreen extends StatelessWidget {
   const BrowniesItemsScreen({super.key});
@@ -69,6 +70,14 @@ class BrowniesItemsScreen extends StatelessWidget {
                     rating: product['rating'],
                     reviewCount: product['reviews'],
                     price: product['price'],
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const BrowniesType1Screen(),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

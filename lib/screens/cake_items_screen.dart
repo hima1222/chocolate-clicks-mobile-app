@@ -1,6 +1,7 @@
-// lib/screens/cake_items_screen.dart
+﻿// lib/screens/cake_items_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/image_card.dart';
+import 'cake_type1.dart';
 
 class CakeItemsScreen extends StatelessWidget {
   const CakeItemsScreen({super.key});
@@ -17,6 +18,8 @@ class CakeItemsScreen extends StatelessWidget {
     {'image': 'assets/images/cake9.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
     {'image': 'assets/images/cake10.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
     {'image': 'assets/images/cake11.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
+
+ 
 
 
   ];
@@ -77,6 +80,14 @@ class CakeItemsScreen extends StatelessWidget {
                     rating: product['rating'],
                     reviewCount: product['reviews'],
                     price: product['price'],
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CakeType1Screen(),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

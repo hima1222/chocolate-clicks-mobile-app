@@ -89,7 +89,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ),
           // Overlay
-          Container(color: Colors.black.withOpacity(0.3)),
+          Container(color: Colors.black.withValues(alpha: 0.3)),
           // Content
           SafeArea(
             child: SingleChildScrollView(
@@ -125,7 +125,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Column(
@@ -155,7 +155,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.8),
+                              fillColor: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                           const SizedBox(height: 15),
@@ -172,7 +172,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.8),
+                              fillColor: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                           const SizedBox(height: 15),
@@ -191,7 +191,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.8),
+                              fillColor: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                           const SizedBox(height: 15),

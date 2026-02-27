@@ -80,7 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           // Dark overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.52)),
+            child: Container(color: Colors.black.withValues(alpha: 0.52)),
           ),
 
           SafeArea(
@@ -120,7 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Text(
                       "Welcome to Cafe Chocolate please login your account.",
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.85),
+                        color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 12, // Smaller font
                         fontFamily: 'Roboto',
                       ),
@@ -174,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hintText: "password",
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: Colors.white.withOpacity(0.18),
+                        fillColor: Colors.white.withValues(alpha: 0.18),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -279,7 +279,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           fontFamily: 'Roboto',
         ), // Smaller hint
         filled: true,
-        fillColor: Colors.white.withOpacity(0.18),
+        fillColor: Colors.white.withValues(alpha: 0.18),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8), // Smaller border radius
           borderSide: BorderSide.none,

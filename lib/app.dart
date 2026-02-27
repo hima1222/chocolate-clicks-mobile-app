@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'screens/landing.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
@@ -42,12 +42,14 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
+
       home: const LandingScreen(),
       routes: {
         '/landing': (context) => const LandingScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const SignUpScreen(),
         '/otp': (context) => const OtpVerificationScreen(),
+
         '/welcome_profile': (context) => const WelcomeProfileScreen(),
         '/categories': (context) => const CategoriesScreen(),
         '/events': (context) => const EventsScreen(),
@@ -79,3 +81,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

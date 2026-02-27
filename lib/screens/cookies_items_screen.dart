@@ -1,6 +1,7 @@
 // lib/screens/cookies_items_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/image_card.dart';
+import 'cookies_type1.dart';
 
 class CookiesItemsScreen extends StatelessWidget {
   const CookiesItemsScreen({super.key});
@@ -71,6 +72,14 @@ class CookiesItemsScreen extends StatelessWidget {
                     rating: product['rating'],
                     reviewCount: product['reviews'],
                     price: product['price'],
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CookiesType1Screen(),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

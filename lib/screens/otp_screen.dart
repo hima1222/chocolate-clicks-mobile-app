@@ -82,7 +82,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.52)),
+            child: Container(color: Colors.black.withValues(alpha: 0.52)),
           ),
           SafeArea(
             child: SingleChildScrollView(

@@ -48,7 +48,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
             ),
           ),
           // Overlay
-          Container(color: Colors.black.withOpacity(0.3)),
+          Container(color: Colors.black.withValues(alpha: 0.3)),
           // Content
           SafeArea(
             child: SingleChildScrollView(
@@ -84,7 +84,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Column(
