@@ -4,6 +4,8 @@ import 'package:chocolate_clicks/services/favorites_service.dart';
 import 'package:chocolate_clicks/services/cart_service.dart';
 import 'package:chocolate_clicks/services/events_service.dart';
 import 'package:chocolate_clicks/services/payment_service.dart';
+import 'package:chocolate_clicks/services/order_service.dart';
+import 'package:chocolate_clicks/services/notification_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -15,6 +17,8 @@ class ProfileScreen extends StatelessWidget {
     final cartService = CartService();
     final eventsService = EventsService();
     final paymentService = PaymentService();
+    final orderService = OrderService();
+    final notificationService = NotificationService();
     return Scaffold(
       body: Stack(
         children: [
@@ -136,6 +140,8 @@ class ProfileScreen extends StatelessWidget {
                         cartService.clear();
                         eventsService.clear();
                         paymentService.clear();
+                        orderService.clear();
+                        notificationService.clear();
                         Navigator.pushReplacementNamed(context, '/landing');
                       },
                       style: ElevatedButton.styleFrom(
