@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'otp_screen.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -28,9 +29,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _onSignUpComplete() {
-    // Navigate directly to welcome profile screen
-    Navigator.pushReplacementNamed(context, '/welcome_profile');
+  bool _loading = false;
+
+  Future<void> _onSignUpComplete() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _loading = true);
+    final auth = AuthService();
+    try {
+      final response = await auth.signup(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _mobileController.text.trim(),
+        password: _passwordController.text,
+      );
+      if (response.success) {
+        Navigator.pushReplacementNamed(context, '/welcome_profile');
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(response.message)));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      setState(() => _loading = false);
+    }
   }
 
   @override
@@ -66,10 +92,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 235),
+
                     // const Spacer(
                     //   flex: 8,
-                    // ), 
-
+                    // ),
                     const Text(
                       "Create an account",
                       style: TextStyle(
@@ -184,13 +210,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 30), // Reduced spacing
                     // Sign Up Button
                     ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _onSignUpComplete();
-                        }
-                      },
+                      onPressed: _loading ? null : _onSignUpComplete,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(159, 243, 102, 27),
+                        backgroundColor: const Color.fromARGB(
+                          159,
+                          243,
+                          102,
+                          27,
+                        ),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           vertical: 18,

@@ -1,7 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
+
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _cardController = TextEditingController();
+
+  late AuthService authService;
+
+  @override
+  void initState() {
+    super.initState();
+    authService = AuthService();
+    final user = authService.currentUser;
+    if (user != null) {
+      _nameController.text = user.fullName;
+      _emailController.text = user.email;
+      _phoneController.text = user.phone;
+      // address and card info fields are not part of user model currently
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _cardController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveProfile() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      final nameParts = _nameController.text.trim().split(' ');
+      final firstName = nameParts.isNotEmpty ? nameParts.first : '';
+      final lastName = nameParts.length > 1
+          ? nameParts.sublist(1).join(' ')
+          : '';
+
+      final response = await authService.updateProfile(
+        firstName: firstName,
+        lastName: lastName,
+        phone: _phoneController.text.trim(),
+      );
+
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile information saved')),
+        );
+        Navigator.of(context).pop();
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(response.message)));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +142,9 @@ class EditProfileScreen extends StatelessWidget {
                           const SizedBox(height: 15),
                           // Profile edit form
                           TextFormField(
+                            controller: _nameController,
+                            validator: (v) =>
+                                v == null || v.isEmpty ? 'Name required' : null,
                             decoration: InputDecoration(
                               labelText: 'Full Name',
                               labelStyle: TextStyle(
@@ -86,6 +160,8 @@ class EditProfileScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 15),
                           TextFormField(
+                            controller: _emailController,
+                            readOnly: true,
                             decoration: InputDecoration(
                               labelText: 'Email',
                               labelStyle: TextStyle(
@@ -101,6 +177,10 @@ class EditProfileScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 15),
                           TextFormField(
+                            controller: _phoneController,
+                            validator: (v) => v == null || v.isEmpty
+                                ? 'Phone required'
+                                : null,
                             decoration: InputDecoration(
                               labelText: 'Phone Number',
                               labelStyle: TextStyle(
@@ -149,14 +229,7 @@ class EditProfileScreen extends StatelessWidget {
                             width: double.infinity,
                             height: 45,
                             child: ElevatedButton(
-                              onPressed: () {
-                                // Save profile logic
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Profile information saved'),
-                                  ),
-                                );
-                              },
+                              onPressed: _saveProfile,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.brown[700],
                                 shape: RoundedRectangleBorder(

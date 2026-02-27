@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
 import '../../widgets/primary_button.dart'; // Keep this – we'll use it for "Shop Here"
 import '../../screens/cake_items_screen.dart';
 import '../../screens/brownies_items_screen.dart';
@@ -57,9 +58,9 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Hello Subhani !',
-                          style: TextStyle(
+                        Text(
+                          'Hello ${AuthService().currentUser?.firstName ?? 'Guest'}!',
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,

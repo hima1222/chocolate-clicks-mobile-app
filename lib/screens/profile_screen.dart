@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
+import 'package:chocolate_clicks/services/favorites_service.dart';
+import 'package:chocolate_clicks/services/cart_service.dart';
+import 'package:chocolate_clicks/services/events_service.dart';
+import 'package:chocolate_clicks/services/payment_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+    final favoritesService = FavoritesService();
+    final cartService = CartService();
+    final eventsService = EventsService();
+    final paymentService = PaymentService();
     return Scaffold(
       body: Stack(
         children: [
@@ -41,14 +51,23 @@ class ProfileScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  const CircleAvatar(
+                  // profile picture and name loaded from service
+                  CircleAvatar(
                     radius: 50,
-                    child: Icon(Icons.person, size: 48),
+                    backgroundImage:
+                        authService.currentUser?.profileImageUrl != null
+                        ? NetworkImage(
+                            authService.currentUser!.profileImageUrl!,
+                          )
+                        : null,
+                    child: authService.currentUser?.profileImageUrl == null
+                        ? const Icon(Icons.person, size: 48)
+                        : null,
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Subhani',
-                    style: TextStyle(
+                  Text(
+                    authService.currentUser?.fullName ?? 'Guest User',
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -109,7 +128,14 @@ class ProfileScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        // log out through AuthService
+                        await authService.logout();
+                        // clear auxiliary services
+                        favoritesService.clear();
+                        cartService.clear();
+                        eventsService.clear();
+                        paymentService.clear();
                         Navigator.pushReplacementNamed(context, '/landing');
                       },
                       style: ElevatedButton.styleFrom(

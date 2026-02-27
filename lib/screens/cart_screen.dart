@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/cart_manager.dart';
+import 'package:chocolate_clicks/services/cart_service.dart';
+import 'package:chocolate_clicks/models/cart_item.dart';
 import '../services/payment_manager.dart';
 
 class CartScreen extends StatefulWidget {
@@ -10,21 +11,28 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final CartManager _cart = CartManager();
+  final CartService _cart = CartService();
+  List<CartItem> _items = [];
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _cart.addListener(_update);
+    _load();
   }
 
-  @override
-  void dispose() {
-    _cart.removeListener(_update);
-    super.dispose();
+  Future<void> _load() async {
+    final items = await _cart.fetchCartItems();
+    setState(() {
+      _items = items;
+      _loading = false;
+    });
   }
 
-  void _update() => setState(() {});
+  Future<void> _remove(String id) async {
+    await _cart.removeItem(id);
+    _load();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +73,9 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   const SizedBox(height: 20),
                   Expanded(
-                    child: _cart.items.isEmpty
+                    child: _loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : _items.isEmpty
                         ? const Center(
                             child: Text(
                               'Your cart is empty',
@@ -73,19 +83,19 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                           )
                         : ListView.builder(
-                            itemCount: _cart.items.length,
+                            itemCount: _items.length,
                             itemBuilder: (context, index) {
-                              final item = _cart.items[index];
+                              final item = _items[index];
                               return Card(
                                 color: Colors.white.withOpacity(0.9),
                                 margin: const EdgeInsets.symmetric(vertical: 8),
                                 child: ListTile(
-                                  leading: Image.asset(
-                                    item.image,
+                                  leading: Image.network(
+                                    item.imageUrl,
                                     width: 50,
                                     fit: BoxFit.cover,
                                   ),
-                                  title: Text(item.title),
+                                  title: Text(item.name),
                                   subtitle: Text(
                                     'Rs. ${item.price.toStringAsFixed(0)}',
                                   ),
@@ -94,16 +104,16 @@ class _CartScreenState extends State<CartScreen> {
                                       Icons.remove_circle,
                                       color: Colors.red,
                                     ),
-                                    onPressed: () => _cart.remove(item),
+                                    onPressed: () => _remove(item.id),
                                   ),
                                 ),
                               );
                             },
                           ),
                   ),
-                  if (_cart.items.isNotEmpty) ...[
+                  if (_items.isNotEmpty) ...[
                     Text(
-                      'Total: Rs. ${_cart.total.toStringAsFixed(0)}',
+                      'Total: Rs. ${_items.fold<double>(0, (sum, i) => sum + i.totalPrice).toStringAsFixed(0)}',
                       style: const TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     const SizedBox(height: 12),
@@ -112,7 +122,11 @@ class _CartScreenState extends State<CartScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           // directly pay total
-                          PaymentManager.initiatePayment(context, _cart.total);
+                          final total = _items.fold<double>(
+                            0,
+                            (sum, i) => sum + i.totalPrice,
+                          );
+                          PaymentManager.initiatePayment(context, total);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(

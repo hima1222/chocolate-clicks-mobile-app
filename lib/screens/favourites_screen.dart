@@ -1,7 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/services/favorites_service.dart';
+import 'package:chocolate_clicks/models/favorite_item.dart';
 
-class FavouritesScreen extends StatelessWidget {
+class FavouritesScreen extends StatefulWidget {
   const FavouritesScreen({super.key});
+
+  @override
+  State<FavouritesScreen> createState() => _FavouritesScreenState();
+}
+
+class _FavouritesScreenState extends State<FavouritesScreen> {
+  final FavoritesService _service = FavoritesService();
+  List<FavoriteItem> _items = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final favs = await _service.fetchFavorites();
+    setState(() {
+      _items = favs;
+      _loading = false;
+    });
+  }
+
+  Future<void> _remove(String id) async {
+    await _service.removeFavorite(id);
+    _load();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,22 +99,51 @@ class FavouritesScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          // Favourites list placeholder
-                          Container(
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              'Your favourite items will appear here',
-                              style: TextStyle(
-                                fontFamily: 'serif',
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+                          _loading
+                              ? const CircularProgressIndicator()
+                              : _items.isEmpty
+                              ? Container(
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    'No favourites yet',
+                                    style: TextStyle(
+                                      fontFamily: 'serif',
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              : Column(
+                                  children: _items
+                                      .map(
+                                        (item) => Card(
+                                          color: Colors.white.withOpacity(0.9),
+                                          margin: const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                          ),
+                                          child: ListTile(
+                                            leading: Image.network(
+                                              item.imageUrl,
+                                              width: 50,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            title: Text(item.name),
+                                            trailing: IconButton(
+                                              icon: const Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                              ),
+                                              onPressed: () => _remove(item.id),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
                         ],
                       ),
                     ),
