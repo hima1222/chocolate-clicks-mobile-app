@@ -7,13 +7,48 @@ class BrowniesItemsScreen extends StatelessWidget {
   const BrowniesItemsScreen({super.key});
 
   static final List<Map<String, dynamic>> brownieProducts = [
-    {'image': 'assets/images/brownies1.jpg', 'title': 'Lorem ipsum', 'rating': 9.0, 'reviews': 15, 'price': 3500.0},
-    {'image': 'assets/images/brownies2.jpg', 'title': 'Lorem ipsum', 'rating': 8.8, 'reviews': 22, 'price': 3800.0},
-    {'image': 'assets/images/brownies3.jpg', 'title': 'Lorem ipsum', 'rating': 9.2, 'reviews': 18, 'price': 3500.0},
-    {'image': 'assets/images/brownies4.jpg', 'title': 'Lorem ipsum', 'rating': 8.5, 'reviews': 30, 'price': 3200.0},
-    {'image': 'assets/images/brownies5.jpg', 'title': 'Lorem ipsum', 'rating': 9.1, 'reviews': 12, 'price': 3500.0},
-    {'image': 'assets/images/brownies6.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 25, 'price': 3800.0},
-   
+    {
+      'image': 'assets/images/brownies1.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.0,
+      'reviews': 15,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/brownies2.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.8,
+      'reviews': 22,
+      'price': 3800.0,
+    },
+    {
+      'image': 'assets/images/brownies3.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.2,
+      'reviews': 18,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/brownies4.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.5,
+      'reviews': 30,
+      'price': 3200.0,
+    },
+    {
+      'image': 'assets/images/brownies5.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.1,
+      'reviews': 12,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/brownies6.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.9,
+      'reviews': 25,
+      'price': 3800.0,
+    },
   ];
 
   @override
@@ -24,16 +59,26 @@ class BrowniesItemsScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 28,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 36,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(30),
@@ -57,7 +102,7 @@ class BrowniesItemsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.73,
+                  childAspectRatio: 0.75,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 16,
                 ),

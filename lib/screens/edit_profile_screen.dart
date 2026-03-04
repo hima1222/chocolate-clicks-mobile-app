@@ -128,126 +128,130 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         color: Colors.white.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Edit Your Profile',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'serif',
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          // Profile edit form
-                          TextFormField(
-                            controller: _nameController,
-                            validator: (v) =>
-                                v == null || v.isEmpty ? 'Name required' : null,
-                            decoration: InputDecoration(
-                              labelText: 'Full Name',
-                              labelStyle: TextStyle(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            const Text(
+                              'Edit Your Profile',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                                 fontFamily: 'serif',
                                 color: Colors.white,
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.8),
                             ),
-                          ),
-                          const SizedBox(height: 15),
-                          TextFormField(
-                            controller: _emailController,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: 'Email',
-                              labelStyle: TextStyle(
-                                fontFamily: 'serif',
-                                color: Colors.white,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.8),
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          TextFormField(
-                            controller: _phoneController,
-                            validator: (v) => v == null || v.isEmpty
-                                ? 'Phone required'
-                                : null,
-                            decoration: InputDecoration(
-                              labelText: 'Phone Number',
-                              labelStyle: TextStyle(
-                                fontFamily: 'serif',
-                                color: Colors.white,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.8),
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Address',
-                              labelStyle: TextStyle(
-                                fontFamily: 'serif',
-                                color: Colors.white,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white.withOpacity(0.8),
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Card Info',
-                              labelStyle: TextStyle(
-                                fontFamily: 'serif',
-                                color: Colors.white,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white.withOpacity(0.8),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 45,
-                            child: ElevatedButton(
-                              onPressed: _saveProfile,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.brown[700],
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: Text(
-                                'Save Changes',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                            const SizedBox(height: 15),
+                            // Profile edit form fields
+                            TextFormField(
+                              controller: _nameController,
+                              validator: (v) => v == null || v.isEmpty
+                                  ? 'Name required'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: 'Full Name',
+                                labelStyle: const TextStyle(
                                   fontFamily: 'serif',
                                   color: Colors.white,
                                 ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white.withValues(alpha: 0.8),
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 15),
+                            TextFormField(
+                              controller: _emailController,
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                labelStyle: const TextStyle(
+                                  fontFamily: 'serif',
+                                  color: Colors.white,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white.withValues(alpha: 0.8),
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            TextFormField(
+                              controller: _phoneController,
+                              validator: (v) => v == null || v.isEmpty
+                                  ? 'Phone required'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: 'Phone Number',
+                                labelStyle: const TextStyle(
+                                  fontFamily: 'serif',
+                                  color: Colors.white,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white.withValues(alpha: 0.8),
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Address',
+                                labelStyle: const TextStyle(
+                                  fontFamily: 'serif',
+                                  color: Colors.white,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white.withOpacity(0.8),
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Card Info',
+                                labelStyle: const TextStyle(
+                                  fontFamily: 'serif',
+                                  color: Colors.white,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white.withOpacity(0.8),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 45,
+                              child: ElevatedButton(
+                                onPressed: _saveProfile,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.brown[700],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Save Changes',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'serif',
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

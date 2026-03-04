@@ -90,14 +90,27 @@ class _CartScreenState extends State<CartScreen> {
                                 color: Colors.white.withOpacity(0.9),
                                 margin: const EdgeInsets.symmetric(vertical: 8),
                                 child: ListTile(
-                                  leading: Image.network(
+                                  leading: Image.asset(
                                     item.imageUrl,
                                     width: 50,
                                     fit: BoxFit.cover,
                                   ),
                                   title: Text(item.name),
-                                  subtitle: Text(
-                                    'Rs. ${item.price.toStringAsFixed(0)}',
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Price: Rs. ${item.price.toStringAsFixed(0)} × ${item.quantity} = Rs. ${item.totalPrice.toStringAsFixed(0)}',
+                                      ),
+                                      Text(
+                                        'Qty: ${item.quantity}',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   trailing: IconButton(
                                     icon: const Icon(

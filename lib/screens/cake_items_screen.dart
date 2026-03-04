@@ -7,21 +7,83 @@ class CakeItemsScreen extends StatelessWidget {
   const CakeItemsScreen({super.key});
 
   static final List<Map<String, dynamic>> cakeProducts = [
-    {'image': 'assets/images/cake1.jpg', 'title': 'Lorem ipsum', 'rating': 9.0, 'reviews': 15, 'price': 3500.0},
-    {'image': 'assets/images/cake2.jpg', 'title': 'Lorem ipsum', 'rating': 8.5, 'reviews': 20, 'price': 3800.0},
-    {'image': 'assets/images/cake3.jpg', 'title': 'Lorem ipsum', 'rating': 9.2, 'reviews': 18, 'price': 3500.0},
-    {'image': 'assets/images/cake4.jpg', 'title': 'Lorem ipsum', 'rating': 8.8, 'reviews': 25, 'price': 3500.0},
-    {'image': 'assets/images/cake5.jpg', 'title': 'Lorem ipsum', 'rating': 9.1, 'reviews': 12, 'price': 4200.0},
-    {'image': 'assets/images/cake6.jpg', 'title': 'Lorem ipsum', 'rating': 8.7, 'reviews': 30, 'price': 3500.0},
-    {'image': 'assets/images/cake7.jpg', 'title': 'Lorem ipsum', 'rating': 9.0, 'reviews': 22, 'price': 3800.0},
-    {'image': 'assets/images/cake8.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
-    {'image': 'assets/images/cake9.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
-    {'image': 'assets/images/cake10.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
-    {'image': 'assets/images/cake11.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 17, 'price': 3500.0},
-
- 
-
-
+    {
+      'image': 'assets/images/cake1.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.0,
+      'reviews': 15,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cake2.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.5,
+      'reviews': 20,
+      'price': 3800.0,
+    },
+    {
+      'image': 'assets/images/cake3.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.2,
+      'reviews': 18,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cake4.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.8,
+      'reviews': 25,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cake5.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.1,
+      'reviews': 12,
+      'price': 4200.0,
+    },
+    {
+      'image': 'assets/images/cake6.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.7,
+      'reviews': 30,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cake7.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.0,
+      'reviews': 22,
+      'price': 3800.0,
+    },
+    {
+      'image': 'assets/images/cake8.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.9,
+      'reviews': 17,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cake9.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.9,
+      'reviews': 17,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cake10.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.9,
+      'reviews': 17,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cake11.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.9,
+      'reviews': 17,
+      'price': 3500.0,
+    },
   ];
 
   @override
@@ -33,16 +95,26 @@ class CakeItemsScreen extends StatelessWidget {
           children: [
             // Custom header with centered black pill title
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 28,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 36,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(30),
@@ -67,7 +139,7 @@ class CakeItemsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.73, // Adjusted for good card proportions
+                  childAspectRatio: 0.75,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 16,
                 ),
