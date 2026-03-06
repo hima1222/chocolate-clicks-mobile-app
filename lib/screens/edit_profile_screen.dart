@@ -73,75 +73,105 @@ class EditProfileScreen extends StatelessWidget {
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: 'Full Name',
+                              hintText: 'Enter your full name',
                               labelStyle: TextStyle(
                                 fontFamily: 'serif',
-                                color: Colors.white,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              hintStyle: TextStyle(
+                                fontFamily: 'serif',
+                                color: Colors.grey[600],
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.8),
+                              fillColor: Colors.white.withValues(alpha: 0.95),
                             ),
                           ),
                           const SizedBox(height: 15),
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: 'Email',
+                              hintText: 'Enter your email address',
                               labelStyle: TextStyle(
                                 fontFamily: 'serif',
-                                color: Colors.white,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              hintStyle: TextStyle(
+                                fontFamily: 'serif',
+                                color: Colors.grey[600],
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.8),
+                              fillColor: Colors.white.withValues(alpha: 0.95),
                             ),
                           ),
                           const SizedBox(height: 15),
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: 'Phone Number',
+                              hintText: 'Enter your phone number',
                               labelStyle: TextStyle(
                                 fontFamily: 'serif',
-                                color: Colors.white,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              hintStyle: TextStyle(
+                                fontFamily: 'serif',
+                                color: Colors.grey[600],
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.8),
+                              fillColor: Colors.white.withValues(alpha: 0.95),
                             ),
                           ),
                           const SizedBox(height: 15),
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: 'Address',
+                              hintText: 'Enter your address',
                               labelStyle: TextStyle(
                                 fontFamily: 'serif',
-                                color: Colors.white,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              hintStyle: TextStyle(
+                                fontFamily: 'serif',
+                                color: Colors.grey[600],
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.8),
+                              fillColor: Colors.white.withOpacity(0.95),
                             ),
                           ),
                           const SizedBox(height: 15),
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: 'Card Info',
+                              hintText: 'Enter your card information',
                               labelStyle: TextStyle(
                                 fontFamily: 'serif',
-                                color: Colors.white,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              hintStyle: TextStyle(
+                                fontFamily: 'serif',
+                                color: Colors.grey[600],
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.8),
+                              fillColor: Colors.white.withOpacity(0.95),
                             ),
                           ),
                           const SizedBox(height: 20),
