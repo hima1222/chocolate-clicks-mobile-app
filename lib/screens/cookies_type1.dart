@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CookiesType1Screen extends StatefulWidget {
-  const CookiesType1Screen({super.key});
+  final Map<String, dynamic> product;
+  final int index;
+
+  const CookiesType1Screen({
+    super.key,
+    required this.product,
+    required this.index,
+  });
 
   @override
   State<CookiesType1Screen> createState() => _CookiesType1ScreenState();
@@ -31,9 +38,9 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const Spacer(),
-                    const Text(
-                      'Red velvet Cake',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    Text(
+                      widget.product['title'] ?? 'Cookies',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     const SizedBox(width: 48),
@@ -43,7 +50,7 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
 
               // Main product image
               Image.asset(
-                'assets/images/cookies_type1.jpg', // Upload your image here
+                widget.product['image'] ?? 'assets/images/cookies1.jpg',
                 width: double.infinity,
                 height: 350,
                 fit: BoxFit.cover,

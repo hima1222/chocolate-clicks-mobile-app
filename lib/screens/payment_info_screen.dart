@@ -27,7 +27,7 @@ class PaymentInfoScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Text('40/J, MC Road, Matale'),
+            Text('[User Billing Address]'),
             SizedBox(height: 20),
             Text(
               'For security reasons, actual payment editing is not implemented.',

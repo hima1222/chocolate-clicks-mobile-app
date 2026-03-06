@@ -334,7 +334,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
           ),
           const SizedBox(height: 8),
           const Text(
-            '40/J, MC Road, Matale, Sri Lanka',
+            '[User Address]',
             style: TextStyle(
               color: Colors.white70,
               fontSize: 12,

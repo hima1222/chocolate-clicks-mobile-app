@@ -47,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Subhani',
+                    'User Name',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class ProfileScreen extends StatelessWidget {
                         Navigator.pushReplacementNamed(context, '/landing');
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
+                        backgroundColor: const Color.fromARGB(255, 202, 38, 38),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),

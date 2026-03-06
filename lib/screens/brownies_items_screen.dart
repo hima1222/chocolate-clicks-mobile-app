@@ -57,7 +57,7 @@ class BrowniesItemsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.73,
+                  childAspectRatio: 0.85,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 16,
                 ),
@@ -74,7 +74,10 @@ class BrowniesItemsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const BrowniesType1Screen(),
+                          builder: (context) => BrowniesType1Screen(
+                            product: product,
+                            index: index,
+                          ),
                         ),
                       );
                     },
