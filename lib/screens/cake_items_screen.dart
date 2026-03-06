@@ -67,7 +67,7 @@ class CakeItemsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.73, // Adjusted for good card proportions
+                  childAspectRatio: 0.85,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 16,
                 ),
@@ -84,7 +84,10 @@ class CakeItemsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CakeType1Screen(),
+                          builder: (context) => CakeType1Screen(
+                            product: product,
+                            index: index,
+                          ),
                         ),
                       );
                     },

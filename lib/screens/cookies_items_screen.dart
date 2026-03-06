@@ -59,7 +59,7 @@ class CookiesItemsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.73,
+                  childAspectRatio: 0.85,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 16,
                 ),
@@ -76,7 +76,10 @@ class CookiesItemsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CookiesType1Screen(),
+                          builder: (context) => CookiesType1Screen(
+                            product: product,
+                            index: index,
+                          ),
                         ),
                       );
                     },

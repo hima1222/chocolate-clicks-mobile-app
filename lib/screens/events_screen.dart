@@ -144,7 +144,7 @@ class EventsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(49, 0, 0, 0),
+        color:  Colors.black,
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: const Color.fromARGB(159, 245, 157, 74)),
         boxShadow: [
