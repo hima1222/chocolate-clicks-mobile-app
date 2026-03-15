@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/payment_manager.dart';
 
 class DigitalWalletScreen extends StatefulWidget {
   const DigitalWalletScreen({super.key});

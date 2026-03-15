@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'otp_screen.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
