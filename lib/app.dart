@@ -30,6 +30,8 @@ import 'screens/upi_payment_screen.dart';
 import 'screens/payment_summary_screen.dart';
 import 'screens/payment_success_screen.dart';
 import 'screens/payment_failure_screen.dart';
+import 'screens/notifications_screen.dart';
+import 'screens/messages_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -58,6 +60,8 @@ class MyApp extends StatelessWidget {
         '/favourites': (context) => const FavouritesScreen(),
         '/upcoming_events': (context) => const UpcomingEventsScreen(),
         '/cart': (context) => const CartScreen(),
+        '/notifications': (context) => const NotificationsScreen(),
+        '/messages': (context) => const MessagesScreen(),
         '/payment_info': (context) => const PaymentInfoScreen(),
         '/mask_painting_workshop': (context) =>
             const MaskPaintingWorkshopScreen(),
