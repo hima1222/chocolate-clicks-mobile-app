@@ -1,4 +1,6 @@
 import 'package:chocolate_clicks/models/user_model.dart';
+import 'package:chocolate_clicks/services/api_client.dart';
+import 'package:chocolate_clicks/services/storage_service.dart';
 
 /// Service for handling authentication operations
 /// This is a complete authentication service that manages login, signup, and user sessions
@@ -10,25 +12,36 @@ class AuthService {
     return _instance;
   }
 
-  AuthService._internal();
+  AuthService._internal() {
+    _session = SessionManager();
+    _storage = StorageService();
+    _loadStoredSession();
+  }
 
-  // Current authenticated user
-  User? _currentUser;
-
-  // Authentication token
-  String? _authToken;
-
-  // Flag to track if user is authenticated
-  bool _isAuthenticated = false;
+  late SessionManager _session;
+  late StorageService _storage;
 
   /// Get current authenticated user
-  User? get currentUser => _currentUser;
+  User? get currentUser => _session.user;
 
   /// Check if user is currently authenticated
-  bool get isAuthenticated => _isAuthenticated;
+  bool get isAuthenticated => _session.isLoggedIn;
 
   /// Get current auth token
-  String? get authToken => _authToken;
+  String? get authToken => _session.token;
+
+  /// Load stored session from local storage
+  void _loadStoredSession() {
+    try {
+      // TODO: Implement with actual storage retrieval
+      // final token = _storage.getString('auth_token');
+      // if (token != null) {
+      //   _session.token = token;
+      // }
+    } catch (e) {
+      // Silent fail on startup
+    }
+  }
 
   /// Login user with email/username and password
   /// Returns AuthResponse with user and token on success
@@ -66,10 +79,10 @@ class AuthService {
 
       const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
 
-      // Update local state
-      _currentUser = mockUser;
-      _authToken = mockToken;
-      _isAuthenticated = true;
+      // Update session and storage
+      _session.setSession(token: mockToken, user: mockUser);
+      await _storage.save('auth_token', mockToken);
+      await _storage.save('user_id', mockUser.id);
 
       return AuthResponse(
         success: true,
@@ -147,10 +160,10 @@ class AuthService {
 
       const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
 
-      // Update local state
-      _currentUser = newUser;
-      _authToken = mockToken;
-      _isAuthenticated = true;
+      // Update session and storage
+      _session.setSession(token: mockToken, user: newUser);
+      await _storage.save('auth_token', mockToken);
+      await _storage.save('user_id', newUser.id);
 
       return AuthResponse(
         success: true,
@@ -162,6 +175,10 @@ class AuthService {
       throw AuthException(message: e.toString(), code: 'SIGNUP_FAILED');
     }
   }
+
+  // private helpers to reach session state
+  User? get _currentUser => _session.user;
+  String? get _authToken => _session.token;
 
   /// Verify OTP for phone or email
   /// Returns AuthResponse with updated user information
@@ -198,7 +215,8 @@ class AuthService {
         );
       }
 
-      _currentUser = updatedUser;
+      // update session user while keeping same token
+      _session.setSession(token: _authToken ?? '', user: updatedUser);
 
       return AuthResponse(
         success: true,
@@ -331,10 +349,10 @@ class AuthService {
       // TODO: Call API to invalidate token on backend
       await Future.delayed(const Duration(milliseconds: 500));
 
-      // Clear local state
-      _currentUser = null;
-      _authToken = null;
-      _isAuthenticated = false;
+      // Clear session and storage
+      _session.clearSession();
+      await _storage.delete('auth_token');
+      await _storage.delete('user_id');
     } catch (e) {
       throw AuthException(message: e.toString(), code: 'LOGOUT_FAILED');
     }
@@ -352,7 +370,10 @@ class AuthService {
       await Future.delayed(const Duration(milliseconds: 500));
 
       const newToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...new';
-      _authToken = newToken;
+      // update session token while preserving user
+      if (_session.user != null) {
+        _session.setSession(token: newToken, user: _session.user!);
+      }
 
       return AuthResponse(
         success: true,
@@ -391,7 +412,8 @@ class AuthService {
         profileImageUrl: profileImageUrl,
       );
 
-      _currentUser = updatedUser;
+      // update user in session
+      _session.setSession(token: _authToken ?? '', user: updatedUser);
 
       return AuthResponse(
         success: true,
@@ -423,8 +445,6 @@ class AuthService {
 
   /// Clear all auth data (useful for testing or cleanup)
   void clearAuthData() {
-    _currentUser = null;
-    _authToken = null;
-    _isAuthenticated = false;
+    _session.clearSession();
   }
 }

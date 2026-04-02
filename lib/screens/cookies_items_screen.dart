@@ -7,15 +7,62 @@ class CookiesItemsScreen extends StatelessWidget {
   const CookiesItemsScreen({super.key});
 
   static final List<Map<String, dynamic>> cookieProducts = [
-    {'image': 'assets/images/cookies1.jpg', 'title': 'Lorem ipsum', 'rating': 9.0, 'reviews': 18, 'price': 3500.0},
-    {'image': 'assets/images/cookies2.jpg', 'title': 'Lorem ipsum', 'rating': 8.7, 'reviews': 25, 'price': 3200.0},
-    {'image': 'assets/images/cookies3.jpg', 'title': 'Lorem ipsum', 'rating': 9.1, 'reviews': 15, 'price': 3500.0},
-    {'image': 'assets/images/cookies4.jpg', 'title': 'Lorem ipsum', 'rating': 8.9, 'reviews': 20, 'price': 3800.0},
-    {'image': 'assets/images/cookies5.jpg', 'title': 'Lorem ipsum', 'rating': 9.0, 'reviews': 12, 'price': 3500.0},
-    {'image': 'assets/images/cookies6.jpg', 'title': 'Lorem ipsum', 'rating': 8.8, 'reviews': 30, 'price': 3500.0},
-    {'image': 'assets/images/cookies7.jpg', 'title': 'Lorem ipsum', 'rating': 9.2, 'reviews': 22, 'price': 3800.0},
-    {'image': 'assets/images/cookies8.jpg', 'title': 'Lorem ipsum', 'rating': 9.2, 'reviews': 22, 'price': 3800.0},
-
+    {
+      'image': 'assets/images/cookies1.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.0,
+      'reviews': 18,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cookies2.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.7,
+      'reviews': 25,
+      'price': 3200.0,
+    },
+    {
+      'image': 'assets/images/cookies3.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.1,
+      'reviews': 15,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cookies4.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.9,
+      'reviews': 20,
+      'price': 3800.0,
+    },
+    {
+      'image': 'assets/images/cookies5.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.0,
+      'reviews': 12,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cookies6.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 8.8,
+      'reviews': 30,
+      'price': 3500.0,
+    },
+    {
+      'image': 'assets/images/cookies7.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.2,
+      'reviews': 22,
+      'price': 3800.0,
+    },
+    {
+      'image': 'assets/images/cookies8.jpg',
+      'title': 'Lorem ipsum',
+      'rating': 9.2,
+      'reviews': 22,
+      'price': 3800.0,
+    },
   ];
 
   @override
@@ -26,16 +73,26 @@ class CookiesItemsScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 28,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 36,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(30),
@@ -59,7 +116,7 @@ class CookiesItemsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.85,
+                  childAspectRatio: 0.75,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 16,
                 ),
@@ -76,10 +133,7 @@ class CookiesItemsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CookiesType1Screen(
-                            product: product,
-                            index: index,
-                          ),
+                          builder: (context) => const CookiesType1Screen(),
                         ),
                       );
                     },

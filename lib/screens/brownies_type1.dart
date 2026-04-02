@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BrowniesType1Screen extends StatefulWidget {
-  final Map<String, dynamic> product;
-  final int index;
-
-  const BrowniesType1Screen({
-    super.key,
-    required this.product,
-    required this.index,
-  });
+  const BrowniesType1Screen({super.key});
 
   @override
   State<BrowniesType1Screen> createState() => _BrowniesType1ScreenState();
@@ -38,9 +31,9 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const Spacer(),
-                    Text(
-                      widget.product['title'] ?? 'Brownies',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    const Text(
+                      'Brownies Type 1',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     const SizedBox(width: 48),
@@ -50,7 +43,7 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
 
               // Main product image
               Image.asset(
-                widget.product['image'] ?? 'assets/images/brownies1.jpg',
+                'assets/images/brownies_type1.jpg', // Upload your brownies image here
                 width: double.infinity,
                 height: 350,
                 fit: BoxFit.cover,

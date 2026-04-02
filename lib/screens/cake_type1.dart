@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CakeType1Screen extends StatefulWidget {
-  final Map<String, dynamic> product;
-  final int index;
-
-  const CakeType1Screen({
-    super.key,
-    required this.product,
-    required this.index,
-  });
+  const CakeType1Screen({super.key});
 
   @override
   State<CakeType1Screen> createState() => _CakeType1ScreenState();
@@ -38,9 +31,9 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const Spacer(),
-                    Text(
-                      widget.product['title'] ?? 'Cake',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    const Text(
+                      'Blue Berry Cake',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     const SizedBox(width: 48),
@@ -50,7 +43,7 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
 
               // Main product image
               Image.asset(
-                widget.product['image'] ?? 'assets/images/cake1.jpg',
+                'assets/images/cake_type1.jpg', // Upload your image here
                 width: double.infinity,
                 height: 350,
                 fit: BoxFit.cover,

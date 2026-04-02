@@ -160,7 +160,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                               maxLength: 5,
                               onChanged: (value) {
                                 if (value.length == 2 && !value.contains('/')) {
-                                  _expiryController.text = '${value}/';
+                                  _expiryController.text = '$value/';
                                   _expiryController.selection =
                                       TextSelection.fromPosition(
                                         TextPosition(
@@ -210,7 +210,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                           Checkbox(
                             value: true,
                             onChanged: (value) {},
-                            fillColor: MaterialStateProperty.all(
+                            fillColor: WidgetStateProperty.all(
                               const Color.fromARGB(159, 245, 157, 74),
                             ),
                           ),

@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
+import 'package:chocolate_clicks/services/favorites_service.dart';
+import 'package:chocolate_clicks/services/cart_service.dart';
+import 'package:chocolate_clicks/services/events_service.dart';
+import 'package:chocolate_clicks/services/payment_service.dart';
+import 'package:chocolate_clicks/services/order_service.dart';
+import 'package:chocolate_clicks/services/notification_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+    final favoritesService = FavoritesService();
+    final cartService = CartService();
+    final eventsService = EventsService();
+    final paymentService = PaymentService();
+    final orderService = OrderService();
+    final notificationService = NotificationService();
     return Scaffold(
       body: Stack(
         children: [
@@ -41,49 +55,93 @@ class ProfileScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  const CircleAvatar(
+                  // profile picture and name loaded from service
+                  CircleAvatar(
                     radius: 50,
-                    child: Icon(Icons.person, size: 48),
+                    backgroundImage:
+                        authService.currentUser?.profileImageUrl != null
+                        ? NetworkImage(
+                            authService.currentUser!.profileImageUrl!,
+                          )
+                        : null,
+                    child: authService.currentUser?.profileImageUrl == null
+                        ? const Icon(Icons.person, size: 48)
+                        : null,
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'User Name',
-                    style: TextStyle(
+                  Text(
+                    authService.currentUser?.fullName ?? 'Guest User',
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _buildNavigationButton(
-                    context,
-                    'Edit Profile',
-                    () => Navigator.pushNamed(context, '/edit_profile'),
+                  // menu card
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.edit,
+                          label: 'Edit Profile',
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/edit_profile'),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.favorite_border,
+                          label: 'Favourites',
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/favourites'),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.shopping_cart_outlined,
+                          label: 'Cart',
+                          onTap: () => Navigator.pushNamed(context, '/cart'),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.calendar_today,
+                          label: 'Upcoming Events',
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/upcoming_events'),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.payment,
+                          label: 'Payment Info',
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/payment_info'),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  _buildNavigationButton(
-                    context,
-                    'Favourites',
-                    () => Navigator.pushNamed(context, '/favourites'),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildNavigationButton(
-                    context,
-                    'Upcoming Events',
-                    () => Navigator.pushNamed(context, '/upcoming_events'),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildNavigationButton(
-                    context,
-                    'Payment Info',
-                    () => Navigator.pushNamed(context, '/payment_info'),
-                  ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        // log out through AuthService
+                        await authService.logout();
+                        // clear auxiliary services
+                        favoritesService.clear();
+                        cartService.clear();
+                        eventsService.clear();
+                        paymentService.clear();
+                        orderService.clear();
+                        notificationService.clear();
                         Navigator.pushReplacementNamed(context, '/landing');
                       },
                       style: ElevatedButton.styleFrom(
@@ -108,33 +166,21 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationButton(
-    BuildContext context,
-    String title,
-    VoidCallback onPressed,
-  ) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withValues(alpha: 0.9),
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          elevation: 5,
-        ),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            fontFamily: 'Roboto',
-          ),
-        ),
-      ),
+  Widget _buildMenuItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.brown[700]),
+      title: Text(label),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
     );
+  }
+
+  Widget _buildDivider() {
+    return const Divider(height: 1, color: Colors.grey);
   }
 }

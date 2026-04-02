@@ -1,7 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/services/events_service.dart';
+import 'package:chocolate_clicks/models/event_model.dart';
 
-class UpcomingEventsScreen extends StatelessWidget {
+class UpcomingEventsScreen extends StatefulWidget {
   const UpcomingEventsScreen({super.key});
+
+  @override
+  State<UpcomingEventsScreen> createState() => _UpcomingEventsScreenState();
+}
+
+class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
+  final EventsService _service = EventsService();
+  List<EventModel> _events = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final events = await _service.fetchUpcomingEvents();
+    setState(() {
+      _events = events;
+      _loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,22 +94,49 @@ class UpcomingEventsScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          // Events list placeholder
-                          Container(
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              'Upcoming events will appear here',
-                              style: TextStyle(
-                                fontFamily: 'serif',
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+                          _loading
+                              ? const CircularProgressIndicator()
+                              : _events.isEmpty
+                              ? Container(
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    'No upcoming events',
+                                    style: TextStyle(
+                                      fontFamily: 'serif',
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              : Column(
+                                  children: _events
+                                      .map(
+                                        (e) => Card(
+                                          color: Colors.white.withOpacity(0.9),
+                                          margin: const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                          ),
+                                          child: ListTile(
+                                            leading: Image.network(
+                                              e.imageUrl,
+                                              width: 50,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            title: Text(e.title),
+                                            subtitle: Text(
+                                              '${e.date.toLocal()}'.split(
+                                                ' ',
+                                              )[0],
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
                         ],
                       ),
                     ),

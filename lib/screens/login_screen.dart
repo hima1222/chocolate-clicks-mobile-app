@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:chocolate_clicks/screens/register_screen.dart';
-import 'package:chocolate_clicks/screens/home_screen.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
+
 
 
 class LoginScreen extends StatefulWidget {
@@ -13,6 +13,43 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
+  bool _loading = false;
+
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  final AuthService _auth = AuthService();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _loading = true);
+    try {
+      final resp = await _auth.login(
+        emailOrUsername: _usernameController.text.trim(),
+        password: _passwordController.text,
+      );
+      if (resp.success) {
+        Navigator.pushReplacementNamed(context, '/welcome_profile');
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(resp.message)));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,10 +124,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         TextFormField(
+                          controller: _usernameController,
                           style: const TextStyle(
                             fontSize: 14,
                             fontFamily: 'Roboto',
-                          ), // Added font
+                          ),
+                          validator: (v) =>
+                              v == null || v.isEmpty ? 'Required' : null,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white.withValues(alpha: 0.92),
@@ -121,11 +161,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 16), // Reduced spacing
 
                         TextFormField(
+                          controller: _passwordController,
                           obscureText: _obscurePassword,
                           style: const TextStyle(
                             fontSize: 14,
                             fontFamily: 'Roboto',
                           ),
+                          validator: (v) =>
+                              v == null || v.isEmpty ? 'Required' : null,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white.withValues(alpha: 0.92),
@@ -184,13 +227,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         // Login Button
                         ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.pushReplacementNamed(context, '/welcome_profile');
-                            }
-                          },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(159, 243, 102, 27),
+                            backgroundColor: const Color.fromARGB(
+                              159,
+                              243,
+                              102,
+                              27,
+                            ),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
@@ -198,15 +241,25 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             elevation: 4,
                           ),
-                          child: const Text(
-                            "LOGIN",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.1,
-                              fontFamily: 'Roboto',
-                            ),
-                          ),
+                          onPressed: _loading ? null : _submit,
+                          child: _loading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text(
+                                  "LOGIN",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.1,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                ),
                         ),
                       ],
                     ),
