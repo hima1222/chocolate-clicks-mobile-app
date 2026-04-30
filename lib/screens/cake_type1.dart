@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/services/favorites_service.dart';
+import 'package:chocolate_clicks/services/cart_service.dart';
+import 'package:chocolate_clicks/models/cart_item.dart';
+import 'package:chocolate_clicks/models/favorite_item.dart';
 
 class CakeType1Screen extends StatefulWidget {
-  const CakeType1Screen({super.key});
+  final Map<String, dynamic>? product;
+  final int? index;
+
+  const CakeType1Screen({super.key, this.product, this.index});
 
   @override
   State<CakeType1Screen> createState() => _CakeType1ScreenState();
@@ -11,147 +18,241 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
   String selectedSize = 'Medium';
   String selectedTopping = 'Blueberry & Lemon';
   String selectedFrosting = 'Chocolate';
+  bool isFavorite = false;
+  final FavoritesService _favoritesService = FavoritesService();
+  final CartService _cartService = CartService();
 
   @override
   Widget build(BuildContext context) {
+    final productTitle = widget.product?['title'] ?? 'Blue Berry Cake';
+    final productImage = widget.product?['image'] ?? 'assets/images/cake_type1.jpg';
+    final productPrice = widget.product?['price'] ?? 4500.0;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0E6), // Light beige background
+      backgroundColor: const Color(0xFFF5F0E6),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with back button and title
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, size: 28),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    const Spacer(),
-                    const Text(
-                      'Blue Berry Cake',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const Spacer(),
-                    const SizedBox(width: 48),
-                  ],
-                ),
-              ),
-
-              // Main product image
-              Image.asset(
-                'assets/images/cake_type1.jpg', // Upload your image here
-                width: double.infinity,
-                height: 350,
-                fit: BoxFit.cover,
-              ),
-
-              const SizedBox(height: 20),
-
-              // Description card
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                  style: TextStyle(fontSize: 14, height: 1.5),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              // Customization dropdowns
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Size', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    DropdownButton<String>(
-                      value: selectedSize,
-                      isExpanded: true,
-                      underline: Container(),
-                      icon: const Icon(Icons.arrow_drop_down),
-                      items: ['Small', 'Medium', 'Large'].map((String value) {
-                        return DropdownMenuItem<String>(value: value, child: Text(value));
-                      }).toList(),
-                      onChanged: (value) => setState(() => selectedSize = value!),
-                    ),
-
-                    const SizedBox(height: 20),
-                    const Text('Toppings', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    DropdownButton<String>(
-                      value: selectedTopping,
-                      isExpanded: true,
-                      underline: Container(),
-                      icon: const Icon(Icons.arrow_drop_down),
-                      items: ['Blueberry & Lemon', 'Chocolate Chips', 'Nuts'].map((String value) {
-                        return DropdownMenuItem<String>(value: value, child: Text(value));
-                      }).toList(),
-                      onChanged: (value) => setState(() => selectedTopping = value!),
-                    ),
-
-                    const SizedBox(height: 20),
-                    const Text('Frosting', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    DropdownButton<String>(
-                      value: selectedFrosting,
-                      isExpanded: true,
-                      underline: Container(),
-                      icon: const Icon(Icons.arrow_drop_down),
-                      items: ['Chocolate', 'Vanilla', 'Cream Cheese'].map((String value) {
-                        return DropdownMenuItem<String>(value: value, child: Text(value));
-                      }).toList(),
-                      onChanged: (value) => setState(() => selectedFrosting = value!),
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    // Review button
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // TODO: Navigate to reviews screen or show bottom sheet
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Reviews coming soon!')),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.brown[800],
-                          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                        ),
-                        child: const Text('Review', style: TextStyle(fontSize: 18, color: Colors.white)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back, size: 28),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const Spacer(),
+                          Text(
+                            productTitle,
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: Icon(
+                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              size: 28,
+                              color: isFavorite ? Colors.red : Colors.grey,
+                            ),
+                            onPressed: () => setState(() => isFavorite = !isFavorite),
+                          ),
+                        ],
                       ),
                     ),
-
-                    const SizedBox(height: 40),
+                    Image.asset(
+                      productImage,
+                      width: double.infinity,
+                      height: 280,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'LKR ${productPrice.toStringAsFixed(0)}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.brown,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.star, color: Colors.amber, size: 18),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    widget.product?['rating']?.toString() ?? '9.0',
+                                    style: const TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '(${widget.product?['reviews'] ?? 15} reviews)',
+                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          const Text(
+                            'Delicious blueberry cake with a tangy lemon frosting. Fresh berries baked fresh daily.',
+                            style: TextStyle(fontSize: 13, height: 1.5, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Size', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 6),
+                          Container(
+                            constraints: const BoxConstraints(maxHeight: 50),
+                            child: DropdownButton<String>(
+                              value: selectedSize,
+                              isExpanded: true,
+                              isDense: true,
+                              underline: Container(),
+                              icon: const Icon(Icons.arrow_drop_down, size: 20),
+                              items: ['Small', 'Medium', 'Large'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    child: Text(value),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) => setState(() => selectedSize = value!),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text('Toppings', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 6),
+                          Container(
+                            constraints: const BoxConstraints(maxHeight: 50),
+                            child: DropdownButton<String>(
+                              value: selectedTopping,
+                              isExpanded: true,
+                              isDense: true,
+                              underline: Container(),
+                              icon: const Icon(Icons.arrow_drop_down, size: 20),
+                              items: ['Blueberry & Lemon', 'Chocolate Chips', 'Nuts'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    child: Text(value),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) => setState(() => selectedTopping = value!),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text('Frosting', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 6),
+                          Container(
+                            constraints: const BoxConstraints(maxHeight: 50),
+                            child: DropdownButton<String>(
+                              value: selectedFrosting,
+                              isExpanded: true,
+                              isDense: true,
+                              underline: Container(),
+                              icon: const Icon(Icons.arrow_drop_down, size: 20),
+                              items: ['Chocolate', 'Vanilla', 'Cream Cheese'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    child: Text(value),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) => setState(() => selectedFrosting = value!),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
-
-              // Bottom dark section with more text
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                color: Colors.grey[900],
-                child: const Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                  style: TextStyle(color: Colors.white, fontSize: 14, height: 1.5),
-                  textAlign: TextAlign.center,
-                ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
               ),
-            ],
-          ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final item = CartItem(
+                          id: 'cake_${widget.index ?? 0}',
+                          name: productTitle,
+                          price: productPrice,
+                          quantity: 1,
+                          imageUrl: productImage,
+                        );
+                        await _cartService.addOrUpdateItem(item);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Added to cart!')),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.brown[700],
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text('Add to Cart', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Proceeding to checkout...')),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[600],
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text('Buy Now', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
