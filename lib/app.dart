@@ -16,6 +16,7 @@ import 'screens/payment_info_screen.dart';
 import 'screens/mask_painting_workshop_screen.dart';
 import 'screens/tasting_luxe_screen.dart';
 import 'screens/bake_it_happen_screen.dart';
+import 'screens/backing_goods.dart';
 import 'screens/summer_cake_picnics_screen.dart';
 import 'screens/cake_dates_screen.dart';
 import 'screens/cake_items_screen.dart';
@@ -29,6 +30,8 @@ import 'screens/upi_payment_screen.dart';
 import 'screens/payment_summary_screen.dart';
 import 'screens/payment_success_screen.dart';
 import 'screens/payment_failure_screen.dart';
+import 'screens/notifications_screen.dart';
+import 'screens/messages_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -57,11 +60,14 @@ class MyApp extends StatelessWidget {
         '/favourites': (context) => const FavouritesScreen(),
         '/upcoming_events': (context) => const UpcomingEventsScreen(),
         '/cart': (context) => const CartScreen(),
+        '/notifications': (context) => const NotificationsScreen(),
+        '/messages': (context) => const MessagesScreen(),
         '/payment_info': (context) => const PaymentInfoScreen(),
         '/mask_painting_workshop': (context) =>
             const MaskPaintingWorkshopScreen(),
         '/tasting_luxe': (context) => const TastingLuxeScreen(),
         '/bake_it_happen': (context) => const BakeItHappenScreen(),
+        '/baking_goods': (context) => const BakingGoodsScreen(),
         '/summer_cake_picnics': (context) => const SummerCakePicnicsScreen(),
         '/cake_dates': (context) => const CakeDatesScreen(),
         '/profile': (context) => const ProfileScreen(),
