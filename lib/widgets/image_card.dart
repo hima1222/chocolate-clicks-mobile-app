@@ -51,13 +51,13 @@ class ProductCard extends StatelessWidget {
                 ),
                 child: Image.asset(
                   imageAsset,
-                  height: 90,
+                  height: 80,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
+                padding: const EdgeInsets.fromLTRB(10, 4, 10, 6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -65,43 +65,43 @@ class ProductCard extends StatelessWidget {
                       title,
                       style: const TextStyle(
                         color: Color(0xFFF6E6D7),
-                        fontSize: 15,
+                        fontSize: 13,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.2,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Icon(Icons.star, color: Color(0xFFF8B84E), size: 14),
-                        const SizedBox(width: 4),
+                        const Icon(Icons.star, color: Color(0xFFF8B84E), size: 12),
+                        const SizedBox(width: 3),
                         Text(
                           '$rating ($reviewCount)',
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.78),
-                            fontSize: 11,
+                            fontSize: 10,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       'Rs. ${price.toStringAsFixed(0)}',
                       style: const TextStyle(
                         color: Color(0xFFF8B84E),
-                        fontSize: 15,
+                        fontSize: 13,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.2,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Row(
                       children: [
                         Expanded(
                           child: SizedBox(
-                            height: 30,
+                            height: 28,
                             child: ElevatedButton(
                               onPressed: () {
                                 PaymentManager.initiatePayment(context, price);

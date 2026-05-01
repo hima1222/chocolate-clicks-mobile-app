@@ -136,7 +136,7 @@ class BrowniesItemsScreen extends StatelessWidget {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 1.05,
+                      childAspectRatio: 1.2,
                       mainAxisSpacing: 14,
                       crossAxisSpacing: 12,
                     ),
