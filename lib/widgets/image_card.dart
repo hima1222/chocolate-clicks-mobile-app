@@ -51,13 +51,13 @@ class ProductCard extends StatelessWidget {
                 ),
                 child: Image.asset(
                   imageAsset,
-                  height: 102,
+                  height: 90,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -72,7 +72,7 @@ class ProductCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Row(
                       children: [
                         const Icon(Icons.star, color: Color(0xFFF8B84E), size: 14),
@@ -86,7 +86,7 @@ class ProductCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       'Rs. ${price.toStringAsFixed(0)}',
                       style: const TextStyle(
@@ -96,12 +96,12 @@ class ProductCard extends StatelessWidget {
                         letterSpacing: 0.2,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         Expanded(
                           child: SizedBox(
-                            height: 34,
+                            height: 30,
                             child: ElevatedButton(
                               onPressed: () {
                                 PaymentManager.initiatePayment(context, price);
@@ -128,8 +128,8 @@ class ProductCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Container(
-                          width: 34,
-                          height: 34,
+                          width: 30,
+                          height: 30,
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(9),

@@ -150,7 +150,7 @@ class CookiesItemsScreen extends StatelessWidget {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.82,
+                      childAspectRatio: 1.05,
                       mainAxisSpacing: 14,
                       crossAxisSpacing: 12,
                     ),
