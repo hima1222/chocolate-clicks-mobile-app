@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 class CakeType1Screen extends StatefulWidget {
-  const CakeType1Screen({super.key});
+  final Map<String, dynamic>? product;
+
+  const CakeType1Screen({super.key, this.product});
 
   @override
   State<CakeType1Screen> createState() => _CakeType1ScreenState();
 }
 
 class _CakeType1ScreenState extends State<CakeType1Screen> {
+  Map<String, dynamic>? get product => widget.product;
+
   String selectedSize = 'Medium';
   String selectedTopping = 'Blueberry & Lemon';
   String selectedFrosting = 'Chocolate';
@@ -15,13 +19,12 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0E6), // Light beige background
+      backgroundColor: const Color(0xFFF5F0E6),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with back button and title
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
@@ -31,9 +34,9 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const Spacer(),
-                    const Text(
-                      'Blue Berry Cake',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    Text(
+                      product?['title'] as String? ?? 'Blue Berry Cake',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     const SizedBox(width: 48),
@@ -41,9 +44,8 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                 ),
               ),
 
-              // Main product image
               Image.asset(
-                'assets/images/cake_type1.jpg', // Upload your image here
+                product?['image'] as String? ?? 'assets/images/cake_type1.jpg',
                 width: double.infinity,
                 height: 350,
                 fit: BoxFit.cover,
@@ -51,7 +53,6 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
 
               const SizedBox(height: 20),
 
-              // Description card
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 padding: const EdgeInsets.all(20),
@@ -59,15 +60,15 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+                child: Text(
+                  product?['description'] as String? ??
+                      'Light sponge cake finished with a bright fruity topping.',
                   style: TextStyle(fontSize: 14, height: 1.5),
                 ),
               ),
 
               const SizedBox(height: 30),
 
-              // Customization dropdowns
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
@@ -116,11 +117,9 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
 
                     const SizedBox(height: 40),
 
-                    // Review button
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: Navigate to reviews screen or show bottom sheet
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Reviews coming soon!')),
                           );
@@ -139,13 +138,13 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                 ),
               ),
 
-              // Bottom dark section with more text
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 color: Colors.grey[900],
-                child: const Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                child: Text(
+                  product?['description'] as String? ??
+                      'A fresh cake built for a bright and balanced flavor profile.',
                   style: TextStyle(color: Colors.white, fontSize: 14, height: 1.5),
                   textAlign: TextAlign.center,
                 ),

@@ -43,6 +43,7 @@ class ProductCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           onTap: onTap,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
@@ -51,13 +52,13 @@ class ProductCard extends StatelessWidget {
                 ),
                 child: Image.asset(
                   imageAsset,
-                  height: 102,
+                  height: 88,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                padding: const EdgeInsets.fromLTRB(10, 7, 10, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -65,43 +66,43 @@ class ProductCard extends StatelessWidget {
                       title,
                       style: const TextStyle(
                         color: Color(0xFFF6E6D7),
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 0.2,
+                        letterSpacing: 0.1,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Icon(Icons.star, color: Color(0xFFF8B84E), size: 14),
+                        const Icon(Icons.star, color: Color(0xFFF8B84E), size: 13),
                         const SizedBox(width: 4),
                         Text(
                           '$rating ($reviewCount)',
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.78),
-                            fontSize: 11,
+                            fontSize: 10,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       'Rs. ${price.toStringAsFixed(0)}',
                       style: const TextStyle(
                         color: Color(0xFFF8B84E),
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.w800,
-                        letterSpacing: 0.2,
+                        letterSpacing: 0.1,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
                         Expanded(
                           child: SizedBox(
-                            height: 34,
+                            height: 32,
                             child: ElevatedButton(
                               onPressed: () {
                                 PaymentManager.initiatePayment(context, price);
@@ -112,15 +113,15 @@ class ProductCard extends StatelessWidget {
                                 foregroundColor: Colors.white,
                                 padding: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(9),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
                               child: const Text(
                                 'Buy Now',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.2,
+                                  letterSpacing: 0.1,
                                 ),
                               ),
                             ),
@@ -128,11 +129,11 @@ class ProductCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Container(
-                          width: 34,
-                          height: 34,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(9),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: IconButton(
                             padding: EdgeInsets.zero,
@@ -152,7 +153,7 @@ class ProductCard extends StatelessWidget {
                             },
                             icon: const Icon(
                               Icons.add_shopping_cart,
-                              size: 18,
+                              size: 17,
                               color: Color(0xFFF6E6D7),
                             ),
                           ),
