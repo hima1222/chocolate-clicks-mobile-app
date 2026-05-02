@@ -15,6 +15,8 @@ class CakeType1Screen extends StatefulWidget {
 }
 
 class _CakeType1ScreenState extends State<CakeType1Screen> {
+  Map<String, dynamic>? get product => widget.product;
+
   String selectedSize = 'Medium';
   String selectedTopping = 'Blueberry & Lemon';
   String selectedFrosting = 'Chocolate';
@@ -31,184 +33,131 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F0E6),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, size: 28),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const Spacer(),
+                    Text(
+                      product?['title'] as String? ?? 'Blue Berry Cake',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    const SizedBox(width: 48),
+                  ],
+                ),
+              ),
+
+              Image.asset(
+                product?['image'] as String? ?? 'assets/images/cake_type1.jpg',
+                width: double.infinity,
+                height: 350,
+                fit: BoxFit.cover,
+              ),
+
+              const SizedBox(height: 20),
+
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  product?['description'] as String? ??
+                      'Light sponge cake finished with a bright fruity topping.',
+                  style: TextStyle(fontSize: 14, height: 1.5),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back, size: 28),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          const Spacer(),
-                          Text(
-                            productTitle,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            icon: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
-                              size: 28,
-                              color: isFavorite ? Colors.red : Colors.grey,
-                            ),
-                            onPressed: () => setState(() => isFavorite = !isFavorite),
-                          ),
-                        ],
-                      ),
+                    const Text('Size', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    DropdownButton<String>(
+                      value: selectedSize,
+                      isExpanded: true,
+                      underline: Container(),
+                      icon: const Icon(Icons.arrow_drop_down),
+                      items: ['Small', 'Medium', 'Large'].map((String value) {
+                        return DropdownMenuItem<String>(value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (value) => setState(() => selectedSize = value!),
                     ),
-                    Image.asset(
-                      productImage,
-                      width: double.infinity,
-                      height: 280,
-                      fit: BoxFit.cover,
-                    ),
+
                     const SizedBox(height: 20),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'LKR ${productPrice.toStringAsFixed(0)}',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.brown,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  const Icon(Icons.star, color: Colors.amber, size: 18),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    widget.product?['rating']?.toString() ?? '9.0',
-                                    style: const TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    '(${widget.product?['reviews'] ?? 15} reviews)',
-                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          const Text(
-                            'Delicious blueberry cake with a tangy lemon frosting. Fresh berries baked fresh daily.',
-                            style: TextStyle(fontSize: 13, height: 1.5, color: Colors.grey),
-                          ),
-                        ],
-                      ),
+                    const Text('Toppings', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    DropdownButton<String>(
+                      value: selectedTopping,
+                      isExpanded: true,
+                      underline: Container(),
+                      icon: const Icon(Icons.arrow_drop_down),
+                      items: ['Blueberry & Lemon', 'Chocolate Chips', 'Nuts'].map((String value) {
+                        return DropdownMenuItem<String>(value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (value) => setState(() => selectedTopping = value!),
                     ),
+
                     const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Size', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 6),
-                          Container(
-                            constraints: const BoxConstraints(maxHeight: 50),
-                            child: DropdownButton<String>(
-                              value: selectedSize,
-                              isExpanded: true,
-                              isDense: true,
-                              underline: Container(),
-                              icon: const Icon(Icons.arrow_drop_down, size: 20),
-                              items: ['Small', 'Medium', 'Large'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Text(value),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) => setState(() => selectedSize = value!),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          const Text('Toppings', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 6),
-                          Container(
-                            constraints: const BoxConstraints(maxHeight: 50),
-                            child: DropdownButton<String>(
-                              value: selectedTopping,
-                              isExpanded: true,
-                              isDense: true,
-                              underline: Container(),
-                              icon: const Icon(Icons.arrow_drop_down, size: 20),
-                              items: ['Blueberry & Lemon', 'Chocolate Chips', 'Nuts'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Text(value),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) => setState(() => selectedTopping = value!),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          const Text('Frosting', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 6),
-                          Container(
-                            constraints: const BoxConstraints(maxHeight: 50),
-                            child: DropdownButton<String>(
-                              value: selectedFrosting,
-                              isExpanded: true,
-                              isDense: true,
-                              underline: Container(),
-                              icon: const Icon(Icons.arrow_drop_down, size: 20),
-                              items: ['Chocolate', 'Vanilla', 'Cream Cheese'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Text(value),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) => setState(() => selectedFrosting = value!),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                    const Text('Frosting', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    DropdownButton<String>(
+                      value: selectedFrosting,
+                      isExpanded: true,
+                      underline: Container(),
+                      icon: const Icon(Icons.arrow_drop_down),
+                      items: ['Chocolate', 'Vanilla', 'Cream Cheese'].map((String value) {
+                        return DropdownMenuItem<String>(value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (value) => setState(() => selectedFrosting = value!),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Reviews coming soon!')),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.brown[800],
+                          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        ),
+                        child: const Text('Review', style: TextStyle(fontSize: 18, color: Colors.white)),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, -2),
-                  ),
-                ],
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                color: Colors.grey[900],
+                child: Text(
+                  product?['description'] as String? ??
+                      'A fresh cake built for a bright and balanced flavor profile.',
+                  style: TextStyle(color: Colors.white, fontSize: 14, height: 1.5),
+                  textAlign: TextAlign.center,
+                ),
               ),
               child: Row(
                 children: [

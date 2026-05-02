@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 import '../../screens/cake_items_screen.dart';
@@ -34,6 +36,19 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   final AuthService _authService = AuthService();
   int _currentIndex = 0;
   bool _animate = false;
+  int _offerIndex = 0;
+  Timer? _offerTimer;
+
+  final List<Map<String, String>> _offeredEvents = const [
+    {
+      'title': 'Mask Painting Workshops',
+      'image': 'assets/images/workshops_collage1.jpg',
+    },
+    {'title': 'Tasting LUXE', 'image': 'assets/images/cake7.jpg'},
+    {'title': 'Bake It Happen', 'image': 'assets/images/event_background.png'},
+    {'title': 'Summer Cake Picnics', 'image': 'assets/images/cake3.jpg'},
+    {'title': 'Cake Dates', 'image': 'assets/images/cake8.jpg'},
+  ];
 
   String get _userName {
     final user = _authService.currentUser;
@@ -74,10 +89,21 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
         _animate = true;
       });
     });
+    _offerTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted) return;
+      setState(() {
+        _offerIndex = (_offerIndex + 1) % _offeredEvents.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _offerTimer?.cancel();
+    super.dispose();
   }
 
   Widget _buildHomeContent(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Stack(
       children: [
         Image.asset(
@@ -234,7 +260,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                     ),
                     const SizedBox(height: 26),
                     const Text(
-                      'Featured',
+                      'Chocolate Clicks will offer you...',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -242,39 +268,22 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildActionCard(
-                            title: 'Baking Goods',
-                            subtitle: 'Learn more about our craft',
-                            imageAsset: 'assets/images/cake7.jpg',
-                            onTap: () => Navigator.pushNamed(
-                              context,
-                              '/baking_goods',
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: _buildActionCard(
-                            title: 'Bake It Happen',
-                            subtitle: 'Workshops every Sunday',
-                            imageAsset: 'assets/images/event_background.png',
-                            onTap: () => Navigator.pushNamed(
-                              context,
-                              '/bake_it_happen',
-                            ),
-                          ),
-                        ),
-                      ],
+                    _buildOfferEventsCard(context),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Now showing: ${_offeredEvents[_offerIndex]['title']}',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 12,
+                        letterSpacing: 0.2,
+                      ),
                     ),
                     const SizedBox(height: 28),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
                         Text(
-                          'Recommended For You',
+                          'Recommended For You...',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -436,16 +445,16 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
     );
   }
 
-  Widget _buildActionCard(
-    {
-    required String title,
-    required String subtitle,
-    required String imageAsset,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildOfferEventsCard(BuildContext context) {
+    final event = _offeredEvents[_offerIndex];
     return InkWell(
       borderRadius: BorderRadius.circular(20),
-      onTap: onTap,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EventsScreen()),
+        );
+      },
       child: Container(
         height: 160,
         decoration: BoxDecoration(
@@ -458,7 +467,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
             ),
           ],
           image: DecorationImage(
-            image: AssetImage(imageAsset),
+            image: AssetImage(event['image']!),
             fit: BoxFit.cover,
           ),
         ),
@@ -479,20 +488,91 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
+              const Text(
+                'Our Featured Events...',
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.event_available,
+                    size: 16,
+                    color: Color(0xFFF6E6D7),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      transitionBuilder: (child, animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(0.0, 0.35),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: Text(
+                        event['title']!,
+                        key: ValueKey<String>(event['title']!),
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.95),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.22),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_forward,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: List.generate(_offeredEvents.length, (index) {
+                  final active = index == _offerIndex;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: active ? 16 : 6,
+                    height: 6,
+                    margin: const EdgeInsets.only(right: 5),
+                    decoration: BoxDecoration(
+                      color: active
+                          ? const Color(0xFFF6E6D7)
+                          : Colors.white.withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 2),
               Text(
-                subtitle,
+                'Tap to open all events',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontSize: 12,
+                  color: Colors.white.withValues(alpha: 0.82),
+                  fontSize: 11,
                 ),
               ),
             ],

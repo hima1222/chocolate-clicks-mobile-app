@@ -9,45 +9,51 @@ class BrowniesItemsScreen extends StatelessWidget {
   static final List<Map<String, dynamic>> brownieProducts = [
     {
       'image': 'assets/images/brownies1.jpg',
-      'title': 'Lorem ipsum',
+      'title': 'Classic Fudge Brownie',
       'rating': 9.0,
       'reviews': 15,
       'price': 3500.0,
+      'description': 'Rich chocolate brownie with a soft center and deep cocoa flavor.',
     },
     {
       'image': 'assets/images/brownies2.jpg',
-      'title': 'Lorem ipsum',
+      'title': 'Nutty Crunch Brownie',
       'rating': 8.8,
       'reviews': 22,
       'price': 3800.0,
+      'description': 'Brownie topped with roasted nuts and a crisp finish.',
     },
     {
       'image': 'assets/images/brownies3.jpg',
-      'title': 'Lorem ipsum',
+      'title': 'Salted Caramel Brownie',
       'rating': 9.2,
       'reviews': 18,
       'price': 3500.0,
+      'description': 'Soft brownie layered with salted caramel drizzle.',
     },
     {
       'image': 'assets/images/brownies4.jpg',
-      'title': 'Lorem ipsum',
+      'title': 'Triple Chocolate Brownie',
       'rating': 8.5,
       'reviews': 30,
       'price': 3200.0,
+      'description': 'Dark, milk, and white chocolate in one dense brownie.',
     },
     {
       'image': 'assets/images/brownies5.jpg',
-      'title': 'Lorem ipsum',
+      'title': 'Coffee Mocha Brownie',
       'rating': 9.1,
       'reviews': 12,
       'price': 3500.0,
+      'description': 'Chocolate brownie blended with a smooth coffee finish.',
     },
     {
       'image': 'assets/images/brownies6.jpg',
-      'title': 'Lorem ipsum',
+      'title': 'Red Velvet Brownie',
       'rating': 8.9,
       'reviews': 25,
       'price': 3800.0,
+      'description': 'A soft red velvet brownie with cream cheese notes.',
     },
   ];
 
@@ -153,7 +159,7 @@ class BrowniesItemsScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const BrowniesType1Screen(),
+                              builder: (context) => BrowniesType1Screen(product: product),
                             ),
                           );
                         },
