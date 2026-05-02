@@ -15,7 +15,6 @@ class AuthService {
   AuthService._internal() {
     _session = SessionManager();
     _storage = StorageService();
-    _loadStoredSession();
   }
 
   late SessionManager _session;
@@ -29,19 +28,6 @@ class AuthService {
 
   /// Get current auth token
   String? get authToken => _session.token;
-
-  /// Load stored session from local storage
-  void _loadStoredSession() {
-    try {
-      // TODO: Implement with actual storage retrieval
-      // final token = _storage.getString('auth_token');
-      // if (token != null) {
-      //   _session.token = token;
-      // }
-    } catch (e) {
-      // Silent fail on startup
-    }
-  }
 
   /// Login user with email/username and password
   /// Returns AuthResponse with user and token on success
@@ -59,38 +45,35 @@ class AuthService {
         );
       }
 
-      // TODO: Replace with actual API call
-      // For now, simulating a successful login response
-      await Future.delayed(const Duration(seconds: 1));
+      final response = await ApiClient().post('/auth/login', body: {
+        'email': emailOrUsername,
+        'password': password,
+      });
 
-      // Mock user object - replace with actual API response
-      final mockUser = User(
-        id: 'user_123',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: emailOrUsername.contains('@')
-            ? emailOrUsername
-            : 'john@example.com',
-        phone: '9876543210',
-        createdAt: DateTime.now(),
-        isEmailVerified: true,
-        isPhoneVerified: true,
-      );
+      if (response['success'] == true) {
+        final userData = response['data'];
+        final user = User.fromJson(userData['user']);
+        final token = userData['token'];
 
-      const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        // Update session and storage
+        await _session.setSession(token: token, user: user);
+        await _storage.save('auth_token', token);
+        await _storage.save('user_id', user.id);
 
-      // Update session and storage
-      _session.setSession(token: mockToken, user: mockUser);
-      await _storage.save('auth_token', mockToken);
-      await _storage.save('user_id', mockUser.id);
-
-      return AuthResponse(
-        success: true,
-        message: 'Login successful',
-        user: mockUser,
-        token: mockToken,
-      );
+        return AuthResponse(
+          success: true,
+          message: response['message'] ?? 'Login successful',
+          user: user,
+          token: token,
+        );
+      } else {
+        throw AuthException(
+          message: response['message'] ?? 'Login failed',
+          code: 'LOGIN_FAILED',
+        );
+      }
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw AuthException(message: e.toString(), code: 'LOGIN_FAILED');
     }
   }
@@ -142,36 +125,38 @@ class AuthService {
         );
       }
 
-      // TODO: Replace with actual API call
-      // For now, simulating a successful signup response
-      await Future.delayed(const Duration(seconds: 2));
+      final response = await ApiClient().post('/auth/register', body: {
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'phone': phone,
+        'password': password,
+      });
 
-      // Mock user object - replace with actual API response
-      final newUser = User(
-        id: 'user_${DateTime.now().millisecondsSinceEpoch}',
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        phone: phone,
-        createdAt: DateTime.now(),
-        isEmailVerified: false,
-        isPhoneVerified: false,
-      );
+      if (response['success'] == true) {
+        final userData = response['data'];
+        final user = User.fromJson(userData['user']);
+        final token = userData['token'];
 
-      const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        // Update session and storage
+        await _session.setSession(token: token, user: user);
+        await _storage.save('auth_token', token);
+        await _storage.save('user_id', user.id);
 
-      // Update session and storage
-      _session.setSession(token: mockToken, user: newUser);
-      await _storage.save('auth_token', mockToken);
-      await _storage.save('user_id', newUser.id);
-
-      return AuthResponse(
-        success: true,
-        message: 'Account created successfully',
-        user: newUser,
-        token: mockToken,
-      );
+        return AuthResponse(
+          success: true,
+          message: response['message'] ?? 'Account created successfully',
+          user: user,
+          token: token,
+        );
+      } else {
+        throw AuthException(
+          message: response['message'] ?? 'Registration failed',
+          code: 'SIGNUP_FAILED',
+        );
+      }
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw AuthException(message: e.toString(), code: 'SIGNUP_FAILED');
     }
   }
@@ -216,7 +201,7 @@ class AuthService {
       }
 
       // update session user while keeping same token
-      _session.setSession(token: _authToken ?? '', user: updatedUser);
+      await _session.setSession(token: _authToken ?? '', user: updatedUser);
 
       return AuthResponse(
         success: true,
@@ -350,7 +335,7 @@ class AuthService {
       await Future.delayed(const Duration(milliseconds: 500));
 
       // Clear session and storage
-      _session.clearSession();
+      await _session.clearSession();
       await _storage.delete('auth_token');
       await _storage.delete('user_id');
     } catch (e) {
@@ -372,7 +357,7 @@ class AuthService {
       const newToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...new';
       // update session token while preserving user
       if (_session.user != null) {
-        _session.setSession(token: newToken, user: _session.user!);
+        await _session.setSession(token: newToken, user: _session.user!);
       }
 
       return AuthResponse(
@@ -402,26 +387,36 @@ class AuthService {
         );
       }
 
-      // TODO: Replace with actual API call
-      await Future.delayed(const Duration(seconds: 1));
+      final response = await ApiClient().put('/auth/profile', body: {
+        if (firstName != null) 'firstName': firstName,
+        if (lastName != null) 'lastName': lastName,
+        if (phone != null) 'phone': phone,
+        if (profileImageUrl != null) 'profileImageUrl': profileImageUrl,
+      }, headers: {
+        'Authorization': 'Bearer $_authToken',
+      });
 
-      final updatedUser = _currentUser!.copyWith(
-        firstName: firstName,
-        lastName: lastName,
-        phone: phone,
-        profileImageUrl: profileImageUrl,
-      );
+      if (response['success'] == true) {
+        final userData = response['data'];
+        final updatedUser = User.fromJson(userData);
 
-      // update user in session
-      _session.setSession(token: _authToken ?? '', user: updatedUser);
+        // update user in session
+        _session.setSession(token: _authToken ?? '', user: updatedUser);
 
-      return AuthResponse(
-        success: true,
-        message: 'Profile updated successfully',
-        user: updatedUser,
-        token: _authToken,
-      );
+        return AuthResponse(
+          success: true,
+          message: response['message'] ?? 'Profile updated successfully',
+          user: updatedUser,
+          token: _authToken,
+        );
+      } else {
+        throw AuthException(
+          message: response['message'] ?? 'Profile update failed',
+          code: 'UPDATE_PROFILE_FAILED',
+        );
+      }
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw AuthException(message: e.toString(), code: 'UPDATE_PROFILE_FAILED');
     }
   }

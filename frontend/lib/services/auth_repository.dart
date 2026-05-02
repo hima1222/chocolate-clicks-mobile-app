@@ -3,9 +3,6 @@ import 'package:chocolate_clicks/models/user_model.dart';
 /// Repository pattern for API calls related to authentication
 /// This acts as an intermediary between the AuthService and backend API
 class AuthRepository {
-  // Base API URL - update this with your actual backend URL
-  static const String _baseUrl = 'https://your-api.com/api';
-
   // Private constructor for singleton pattern
   AuthRepository._();
 

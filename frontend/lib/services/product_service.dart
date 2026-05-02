@@ -1,4 +1,5 @@
 import 'package:chocolate_clicks/models/product_model.dart';
+import 'package:chocolate_clicks/services/api_client.dart';
 
 /// Service for managing product catalog and search
 class ProductService {
@@ -12,8 +13,7 @@ class ProductService {
   /// Fetch all categories
   Future<List<Category>> fetchCategories() async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      // TODO: Replace with API call
+      // For now, return mock categories since backend doesn't have categories endpoint
       if (_categories.isEmpty) {
         _categories.addAll([
           Category(
@@ -45,9 +45,15 @@ class ProductService {
   /// Fetch products by category
   Future<List<Product>> fetchProductsByCategory(String categoryId) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 600));
-      // TODO: Replace with API call
-      return _products.where((p) => p.categoryId == categoryId).toList();
+      final response = await ApiClient().get('/products/category/$categoryId');
+      if (response['success'] == true) {
+        final products = (response['data'] as List)
+            .map((p) => Product.fromJson(p))
+            .toList();
+        return products;
+      } else {
+        throw Exception(response['message'] ?? 'Failed to fetch products');
+      }
     } catch (e) {
       throw Exception('Failed to fetch products: $e');
     }
@@ -56,12 +62,12 @@ class ProductService {
   /// Fetch single product by ID
   Future<Product?> fetchProductById(String id) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 400));
-      // TODO: Replace with API call
-      return _products.firstWhere(
-        (p) => p.id == id,
-        orElse: () => throw Exception('Product not found'),
-      );
+      final response = await ApiClient().get('/products/$id');
+      if (response['success'] == true) {
+        return Product.fromJson(response['data']);
+      } else {
+        return null;
+      }
     } catch (e) {
       return null;
     }
@@ -70,16 +76,15 @@ class ProductService {
   /// Search products by name or description
   Future<List<Product>> searchProducts(String query) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 600));
-      // TODO: Replace with API call
-      final q = query.toLowerCase();
-      return _products
-          .where(
-            (p) =>
-                p.name.toLowerCase().contains(q) ||
-                p.description.toLowerCase().contains(q),
-          )
-          .toList();
+      final response = await ApiClient().get('/products/search?q=$query');
+      if (response['success'] == true) {
+        final products = (response['data'] as List)
+            .map((p) => Product.fromJson(p))
+            .toList();
+        return products;
+      } else {
+        throw Exception(response['message'] ?? 'Search failed');
+      }
     } catch (e) {
       throw Exception('Search failed: $e');
     }
