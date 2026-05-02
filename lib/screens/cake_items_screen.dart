@@ -182,7 +182,7 @@ class CakeItemsScreen extends StatelessWidget {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 1.2,
+                      childAspectRatio: 0.82,
                       mainAxisSpacing: 14,
                       crossAxisSpacing: 12,
                     ),

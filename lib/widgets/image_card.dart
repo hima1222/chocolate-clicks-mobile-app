@@ -1,4 +1,4 @@
-       // lib/widgets/image_card.dart
+// lib/widgets/image_card.dart
 import 'package:flutter/material.dart';
 import '../services/payment_manager.dart';
 import '../services/cart_service.dart';
