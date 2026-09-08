@@ -21,8 +21,8 @@ class ApiClient {
   factory ApiClient() => _instance;
   ApiClient._internal();
 
-  static const String baseUrl = 'http://10.0.2.2:5000/api'; // Android emulator
-  // static const String baseUrl = 'http://localhost:5000/api'; // iOS simulator/web
+  // static const String baseUrl = 'http://10.0.2.2:5000/api'; // Android emulator
+  static const String baseUrl = 'http://localhost:5000/api'; // Web/iOS simulator
   static const Duration timeout = Duration(seconds: 30);
 
   /// Generic GET request
