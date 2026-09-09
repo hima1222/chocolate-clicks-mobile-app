@@ -27,11 +27,28 @@ migrate_working_dir/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+build/
+**/build/
+frontend/build/
 /coverage/
+
+# iOS/macOS related
+**/ios/Flutter/ephemeral/
+**/ios/Pods/
+**/ios/.symlinks/
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+**/Flutter/App.framework
+**/Flutter/Flutter.framework
+**/Flutter/Flutter.podspec
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+*.xcworkspace/
+!default.xcworkspace
 
 # Symbolication related
 app.*.symbols
@@ -43,3 +60,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+**/android/app/*.jks

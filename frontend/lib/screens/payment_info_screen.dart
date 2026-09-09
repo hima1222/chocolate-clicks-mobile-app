@@ -48,7 +48,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
             ? const Center(child: Text('No saved payment methods'))
             : ListView.separated(
                 itemCount: _methods.length,
-                separatorBuilder: (_, __) => const Divider(),
+                separatorBuilder: (_, _) => const Divider(),
                 itemBuilder: (context, index) {
                   final pm = _methods[index];
                   return ListTile(
