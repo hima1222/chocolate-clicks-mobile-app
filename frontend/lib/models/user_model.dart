@@ -53,7 +53,7 @@ class User {
   /// Convert to JSON for API calls
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      '_id': id,
       'firstName': firstName,
       'lastName': lastName,
       'email': email,
@@ -68,15 +68,15 @@ class User {
   /// Create user from JSON response
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      email: json['email'] as String,
-      phone: json['phone'] as String,
-      profileImageUrl: json['profileImageUrl'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      isEmailVerified: json['isEmailVerified'] as bool? ?? false,
-      isPhoneVerified: json['isPhoneVerified'] as bool? ?? false,
+      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      firstName: (json['firstName'] ?? '').toString(),
+      lastName: (json['lastName'] ?? '').toString(),
+      email: (json['email'] ?? '').toString(),
+      phone: (json['phone'] ?? '').toString(),
+      profileImageUrl: json['profileImageUrl']?.toString(),
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
+      isEmailVerified: json['isEmailVerified'] == true,
+      isPhoneVerified: json['isPhoneVerified'] == true,
     );
   }
 }
@@ -99,10 +99,11 @@ class AuthResponse {
 
   /// Create from JSON response
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] as Map<String, dynamic>?;
     return AuthResponse(
       success: json['success'] as bool? ?? false,
       message: json['message'] as String? ?? 'Unknown error',
-      user: json['user'] != null ? User.fromJson(json['user']) : null,
+      user: data?['user'] != null ? User.fromJson(data!['user']) : null,
       token: json['token'] as String?,
       refreshToken: json['refreshToken'] as String?,
     );

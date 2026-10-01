@@ -1,7 +1,7 @@
 import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/api_client.dart';
 import 'package:chocolate_clicks/services/storage_service.dart';
-
+import 'package:flutter/foundation.dart';
 /// Service for handling authentication operations
 /// This is a complete authentication service that manages login, signup, and user sessions
 class AuthService {
@@ -155,7 +155,9 @@ class AuthService {
           code: 'SIGNUP_FAILED',
         );
       }
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('SIGNUP ERROR: $e');
+      debugPrintStack(stackTrace: st, maxFrames: 8);
       if (e is AuthException) rethrow;
       throw AuthException(message: e.toString(), code: 'SIGNUP_FAILED');
     }
