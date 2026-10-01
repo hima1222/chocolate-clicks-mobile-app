@@ -108,5 +108,4 @@ npm run dev
 - `orderRoutes` and `bookingRoutes` require login.
 - `createOrder` expects item objects like:
   `[{ productId: '...', quantity: 2 }]`
-
-If you want, I can also help wire the Flutter services to the backend API routes directly. 
+ 
