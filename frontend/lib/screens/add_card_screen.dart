@@ -14,6 +14,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
   final _cardHolderController = TextEditingController();
   final _expiryController = TextEditingController();
   final _cvvController = TextEditingController();
+  bool _saveCard = true;
 
   @override
   void dispose() {
@@ -109,6 +110,10 @@ class _AddCardScreenState extends State<AddCardScreen> {
                         hint: '1234 5678 9012 3456',
                         keyboardType: TextInputType.number,
                         maxLength: 19,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(16),
+                        ],
                         onChanged: (value) {
                           _cardNumberController.value = TextEditingValue(
                             text: _formatCardNumber(value),
@@ -158,23 +163,53 @@ class _AddCardScreenState extends State<AddCardScreen> {
                               hint: 'MM/YY',
                               keyboardType: TextInputType.number,
                               maxLength: 5,
-                              onChanged: (value) {
-                                if (value.length == 2 && !value.contains('/')) {
-                                  _expiryController.text = '$value/';
-                                  _expiryController.selection =
-                                      TextSelection.fromPosition(
-                                        TextPosition(
-                                          offset: _expiryController.text.length,
-                                        ),
-                                      );
-                                }
-                              },
+                              inputFormatters: [
+                                TextInputFormatter.withFunction((
+                                  oldValue,
+                                  newValue,
+                                ) {
+                                  final digits = newValue.text.replaceAll(
+                                    RegExp(r'\D'),
+                                    '',
+                                  );
+                                  final limited = digits.length > 4
+                                      ? digits.substring(0, 4)
+                                      : digits;
+                                  final deleting =
+                                      newValue.text.length <
+                                      oldValue.text.length;
+                                  final addSlash =
+                                      limited.length > 2 ||
+                                      (limited.length == 2 && !deleting);
+                                  final text = addSlash
+                                      ? '${limited.substring(0, 2)}/${limited.substring(2)}'
+                                      : limited;
+                                  final cursor = newValue.selection.extentOffset
+                                      .clamp(0, newValue.text.length);
+                                  final digitsBeforeCursor = newValue.text
+                                      .substring(0, cursor)
+                                      .replaceAll(RegExp(r'\D'), '')
+                                      .length;
+                                  final offset =
+                                      digitsBeforeCursor +
+                                      (addSlash && digitsBeforeCursor >= 2
+                                          ? 1
+                                          : 0);
+                                  return TextEditingValue(
+                                    text: text,
+                                    selection: TextSelection.collapsed(
+                                      offset: offset.clamp(0, text.length),
+                                    ),
+                                  );
+                                }),
+                              ],
                               validator: (value) {
                                 if (value?.isEmpty ?? true) {
                                   return 'Expiry date is required';
                                 }
-                                if (!value!.contains('/') ||
-                                    value.length != 5) {
+                                if (!RegExp(
+                                  r'^(0[1-9]|1[0-2])/[0-9]{2}$',
+                                ).hasMatch(value!)) {
                                   return 'Use MM/YY format';
                                 }
                                 return null;
@@ -188,14 +223,14 @@ class _AddCardScreenState extends State<AddCardScreen> {
                               label: 'CVV',
                               hint: '123',
                               keyboardType: TextInputType.number,
-                              maxLength: 4,
+                              maxLength: 3,
                               obscureText: true,
                               validator: (value) {
                                 if (value?.isEmpty ?? true) {
                                   return 'CVV is required';
                                 }
-                                if (value!.length < 3) {
-                                  return 'CVV must be 3-4 digits';
+                                if (value!.length != 3) {
+                                  return 'CVV must be 3 digits';
                                 }
                                 return null;
                               },
@@ -208,8 +243,10 @@ class _AddCardScreenState extends State<AddCardScreen> {
                       Row(
                         children: [
                           Checkbox(
-                            value: true,
-                            onChanged: (value) {},
+                            value: _saveCard,
+                            onChanged: (value) {
+                              setState(() => _saveCard = value ?? false);
+                            },
                             fillColor: WidgetStateProperty.all(
                               const Color.fromARGB(159, 245, 157, 74),
                             ),
@@ -236,6 +273,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                                 '/payment_summary',
                                 arguments: {
                                   'method': 'card',
+                                  'saveCard': _saveCard,
                                   'cardNumber': _cardNumberController.text,
                                   'cardHolder': _cardHolderController.text,
                                 },
@@ -411,6 +449,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
     required String hint,
     TextInputType? keyboardType,
     int? maxLength,
+    List<TextInputFormatter>? inputFormatters,
     bool obscureText = false,
     Function(String)? onChanged,
     String? Function(String?)? validator,
@@ -427,9 +466,11 @@ class _AddCardScreenState extends State<AddCardScreen> {
         fontSize: 14,
         fontFamily: 'serif',
       ),
-      inputFormatters: keyboardType == TextInputType.number
-          ? [FilteringTextInputFormatter.digitsOnly]
-          : [],
+      inputFormatters:
+          inputFormatters ??
+          (keyboardType == TextInputType.number
+              ? [FilteringTextInputFormatter.digitsOnly]
+              : []),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(
