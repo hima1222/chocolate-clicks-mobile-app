@@ -1,4 +1,5 @@
 import 'package:chocolate_clicks/models/user_model.dart';
+import 'package:chocolate_clicks/services/api_client.dart';
 
 /// Repository pattern for API calls related to authentication
 /// This acts as an intermediary between the AuthService and backend API
@@ -60,8 +61,7 @@ class AuthRepository {
     }
   }
 
-  /// Mock POST request for signup
-  /// In production, replace this with actual HTTP client
+  /// POST request for signup
   Future<AuthResponse> postSignup({
     required String firstName,
     required String lastName,
@@ -70,46 +70,31 @@ class AuthRepository {
     required String password,
   }) async {
     try {
-      // TODO: Implement actual API call using http or dio package
-      // Example with http package:
-      // final response = await http.post(
-      //   Uri.parse('$_baseUrl/auth/signup'),
-      //   headers: {'Content-Type': 'application/json'},
-      //   body: jsonEncode({
-      //     'firstName': firstName,
-      //     'lastName': lastName,
-      //     'email': email,
-      //     'phone': phone,
-      //     'password': password,
-      //   }),
-      // );
-      //
-      // if (response.statusCode == 201) {
-      //   return AuthResponse.fromJson(jsonDecode(response.body));
-      // } else {
-      //   throw AuthException(
-      //     message: 'Signup failed: ${response.statusCode}',
-      //     code: 'API_ERROR',
-      //   );
-      // }
+      final response = await ApiClient().post('/auth/register', body: {
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'phone': phone,
+        'password': password,
+      });
 
-      // Mock response - remove in production
-      await Future.delayed(const Duration(seconds: 2));
-      return AuthResponse(
-        success: true,
-        message: 'Account created successfully',
-        user: User(
-          id: 'user_${DateTime.now().millisecondsSinceEpoch}',
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          phone: phone,
-          createdAt: DateTime.now(),
-        ),
-        token: 'mock_token_456',
-      );
-    } catch (e) {
-      rethrow;
+      if (response['success'] != true) {
+        throw AuthException(
+          message: response['message'] as String? ?? 'Signup failed',
+          code: 'SIGNUP_FAILED',
+        );
+      }
+
+      final data = response['data'] as Map<String, dynamic>;
+      final userData = Map<String, dynamic>.from(data['user'] as Map);
+      userData['id'] ??= userData['_id'];
+      return AuthResponse.fromJson({
+        ...response,
+        ...data,
+        'user': userData,
+      });
+    } on ApiException catch (e) {
+      throw AuthException(message: e.message, code: 'API_ERROR');
     }
   }
 
