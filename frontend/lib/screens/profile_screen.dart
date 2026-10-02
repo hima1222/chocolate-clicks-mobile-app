@@ -32,7 +32,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _favouritesCount = _favoritesService.count;
+    _favoritesService.addListener(_updateFavoritesCount);
     _loadCounts();
+  }
+
+  void _updateFavoritesCount() {
+    setState(() => _favouritesCount = _favoritesService.count);
+  }
+
+  @override
+  void dispose() {
+    _favoritesService.removeListener(_updateFavoritesCount);
+    super.dispose();
   }
 
   Future<void> _loadCounts() async {
@@ -203,7 +215,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       label: 'Favourites',
                       subtitle: 'Your saved treats',
                       badgeCount: _favouritesCount,
-                      onTap: () => Navigator.pushNamed(context, '/favourites'),
+                      onTap: () async {
+                        await Navigator.pushNamed(context, '/favourites');
+                        if (mounted) _loadCounts();
+                      },
                     ),
                     _buildDivider(),
                     _buildMenuItem(
