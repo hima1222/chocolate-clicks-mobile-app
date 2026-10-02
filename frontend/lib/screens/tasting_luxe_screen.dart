@@ -8,11 +8,11 @@ class TastingLuxeScreen extends StatelessWidget {
   Widget build(BuildContext context) => EventDetailPage(
     title: 'Tasting LUXE',
     subtitle: 'Discover the finer side of chocolate.',
-    image: 'assets/images/cake7.jpg',
+    image: 'assets/images/tl1.jpg',
     gallery: [
-      'assets/images/cake7.jpg',
-      'assets/images/chocolate_treates.jpg',
-      'assets/images/cake8.jpg',
+      'assets/images/tl2.jpg',
+      'assets/images/tl3.jpg',
+      'assets/images/tl4.jpg',
     ],
     description:
         'Indulge in our premium Tasting LUXE experience! Sample our finest collection of artisanal chocolates, gourmet desserts, and exclusive confections crafted by master chocolatiers. A sensory journey for chocolate enthusiasts.',

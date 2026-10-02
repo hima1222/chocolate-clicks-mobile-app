@@ -10,7 +10,7 @@ class MaskPaintingWorkshopScreen extends StatelessWidget {
     subtitle: 'Colour your afternoon with a little creativity.',
     image: 'assets/images/workshops_bg.jpg',
     gallery: [
-      'assets/images/workshops_collage1.jpg',
+      'assets/images/c6.jpg',
       'assets/images/workshops_collage2.jpg',
       'assets/images/workshops_collage3.jpg',
     ],

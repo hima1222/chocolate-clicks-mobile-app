@@ -8,11 +8,11 @@ class SummerCakePicnicsScreen extends StatelessWidget {
   Widget build(BuildContext context) => EventDetailPage(
     title: 'Summer Cake Picnics',
     subtitle: 'Fresh air, good company, and a basket of sweetness.',
-    image: 'assets/images/cake3.jpg',
+    image: 'assets/images/c5.jpg',
     gallery: [
-      'assets/images/cake3.jpg',
-      'assets/images/cake8.jpg',
-      'assets/images/cake7.jpg',
+      'assets/images/cp3.jpg',
+      'assets/images/c4.jpg',
+      'assets/images/cp4.jpg',
     ],
     description:
         'Make summer unforgettable with our Summer Cake Picnics! Enjoy a delightful outdoor experience featuring seasonal cakes, picnic treats, and chocolate delicacies in beautiful garden settings. Perfect for families and friends.',
