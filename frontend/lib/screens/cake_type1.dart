@@ -1,8 +1,7 @@
-﻿import 'package:flutter/material.dart';
-import 'package:chocolate_clicks/services/favorites_service.dart';
+import 'package:flutter/material.dart';
+import '../widgets/favorite_button.dart';
 import 'package:chocolate_clicks/services/cart_service.dart';
 import 'package:chocolate_clicks/models/cart_item.dart';
-import 'package:chocolate_clicks/models/favorite_item.dart';
 
 class CakeType1Screen extends StatefulWidget {
   final Map<String, dynamic>? product;
@@ -18,14 +17,14 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
   String selectedSize = 'Medium';
   String selectedTopping = 'Blueberry & Lemon';
   String selectedFrosting = 'Chocolate';
-  bool isFavorite = false;
-  final FavoritesService _favoritesService = FavoritesService();
   final CartService _cartService = CartService();
 
   @override
   Widget build(BuildContext context) {
-    final productTitle = widget.product?['title'] as String? ?? 'Blue Berry Cake';
-    final productImage = widget.product?['image'] as String? ?? 'assets/images/cake_type1.jpg';
+    final productTitle =
+        widget.product?['title'] as String? ?? 'Blue Berry Cake';
+    final productImage =
+        widget.product?['image'] as String? ?? 'assets/images/cake_type1.jpg';
     final productPrice = widget.product?['price'] as double? ?? 4500.0;
 
     return Scaffold(
@@ -39,7 +38,10 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       child: Row(
                         children: [
                           IconButton(
@@ -49,16 +51,15 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                           const Spacer(),
                           Text(
                             productTitle,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const Spacer(),
-                          IconButton(
-                            icon: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
-                              size: 28,
-                              color: isFavorite ? Colors.red : Colors.grey,
-                            ),
-                            onPressed: () => setState(() => isFavorite = !isFavorite),
+                          FavoriteButton(
+                            name: productTitle,
+                            image: productImage,
                           ),
                         ],
                       ),
@@ -89,58 +90,110 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Size', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Size',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           DropdownButton<String>(
                             value: selectedSize,
                             isExpanded: true,
                             underline: Container(),
                             icon: const Icon(Icons.arrow_drop_down),
-                            items: ['Small', 'Medium', 'Large'].map((String value) {
-                              return DropdownMenuItem<String>(value: value, child: Text(value));
+                            items: ['Small', 'Medium', 'Large'].map((
+                              String value,
+                            ) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
                             }).toList(),
-                            onChanged: (value) => setState(() => selectedSize = value!),
+                            onChanged: (value) =>
+                                setState(() => selectedSize = value!),
                           ),
                           const SizedBox(height: 20),
-                          const Text('Toppings', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Toppings',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           DropdownButton<String>(
                             value: selectedTopping,
                             isExpanded: true,
                             underline: Container(),
                             icon: const Icon(Icons.arrow_drop_down),
-                            items: ['Blueberry & Lemon', 'Chocolate Chips', 'Nuts'].map((String value) {
-                              return DropdownMenuItem<String>(value: value, child: Text(value));
-                            }).toList(),
-                            onChanged: (value) => setState(() => selectedTopping = value!),
+                            items:
+                                [
+                                  'Blueberry & Lemon',
+                                  'Chocolate Chips',
+                                  'Nuts',
+                                ].map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                            onChanged: (value) =>
+                                setState(() => selectedTopping = value!),
                           ),
                           const SizedBox(height: 20),
-                          const Text('Frosting', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Frosting',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           DropdownButton<String>(
                             value: selectedFrosting,
                             isExpanded: true,
                             underline: Container(),
                             icon: const Icon(Icons.arrow_drop_down),
-                            items: ['Chocolate', 'Vanilla', 'Cream Cheese'].map((String value) {
-                              return DropdownMenuItem<String>(value: value, child: Text(value));
-                            }).toList(),
-                            onChanged: (value) => setState(() => selectedFrosting = value!),
+                            items: ['Chocolate', 'Vanilla', 'Cream Cheese'].map(
+                              (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              },
+                            ).toList(),
+                            onChanged: (value) =>
+                                setState(() => selectedFrosting = value!),
                           ),
                           const SizedBox(height: 40),
                           Center(
                             child: ElevatedButton(
                               onPressed: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Reviews coming soon!')),
+                                  const SnackBar(
+                                    content: Text('Reviews coming soon!'),
+                                  ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.brown[800],
-                                padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 60,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
                               ),
-                              child: const Text('Review', style: TextStyle(fontSize: 18, color: Colors.white)),
+                              child: const Text(
+                                'Review',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -152,7 +205,11 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                       color: Colors.grey[900],
                       child: const Text(
                         'A fresh cake built for a bright and balanced flavor profile.',
-                        style: TextStyle(color: Colors.white, fontSize: 14, height: 1.5),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -191,9 +248,14 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown[700],
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('Add to Cart', style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        'Add to Cart',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -201,14 +263,21 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                     child: ElevatedButton(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Proceeding to checkout...')),
+                          const SnackBar(
+                            content: Text('Proceeding to checkout...'),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[600],
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('Buy Now', style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        'Buy Now',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ],

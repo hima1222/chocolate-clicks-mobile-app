@@ -1,5 +1,6 @@
 // lib/widgets/image_card.dart
 import 'package:flutter/material.dart';
+import 'favorite_button.dart';
 import '../services/payment_manager.dart';
 import '../services/cart_service.dart';
 import '../models/cart_item.dart';
@@ -50,11 +51,24 @@ class ProductCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(18),
                 ),
-                child: Image.asset(
-                  imageAsset,
-                  height: 88,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      imageAsset,
+                      height: 88,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      top: 2,
+                      right: 2,
+                      child: Material(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        shape: const CircleBorder(),
+                        child: FavoriteButton(name: title, image: imageAsset),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -76,7 +90,11 @@ class ProductCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Icon(Icons.star, color: Color(0xFFF8B84E), size: 13),
+                        const Icon(
+                          Icons.star,
+                          color: Color(0xFFF8B84E),
+                          size: 13,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           '$rating ($reviewCount)',

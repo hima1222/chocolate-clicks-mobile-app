@@ -11,7 +11,48 @@ class UpcomingEventsScreen extends StatefulWidget {
 
 class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
   final EventsService _service = EventsService();
-  List<EventModel> _events = [];
+  List<EventModel> _events = [
+    EventModel(
+      id: 'evt_1',
+      title: 'Mask Painting Workshop',
+      description:
+          'Join us for a creative and fun workshop where you will paint decorative masks.',
+      date: DateTime(2026, 5, 8),
+      location: 'Colombo',
+      price: 1500.0,
+      imageUrl: 'assets/images/mask_painting.jpg',
+    ),
+    EventModel(
+      id: 'evt_2',
+      title: 'Tasting LUXE',
+      description:
+          'Exclusive tasting event featuring our premium chocolate and dessert collection.',
+      date: DateTime(2026, 5, 14),
+      location: 'Colombo',
+      price: 2200.0,
+      imageUrl: 'assets/images/tasting_luxe.jpg',
+    ),
+    EventModel(
+      id: 'evt_3',
+      title: 'Bake It Happen',
+      description:
+          'Learn baking basics from our expert chefs in this beginner-friendly class.',
+      date: DateTime(2026, 5, 21),
+      location: 'Kandy',
+      price: 1800.0,
+      imageUrl: 'assets/images/bake_it_happen.jpg',
+    ),
+    EventModel(
+      id: 'evt_4',
+      title: 'Summer Cake Picnic',
+      description:
+          'Celebrate summer with outdoor picnic featuring fresh cakes and treats.',
+      date: DateTime(2026, 5, 28),
+      location: 'Negombo Beach',
+      price: 0.0,
+      imageUrl: 'assets/images/summer_picnic.jpg',
+    ),
+  ];
   bool _loading = true;
   int _selectedTab = 0;
 
@@ -22,11 +63,19 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
   }
 
   Future<void> _load() async {
-    final events = await _service.fetchUpcomingEvents();
-    setState(() {
-      _events = events;
-      _loading = false;
-    });
+    try {
+      final events = await _service.fetchUpcomingEvents();
+      if (!mounted) return;
+      if (events.isNotEmpty) {
+        setState(() => _events = events);
+      }
+    } catch (_) {
+      // Keep the event entries previously displayed on the Events screen.
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
   }
 
   List<EventModel> get _filteredEvents {
@@ -131,7 +180,9 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                           child: GestureDetector(
                             onTap: () => setState(() => _selectedTab = index),
                             child: Container(
-                              margin: EdgeInsets.only(right: index < 2 ? 10 : 0),
+                              margin: EdgeInsets.only(
+                                right: index < 2 ? 10 : 0,
+                              ),
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(14),
@@ -143,7 +194,9 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                                 child: Text(
                                   _tabTitle(index),
                                   style: TextStyle(
-                                    color: selected ? Colors.white : Colors.white70,
+                                    color: selected
+                                        ? Colors.white
+                                        : Colors.white70,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -159,9 +212,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
               const SizedBox(height: 22),
               if (_loading)
                 const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
+                  child: CircularProgressIndicator(color: Colors.white),
                 )
               else if (events.isEmpty)
                 Container(
@@ -182,7 +233,9 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                 )
               else
                 Column(
-                  children: events.map((event) => _buildEventCard(event)).toList(),
+                  children: events
+                      .map((event) => _buildEventCard(event))
+                      .toList(),
                 ),
             ],
           ),
@@ -244,14 +297,20 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.red.shade700.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           type,
-                          style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.redAccent,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -277,7 +336,11 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                   const SizedBox(height: 8),
                   Text(
                     event.description,
-                    style: const TextStyle(color: Colors.white60, fontSize: 13, height: 1.4),
+                    style: const TextStyle(
+                      color: Colors.white60,
+                      fontSize: 13,
+                      height: 1.4,
+                    ),
                   ),
                   const SizedBox(height: 14),
                   Row(
@@ -287,7 +350,10 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                       Expanded(
                         child: Text(
                           event.location,
-                          style: const TextStyle(color: Colors.white54, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],

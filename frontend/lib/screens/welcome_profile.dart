@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../widgets/favorite_button.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 import '../../screens/cake_items_screen.dart';
 import '../../screens/brownies_items_screen.dart';
@@ -71,8 +72,9 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
     ];
 
     merged.sort((a, b) {
-      final ratingCompare =
-          (b['rating'] as double).compareTo(a['rating'] as double);
+      final ratingCompare = (b['rating'] as double).compareTo(
+        a['rating'] as double,
+      );
       if (ratingCompare != 0) return ratingCompare;
       return (b['reviews'] as int).compareTo(a['reviews'] as int);
     });
@@ -306,7 +308,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                         scrollDirection: Axis.horizontal,
                         itemCount: _recommendedItems.length,
                         separatorBuilder: (context, index) =>
-                          const SizedBox(width: 12),
+                            const SizedBox(width: 12),
                         itemBuilder: (context, index) {
                           final product = _recommendedItems[index];
                           return _buildProductCard(context, product);
@@ -326,10 +328,8 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () => Navigator.pushNamed(
-                            context,
-                            '/categories',
-                          ),
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/categories'),
                           child: const Text(
                             'View All',
                             style: TextStyle(
@@ -345,10 +345,9 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                       spacing: 12,
                       runSpacing: 12,
                       children: categories
-                          .map((category) => _buildCategoryPill(
-                                context,
-                                category,
-                              ))
+                          .map(
+                            (category) => _buildCategoryPill(context, category),
+                          )
                           .toList(),
                     ),
                     const SizedBox(height: 14),
@@ -596,11 +595,27 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
-            child: Image.asset(
-              product['image'] as String,
-              height: 88,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            child: Stack(
+              children: [
+                Image.asset(
+                  product['image'] as String,
+                  height: 88,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 2,
+                  right: 2,
+                  child: Material(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    shape: const CircleBorder(),
+                    child: FavoriteButton(
+                      name: product['title'] as String,
+                      image: product['image'] as String,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -693,9 +708,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
             }
           : () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${category['name']} coming soon!'),
-                ),
+                SnackBar(content: Text('${category['name']} coming soon!')),
               );
             },
       child: Container(
@@ -766,5 +779,3 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
     );
   }
 }
-
-

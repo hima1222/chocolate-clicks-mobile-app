@@ -239,6 +239,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
 
+                    const SizedBox(height: 16),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        const Text(
+                          'Already have an account?',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                            fontFamily: 'Roboto',
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pushReplacementNamed(context, '/login'),
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                              color: Color(0xFFFFC107),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              fontFamily: 'Roboto',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 40),
                   ],
                 ),

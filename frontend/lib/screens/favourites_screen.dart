@@ -17,11 +17,19 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   @override
   void initState() {
     super.initState();
+    _service.addListener(_load);
     _load();
+  }
+
+  @override
+  void dispose() {
+    _service.removeListener(_load);
+    super.dispose();
   }
 
   Future<void> _load() async {
     final favs = await _service.fetchFavorites();
+    if (!mounted) return;
     setState(() {
       _items = favs;
       _loading = false;
@@ -30,7 +38,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
 
   Future<void> _remove(String id) async {
     await _service.removeFavorite(id);
-    _load();
   }
 
   @override
@@ -126,11 +133,21 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                                             vertical: 8,
                                           ),
                                           child: ListTile(
-                                            leading: Image.network(
-                                              item.imageUrl,
-                                              width: 50,
-                                              fit: BoxFit.cover,
-                                            ),
+                                            leading:
+                                                item.imageUrl.startsWith(
+                                                  'assets/',
+                                                )
+                                                ? Image.asset(
+                                                    item.imageUrl,
+                                                    width: 50,
+                                                    height: 50,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image.network(
+                                                    item.imageUrl,
+                                                    width: 50,
+                                                    fit: BoxFit.cover,
+                                                  ),
                                             title: Text(item.name),
                                             trailing: IconButton(
                                               icon: const Icon(

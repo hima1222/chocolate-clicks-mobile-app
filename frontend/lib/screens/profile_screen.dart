@@ -32,7 +32,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _favouritesCount = _favoritesService.count;
+    _favoritesService.addListener(_updateFavoritesCount);
     _loadCounts();
+  }
+
+  void _updateFavoritesCount() {
+    setState(() => _favouritesCount = _favoritesService.count);
+  }
+
+  @override
+  void dispose() {
+    _favoritesService.removeListener(_updateFavoritesCount);
+    super.dispose();
   }
 
   Future<void> _loadCounts() async {
@@ -82,7 +94,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Navigator.pushReplacementNamed(
+                      context,
+                      '/welcome_profile',
+                    ),
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
                   const SizedBox(width: 8),
@@ -107,7 +122,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
-                  border: Border.all(color: Colors.red.shade900.withOpacity(0.7)),
+                  border: Border.all(
+                    color: Colors.red.shade900.withOpacity(0.7),
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -188,7 +205,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.edit,
                       label: 'Edit Profile',
                       subtitle: 'Name, photo, preferences',
-                      onTap: () => Navigator.pushNamed(context, '/edit_profile'),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/edit_profile'),
                     ),
                     _buildDivider(),
                     _buildMenuItem(
@@ -197,7 +215,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       label: 'Favourites',
                       subtitle: 'Your saved treats',
                       badgeCount: _favouritesCount,
-                      onTap: () => Navigator.pushNamed(context, '/favourites'),
+                      onTap: () async {
+                        await Navigator.pushNamed(context, '/favourites');
+                        if (mounted) _loadCounts();
+                      },
                     ),
                     _buildDivider(),
                     _buildMenuItem(
@@ -214,7 +235,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.calendar_today,
                       label: 'Upcoming Events',
                       subtitle: 'See your next experiences',
-                      onTap: () => Navigator.pushNamed(context, '/upcoming_events'),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/upcoming_events'),
                     ),
                     _buildDivider(),
                     _buildMenuItem(
@@ -222,7 +244,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.payment,
                       label: 'Payment Info',
                       subtitle: 'Visa ending 4242',
-                      onTap: () => Navigator.pushNamed(context, '/payment_info'),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/payment_info'),
                     ),
                   ],
                 ),
@@ -284,10 +307,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
           ],
         ),
