@@ -13,7 +13,8 @@ class BrowniesItemsScreen extends StatelessWidget {
       'rating': 9.0,
       'reviews': 15,
       'price': 3500.0,
-      'description': 'Rich chocolate brownie with a soft center and deep cocoa flavor.',
+      'description':
+          'Rich chocolate brownie with a soft center and deep cocoa flavor.',
     },
     {
       'image': 'assets/images/brownies2.jpg',
@@ -139,10 +140,11 @@ class BrowniesItemsScreen extends StatelessWidget {
                 Expanded(
                   child: GridView.builder(
                     padding: const EdgeInsets.fromLTRB(14, 10, 14, 20),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.82,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.sizeOf(context).width < 360
+                          ? 1
+                          : 2,
+                      mainAxisExtent: 270,
                       mainAxisSpacing: 14,
                       crossAxisSpacing: 12,
                     ),
@@ -159,7 +161,8 @@ class BrowniesItemsScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BrowniesType1Screen(product: product),
+                              builder: (context) =>
+                                  BrowniesType1Screen(product: product),
                             ),
                           );
                         },

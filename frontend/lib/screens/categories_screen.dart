@@ -62,7 +62,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       (category) => category['title'] == 'Cakes',
       orElse: () => filtered.isNotEmpty ? filtered.first : _categories.first,
     );
-    final otherCategories = filtered.where((category) => category != heroCategory).toList();
+    final otherCategories = filtered
+        .where((category) => category != heroCategory)
+        .toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFF120101),
@@ -75,7 +77,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Navigator.pushReplacementNamed(
+                      context,
+                      '/welcome_profile',
+                    ),
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
                   const SizedBox(width: 8),
@@ -95,7 +100,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   color: const Color(0xFF260B0B),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: [
                     const Icon(Icons.search, color: Colors.white70),
@@ -193,7 +201,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           children: [
             Row(
               children: [
-                Icon(category['icon'] as IconData, color: Colors.white, size: 32),
+                Icon(
+                  category['icon'] as IconData,
+                  color: Colors.white,
+                  size: 32,
+                ),
                 const SizedBox(width: 14),
                 Text(
                   category['title'] as String,
@@ -213,7 +225,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             const SizedBox(height: 20),
             const Text(
               'Flagship category with trending sweets and signature cakes.',
-              style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+                height: 1.4,
+              ),
             ),
           ],
         ),
@@ -221,7 +237,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
   }
 
-  Widget _buildCategoryTile(BuildContext context, Map<String, dynamic> category) {
+  Widget _buildCategoryTile(
+    BuildContext context,
+    Map<String, dynamic> category,
+  ) {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, category['route'] as String),
       child: Container(
@@ -240,7 +259,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 color: (category['color'] as Color).withOpacity(0.18),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(category['icon'] as IconData, color: Colors.white, size: 26),
+              child: Icon(
+                category['icon'] as IconData,
+                color: Colors.white,
+                size: 26,
+              ),
             ),
             const Spacer(),
             Text(
