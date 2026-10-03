@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -217,7 +218,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () {
-                              // TODO: Forgot password screen / bottom sheet
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const ForgotPasswordScreen()
+                                ),
+                              );
                             },
                             child: const Text(
                               "Forgot your password?",

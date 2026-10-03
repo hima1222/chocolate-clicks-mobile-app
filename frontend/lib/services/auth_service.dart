@@ -267,35 +267,51 @@ class AuthService {
     }
   }
 
-  /// Reset password with email
-  /// Throws AuthException on failure
-  Future<AuthResponse> resetPassword({required String email}) async {
-    try {
-      if (email.isEmpty) {
-        throw AuthException(
-          message: 'Email is required',
-          code: 'INVALID_INPUT',
-        );
-      }
-
-      if (!_isValidEmail(email)) {
-        throw AuthException(
-          message: 'Invalid email address',
-          code: 'INVALID_EMAIL',
-        );
-      }
-
-      // TODO: Replace with actual API call
-      await Future.delayed(const Duration(seconds: 1));
-
-      return AuthResponse(
-        success: true,
-        message: 'Password reset link sent to $email',
-      );
-    } catch (e) {
-      throw AuthException(message: e.toString(), code: 'PASSWORD_RESET_FAILED');
-    }
+/// Step 1: request a reset code by email
+Future<void> requestPasswordReset(String email) async {
+  if (!_isValidEmail(email)) {
+    throw AuthException(message: 'Invalid email address', code: 'INVALID_EMAIL');
   }
+  try {
+    await ApiClient().post('/auth/forgot-password', body: {'email': email});
+  } catch (e) {
+    if (e is AuthException) rethrow;
+    throw AuthException(message: e.toString(), code: 'PASSWORD_RESET_FAILED');
+  }
+}
+
+/// Step 2: submit email + code + new password
+Future<void> resetPasswordWithCode({
+  required String email,
+  required String code,
+  required String password,
+}) async {
+  if (code.length != 6) {
+    throw AuthException(message: 'Enter the 6-digit code', code: 'INVALID_CODE');
+  }
+  if (password.length < 6) {
+    throw AuthException(
+      message: 'Password must be at least 6 characters',
+      code: 'WEAK_PASSWORD',
+    );
+  }
+  try {
+    final response = await ApiClient().post('/auth/reset-password', body: {
+      'email': email,
+      'code': code,
+      'password': password,
+    });
+    if (response['success'] != true) {
+      throw AuthException(
+        message: response['message'] ?? 'Reset failed',
+        code: 'PASSWORD_RESET_FAILED',
+      );
+    }
+  } catch (e) {
+    if (e is AuthException) rethrow;
+    throw AuthException(message: e.toString(), code: 'PASSWORD_RESET_FAILED');
+  }
+}
 
   /// Update user password
   /// Throws AuthException on failure
