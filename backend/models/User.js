@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema(
     profileImageUrl: { type: String },
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
+    resetCodeHash: { type: String, select: false },
+    resetCodeExpires: { type: Date, select: false },
+    resetCodeAttempts: { type: Number, default: 0, select: false },
   },
   { timestamps: true }
 );
