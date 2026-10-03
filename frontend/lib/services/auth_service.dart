@@ -45,10 +45,10 @@ class AuthService {
         );
       }
 
-      final response = await ApiClient().post('/auth/login', body: {
-        'email': emailOrUsername,
-        'password': password,
-      });
+      final response = await ApiClient().post(
+        '/auth/login',
+        body: {'email': emailOrUsername, 'password': password},
+      );
 
       if (response['success'] == true) {
         final userData = response['data'];
@@ -74,7 +74,12 @@ class AuthService {
       }
     } catch (e) {
       if (e is AuthException) rethrow;
-      throw AuthException(message: e.toString(), code: 'LOGIN_FAILED');
+      throw AuthException(
+        message: e is ApiException
+            ? e.message
+            : 'Unable to sign in. Check your connection and try again.',
+        code: 'LOGIN_FAILED',
+      );
     }
   }
 
@@ -125,13 +130,16 @@ class AuthService {
         );
       }
 
-      final response = await ApiClient().post('/auth/register', body: {
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'phone': phone,
-        'password': password,
-      });
+      final response = await ApiClient().post(
+        '/auth/register',
+        body: {
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'phone': phone,
+          'password': password,
+        },
+      );
 
       if (response['success'] == true) {
         final userData = response['data'];
@@ -157,7 +165,12 @@ class AuthService {
       }
     } catch (e) {
       if (e is AuthException) rethrow;
-      throw AuthException(message: e.toString(), code: 'SIGNUP_FAILED');
+      throw AuthException(
+        message: e is ApiException
+            ? e.message
+            : 'Unable to create your account. Check your connection and try again.',
+        code: 'SIGNUP_FAILED',
+      );
     }
   }
 
@@ -387,14 +400,16 @@ class AuthService {
         );
       }
 
-      final response = await ApiClient().put('/auth/profile', body: {
-        if (firstName != null) 'firstName': firstName,
-        if (lastName != null) 'lastName': lastName,
-        if (phone != null) 'phone': phone,
-        if (profileImageUrl != null) 'profileImageUrl': profileImageUrl,
-      }, headers: {
-        'Authorization': 'Bearer $_authToken',
-      });
+      final response = await ApiClient().put(
+        '/auth/profile',
+        body: {
+          if (firstName != null) 'firstName': firstName,
+          if (lastName != null) 'lastName': lastName,
+          if (phone != null) 'phone': phone,
+          if (profileImageUrl != null) 'profileImageUrl': profileImageUrl,
+        },
+        headers: {'Authorization': 'Bearer $_authToken'},
+      );
 
       if (response['success'] == true) {
         final userData = response['data'];

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
-
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
         emailOrUsername: _usernameController.text.trim(),
         password: _passwordController.text,
       );
+      if (!mounted) return;
       if (resp.success) {
         Navigator.pushReplacementNamed(context, '/welcome_profile');
       } else {
@@ -43,11 +43,18 @@ class _LoginScreenState extends State<LoginScreen> {
         ).showSnackBar(SnackBar(content: Text(resp.message)));
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e is AuthException
+                ? e.message
+                : 'Unable to complete the request. Please try again.',
+          ),
+        ),
+      );
     } finally {
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
