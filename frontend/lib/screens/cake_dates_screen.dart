@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/widgets/event_booking_button.dart';
 
 class CakeDatesScreen extends StatelessWidget {
   const CakeDatesScreen({super.key});
@@ -103,40 +104,8 @@ class CakeDatesScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    // Book Now button
                     Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Booking feature coming soon!'),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(
-                            255,
-                            245,
-                            157,
-                            74,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 15,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: const Text(
-                          'Book Now',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      child: const EventBookingButton(eventTitle: 'Cake Dates'),
                     ),
                   ],
                 ),

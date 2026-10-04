@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/events_service.dart';
+import 'package:chocolate_clicks/services/booking_service.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
 import 'package:chocolate_clicks/models/event_model.dart';
 
 class UpcomingEventsScreen extends StatefulWidget {
@@ -14,6 +16,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
   List<EventModel> _events = [];
   bool _loading = true;
   int _selectedTab = 0;
+  final BookingService _bookingService = BookingService();
 
   @override
   void initState() {
@@ -131,7 +134,9 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                           child: GestureDetector(
                             onTap: () => setState(() => _selectedTab = index),
                             child: Container(
-                              margin: EdgeInsets.only(right: index < 2 ? 10 : 0),
+                              margin: EdgeInsets.only(
+                                right: index < 2 ? 10 : 0,
+                              ),
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(14),
@@ -143,7 +148,9 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                                 child: Text(
                                   _tabTitle(index),
                                   style: TextStyle(
-                                    color: selected ? Colors.white : Colors.white70,
+                                    color: selected
+                                        ? Colors.white
+                                        : Colors.white70,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -159,9 +166,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
               const SizedBox(height: 22),
               if (_loading)
                 const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
+                  child: CircularProgressIndicator(color: Colors.white),
                 )
               else if (events.isEmpty)
                 Container(
@@ -182,7 +187,9 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                 )
               else
                 Column(
-                  children: events.map((event) => _buildEventCard(event)).toList(),
+                  children: events
+                      .map((event) => _buildEventCard(event))
+                      .toList(),
                 ),
             ],
           ),
@@ -244,14 +251,20 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.red.shade700.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           type,
-                          style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.redAccent,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -277,7 +290,11 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                   const SizedBox(height: 8),
                   Text(
                     event.description,
-                    style: const TextStyle(color: Colors.white60, fontSize: 13, height: 1.4),
+                    style: const TextStyle(
+                      color: Colors.white60,
+                      fontSize: 13,
+                      height: 1.4,
+                    ),
                   ),
                   const SizedBox(height: 14),
                   Row(
@@ -287,7 +304,10 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                       Expanded(
                         child: Text(
                           event.location,
-                          style: const TextStyle(color: Colors.white54, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],
@@ -297,6 +317,20 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                     availability,
                     style: const TextStyle(color: Colors.white70, fontSize: 13),
                   ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: event.capacity > 0 && event.remainingSeats == 0
+                          ? null
+                          : () => _reserveEvent(event),
+                      child: Text(
+                        event.capacity > 0 && event.remainingSeats == 0
+                            ? 'Fully booked'
+                            : 'Reserve spot',
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -304,6 +338,29 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _reserveEvent(EventModel event) async {
+    if (!AuthService().isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to reserve a spot.')),
+      );
+      return;
+    }
+    try {
+      await _bookingService.createBooking(eventId: event.id, seats: 1);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your spot has been reserved.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+        ),
+      );
+    }
   }
 
   String _monthAbbreviation(int month) {

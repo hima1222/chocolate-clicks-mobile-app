@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'workshops.dart'; // Import the second screen for "Next"
 
 class BakingGoodsScreen extends StatelessWidget {
   const BakingGoodsScreen({super.key});
@@ -9,95 +8,126 @@ class BakingGoodsScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          
-          Image.asset(
-            'assets/images/cake7.jpg',
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/cake7.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-
+          Container(color: Colors.black.withValues(alpha: 0.3)),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  // Skip button top right
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(context), // Close About Us section
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.8),
-                          borderRadius: BorderRadius.circular(30),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    ),
+                    const SizedBox(height: 20),
+                    const Center(
+                      child: Text(
+                        'Baking Goods',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'serif',
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(49, 0, 0, 0),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: const Color.fromARGB(159, 245, 157, 74),
+                        ),
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Discover a delicious selection of freshly baked cakes, pastries, and chocolate treats made by our bakers every day.',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'serif',
+                              height: 1.5,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'Our Specialties:',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 245, 157, 74),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'serif',
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            '• Celebration cakes\n• Chocolate brownies and slices\n• Fresh pastries and cupcakes\n• Custom cake decorations\n• Seasonal dessert specials',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontFamily: 'serif',
+                              height: 1.6,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'Available daily\nVisit us in store or speak with our team about a custom order.',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 245, 157, 74),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'serif',
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            245,
+                            157,
+                            74,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 15,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
                         child: const Text(
-                          'Skip',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          'Back to Events',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-
-                  const Spacer(),
-
-                  // Title pill
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Text(
-                      'Baking Goods',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  // Description
-                  const Text(
-                    'Lorem ipsum dolor sit amet consectetur. Nullam imperdiet mi viverra laculis ornare eget. Risus egestas imperdiet amet quis sed. Mauris tincidunt iaculis lectus posuere. Fermentum enim sed feugiat quam sed vehicula potenti.',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
-                      height: 1.6,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  const SizedBox(height: 60),
-
-                  // Next button
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => WorkshopsScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
