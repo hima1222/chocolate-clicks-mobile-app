@@ -7,6 +7,7 @@ import 'screens/home_screen.dart';
 import 'screens/welcome_profile.dart';
 import 'screens/categories_screen.dart';
 import 'screens/events_screen.dart';
+import 'screens/bookings_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_profile_screen.dart';
@@ -45,7 +46,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-
       home: const LandingScreen(),
       routes: {
         '/landing': (context) => const LandingScreen(),
@@ -56,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/welcome_profile': (context) => const WelcomeProfileScreen(),
         '/categories': (context) => const CategoriesScreen(),
         '/events': (context) => const EventsScreen(),
+        '/bookings': (context) => const BookingsScreen(),
         '/edit_profile': (context) => const EditProfileScreen(),
         '/favourites': (context) => const FavouritesScreen(),
         '/upcoming_events': (context) => const UpcomingEventsScreen(),
@@ -87,4 +88,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

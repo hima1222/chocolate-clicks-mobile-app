@@ -86,12 +86,43 @@ npm run dev
 ### Events
 - `GET /api/events`
 - `GET /api/events/:id`
-- `POST /api/events`
+PS D:\Projects\Chocalate_Clicks\chocolate_clicks\backend> npm test
+
+> chocolate-clicks-backend@1.0.0 test
+> jest --runInBand
+
+Downloading MongoDB "6.0.14": 0.6% (2.9mb / 509.3mb)
+ RUNS  tests/booking.test.js
+
+Event responses include `id`, `title`, `description`, `imageUrl`, `location`,
+`startDate`, `capacity`, `bookedCount`, `price`, and `remainingSeats`.
+`GET /api/events` returns upcoming events sorted by `startDate`.
 
 ### Bookings
 - `POST /api/bookings`
-- `GET /api/bookings`
-- `GET /api/bookings/:id`
+- `GET /api/bookings/me`
+- `PATCH /api/bookings/:id/cancel`
+
+All booking routes require a JWT bearer token. `POST /api/bookings` accepts
+`{ "eventId": "..." }`. Booking responses include `userId`, `eventId`,
+`status`, `createdAt`, `cancelledAt`, and the populated event's `title`,
+`startDate`, and `imageUrl`.
+Confirmed bookings are unique per user and event. Cancellations are available
+only to the booking owner and only until 24 hours before the event.
+
+Seed five chocolate-themed future events with:
+
+```bash
+npm run seed:events
+```
+
+Run the backend tests with:
+
+```bash
+npm test
+```
+
+API errors use the consistent shape `{ "message": "..." }`.
 
 ## Flutter integration guidance
 

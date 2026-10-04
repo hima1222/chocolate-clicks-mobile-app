@@ -211,6 +211,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildDivider(),
                     _buildMenuItem(
                       context,
+                      icon: Icons.confirmation_number_outlined,
+                      label: 'My Bookings',
+                      subtitle: 'View your reserved experiences',
+                      onTap: () => Navigator.pushNamed(context, '/bookings'),
+                    ),
+                    _buildDivider(),
+                    _buildMenuItem(
+                      context,
                       icon: Icons.favorite_border,
                       label: 'Favourites',
                       subtitle: 'Your saved treats',

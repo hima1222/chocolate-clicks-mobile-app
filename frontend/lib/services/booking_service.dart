@@ -26,14 +26,18 @@ class Booking {
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) {
+    final event = json['eventId'] ?? json['event'];
+    final eventMap = event is Map<String, dynamic> ? event : <String, dynamic>{};
     return Booking(
       id: json['_id'] ?? json['id'],
-      eventId: json['event']['_id'] ?? json['event']['id'],
-      eventTitle: json['event']['title'],
-      eventDate: DateTime.parse(json['event']['date']),
-      eventLocation: json['event']['location'],
-      eventPrice: (json['event']['price'] as num).toDouble(),
-      seats: json['seats'],
+      eventId: (event is String ? event : eventMap['_id'] ?? eventMap['id']) as String,
+      eventTitle: eventMap['title'] ?? '',
+      eventDate: DateTime.parse(
+        eventMap['startDate'] ?? eventMap['date'],
+      ),
+      eventLocation: eventMap['location'] ?? '',
+      eventPrice: ((eventMap['price'] as num?) ?? 0).toDouble(),
+      seats: json['seats'] ?? 1,
       status: json['status'],
       createdAt: DateTime.parse(json['createdAt']),
     );
@@ -61,8 +65,6 @@ class BookingService {
 
       final response = await ApiClient().post('/bookings', body: {
         'eventId': eventId,
-        'seats': seats,
-        'notes': notes,
       }, headers: {
         'Authorization': 'Bearer $token',
       });
@@ -86,7 +88,7 @@ class BookingService {
         throw Exception('Authentication required');
       }
 
-      final response = await ApiClient().get('/bookings', headers: {
+      final response = await ApiClient().get('/bookings/me', headers: {
         'Authorization': 'Bearer $token',
       });
 

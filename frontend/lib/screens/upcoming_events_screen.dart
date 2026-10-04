@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/events_service.dart';
+import 'package:chocolate_clicks/services/booking_service.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
 import 'package:chocolate_clicks/models/event_model.dart';
 
 class UpcomingEventsScreen extends StatefulWidget {
@@ -55,6 +57,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
   ];
   bool _loading = true;
   int _selectedTab = 0;
+  final BookingService _bookingService = BookingService();
 
   @override
   void initState() {
@@ -363,6 +366,20 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                     availability,
                     style: const TextStyle(color: Colors.white70, fontSize: 13),
                   ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: event.capacity > 0 && event.remainingSeats == 0
+                          ? null
+                          : () => _reserveEvent(event),
+                      child: Text(
+                        event.capacity > 0 && event.remainingSeats == 0
+                            ? 'Fully booked'
+                            : 'Reserve spot',
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -370,6 +387,29 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _reserveEvent(EventModel event) async {
+    if (!AuthService().isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to reserve a spot.')),
+      );
+      return;
+    }
+    try {
+      await _bookingService.createBooking(eventId: event.id, seats: 1);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your spot has been reserved.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+        ),
+      );
+    }
   }
 
   String _monthAbbreviation(int month) {

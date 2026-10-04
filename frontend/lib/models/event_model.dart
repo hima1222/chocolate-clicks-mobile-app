@@ -7,6 +7,9 @@ class EventModel {
   final String location;
   final double price;
   final String imageUrl;
+  final int capacity;
+  final int bookedCount;
+  final int remainingSeats;
 
   EventModel({
     required this.id,
@@ -16,6 +19,9 @@ class EventModel {
     required this.location,
     required this.price,
     required this.imageUrl,
+    this.capacity = 0,
+    this.bookedCount = 0,
+    this.remainingSeats = 0,
   });
 
   Map<String, dynamic> toJson() {
@@ -23,7 +29,7 @@ class EventModel {
       'id': id,
       'title': title,
       'description': description,
-      'date': date.toIso8601String(),
+      'startDate': date.toIso8601String(),
       'location': location,
       'price': price,
       'imageUrl': imageUrl,
@@ -35,10 +41,13 @@ class EventModel {
       id: json['id'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
-      date: DateTime.parse(json['date'] as String),
+      date: DateTime.parse((json['startDate'] ?? json['date']) as String),
       location: json['location'] as String,
       price: (json['price'] as num).toDouble(),
       imageUrl: json['imageUrl'] as String,
+      capacity: (json['capacity'] as num?)?.toInt() ?? 0,
+      bookedCount: (json['bookedCount'] as num?)?.toInt() ?? 0,
+      remainingSeats: (json['remainingSeats'] as num?)?.toInt() ?? 0,
     );
   }
 }
