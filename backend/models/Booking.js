@@ -2,25 +2,29 @@ const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema(
   {
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    event: {
+    eventId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Event',
       required: true,
     },
-    seats: { type: Number, required: true, default: 1 },
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'cancelled'],
-      default: 'pending',
+      enum: ['CONFIRMED', 'CANCELLED'],
+      default: 'CONFIRMED',
     },
-    notes: { type: String },
-  },
-  { timestamps: true }
+    cancelledAt: { type: Date, default: null },
+    createdAt: { type: Date, default: Date.now },
+  }
+);
+
+bookingSchema.index(
+  { userId: 1, eventId: 1 },
+  { unique: true, partialFilterExpression: { status: 'CONFIRMED' } }
 );
 
 const Booking = mongoose.model('Booking', bookingSchema);

@@ -1,55 +1,48 @@
-const Booking = require('../models/Booking');
-const Event = require('../models/Event');
+const { createError } = require('../middleware/errorMiddleware');
+const {
+  createBooking: reserveBooking,
+  cancelBooking: cancelReservedBooking,
+  listUserBookings,
+} = require('../services/bookingService');
+
+const mapBookingError = (error) => {
+  if (error?.code === 11000) {
+    error.statusCode = 409;
+    error.message = 'You already booked this event';
+  }
+  return error;
+};
 
 const createBooking = async (req, res, next) => {
   try {
-    const { eventId, seats, notes } = req.body;
-
-    if (!eventId || !seats) {
-      return res.status(400).json({ success: false, message: 'eventId and seats are required' });
+    if (!req.body.eventId) {
+      return next(createError('eventId is required', 400));
     }
 
-    const event = await Event.findById(eventId);
-    if (!event) {
-      return res.status(404).json({ success: false, message: 'Event not found' });
-    }
-
-    const booking = await Booking.create({
-      user: req.user._id,
-      event: event._id,
-      seats,
-      notes,
-    });
-
+    const booking = await reserveBooking(req.user._id, req.body.eventId);
+    await booking.populate('eventId', 'title startDate imageUrl');
     res.status(201).json({ success: true, data: booking });
   } catch (error) {
-    next(error);
+    next(mapBookingError(error));
+  }
+};
+
+const cancelBooking = async (req, res, next) => {
+  try {
+    const booking = await cancelReservedBooking(req.params.id, req.user._id);
+    res.json({ success: true, data: booking });
+  } catch (error) {
+    next(mapBookingError(error));
   }
 };
 
 const getUserBookings = async (req, res, next) => {
   try {
-    const bookings = await Booking.find({ user: req.user._id }).populate('event').sort({ createdAt: -1 });
+    const bookings = await listUserBookings(req.user._id);
     res.json({ success: true, data: bookings });
   } catch (error) {
     next(error);
   }
 };
 
-const getBookingById = async (req, res, next) => {
-  try {
-    const booking = await Booking.findOne({ _id: req.params.id, user: req.user._id }).populate('event');
-    if (!booking) {
-      return res.status(404).json({ success: false, message: 'Booking not found' });
-    }
-    res.json({ success: true, data: booking });
-  } catch (error) {
-    next(error);
-  }
-};
-
-module.exports = {
-  createBooking,
-  getUserBookings,
-  getBookingById,
-};
+module.exports = { createBooking, cancelBooking, getUserBookings };
