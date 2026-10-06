@@ -28,18 +28,19 @@ class Booking {
   factory Booking.fromJson(Map<String, dynamic> json) {
     final event = json['eventId'] ?? json['event'];
     final eventMap = event is Map<String, dynamic> ? event : <String, dynamic>{};
+    final rawEventId = event is String ? event : eventMap['_id'] ?? eventMap['id'];
+    final rawEventDate = eventMap['startDate'] ?? eventMap['date'];
+    final rawCreatedAt = json['createdAt'];
     return Booking(
-      id: json['_id'] ?? json['id'],
-      eventId: (event is String ? event : eventMap['_id'] ?? eventMap['id']) as String,
-      eventTitle: eventMap['title'] ?? '',
-      eventDate: DateTime.parse(
-        eventMap['startDate'] ?? eventMap['date'],
-      ),
-      eventLocation: eventMap['location'] ?? '',
+      id: (json['_id'] ?? json['id'])?.toString() ?? '',
+      eventId: rawEventId?.toString() ?? '',
+      eventTitle: eventMap['title']?.toString() ?? 'Untitled event',
+      eventDate: DateTime.tryParse(rawEventDate?.toString() ?? '') ?? DateTime.now(),
+      eventLocation: eventMap['location']?.toString() ?? '',
       eventPrice: ((eventMap['price'] as num?) ?? 0).toDouble(),
-      seats: json['seats'] ?? 1,
-      status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
+      seats: (json['seats'] as num?)?.toInt() ?? 1,
+      status: json['status']?.toString() ?? 'confirmed',
+      createdAt: DateTime.tryParse(rawCreatedAt?.toString() ?? '') ?? DateTime.now(),
     );
   }
 }
@@ -75,6 +76,7 @@ class BookingService {
         throw Exception(response['message'] ?? 'Failed to create booking');
       }
     } catch (e) {
+      if (e is ApiException) rethrow;
       throw Exception('Failed to create booking: $e');
     }
   }
@@ -101,6 +103,7 @@ class BookingService {
         throw Exception(response['message'] ?? 'Failed to fetch bookings');
       }
     } catch (e) {
+      if (e is ApiException) rethrow;
       throw Exception('Failed to fetch bookings: $e');
     }
   }

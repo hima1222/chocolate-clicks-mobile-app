@@ -37,14 +37,16 @@ class EventModel {
   }
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
+    final rawId = json['_id'] ?? json['id'];
+    final rawDate = json['startDate'] ?? json['date'];
     return EventModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      date: DateTime.parse((json['startDate'] ?? json['date']) as String),
-      location: json['location'] as String,
-      price: (json['price'] as num).toDouble(),
-      imageUrl: json['imageUrl'] as String,
+      id: rawId?.toString() ?? '',
+      title: json['title']?.toString() ?? 'Untitled event',
+      description: json['description']?.toString() ?? '',
+      date: DateTime.tryParse(rawDate?.toString() ?? '') ?? DateTime.now(),
+      location: json['location']?.toString() ?? 'Location unavailable',
+      price: (json['price'] as num?)?.toDouble() ?? 0,
+      imageUrl: json['imageUrl']?.toString() ?? '',
       capacity: (json['capacity'] as num?)?.toInt() ?? 0,
       bookedCount: (json['bookedCount'] as num?)?.toInt() ?? 0,
       remainingSeats: (json['remainingSeats'] as num?)?.toInt() ?? 0,
