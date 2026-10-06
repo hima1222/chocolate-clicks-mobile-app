@@ -40,11 +40,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _favouritesCount = _favoritesService.count;
+    _favoritesService.addListener(_updateFavoritesCount);
     _loadCounts();
   }
 
-<<<<<<< Updated upstream
-=======
   void _updateFavoritesCount() {
     if (!mounted) return;
     setState(() => _favouritesCount = _favoritesService.count);
@@ -56,7 +56,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
->>>>>>> Stashed changes
   Future<void> _loadCounts() async {
     final user = _authService.currentUser;
     if (user == null) {
@@ -114,11 +113,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-<<<<<<< Updated upstream
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-=======
                   Row(
                     children: [
                       IconButton(
@@ -138,7 +132,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ],
->>>>>>> Stashed changes
                   ),
                   const SizedBox(height: 24),
 
@@ -315,177 +308,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-<<<<<<< Updated upstream
-              const SizedBox(height: 24),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF3C090A), Color(0xFF120101)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  border: Border.all(color: Colors.red.shade900.withOpacity(0.7)),
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFEF5350), Color(0xFFB71C1C)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundColor: const Color(0xFF3C090A),
-                        child: Text(
-                          _getInitials(fullName),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      fullName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                        letterSpacing: 0.6,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    _loading
-                        ? const SizedBox(
-                            height: 68,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            ),
-                          )
-                        : Row(
-                            children: [
-                              _buildStatItem('Orders', _ordersCount),
-                              const SizedBox(width: 10),
-                              _buildStatItem('Events', _eventsCount),
-                              const SizedBox(width: 10),
-                              _buildStatItem('Points', 240),
-                            ],
-                          ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.07),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white12),
-                ),
-                child: Column(
-                  children: [
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.edit,
-                      label: 'Edit Profile',
-                      subtitle: 'Name, photo, preferences',
-                      onTap: () => Navigator.pushNamed(context, '/edit_profile'),
-                    ),
-                    _buildDivider(),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.confirmation_number_outlined,
-                      label: 'My Bookings',
-                      subtitle: 'View your reserved experiences',
-                      onTap: () => Navigator.pushNamed(context, '/bookings'),
-                    ),
-                    _buildDivider(),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.favorite_border,
-                      label: 'Favourites',
-                      subtitle: 'Your saved treats',
-                      badgeCount: _favouritesCount,
-                      onTap: () => Navigator.pushNamed(context, '/favourites'),
-                    ),
-                    _buildDivider(),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.shopping_cart_outlined,
-                      label: 'Cart',
-                      subtitle: '$_cartCount items ready',
-                      badgeCount: _cartCount,
-                      onTap: () => Navigator.pushNamed(context, '/cart'),
-                    ),
-                    _buildDivider(),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.calendar_today,
-                      label: 'Upcoming Events',
-                      subtitle: 'See your next experiences',
-                      onTap: () => Navigator.pushNamed(context, '/upcoming_events'),
-                    ),
-                    _buildDivider(),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.payment,
-                      label: 'Payment Info',
-                      subtitle: 'Visa ending 4242',
-                      onTap: () => Navigator.pushNamed(context, '/payment_info'),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await _authService.logout();
-                    _favoritesService.clear();
-                    _cartService.clear();
-                    _eventsService.clear();
-                    _paymentService.clear();
-                    _orderService.clear();
-                    _notificationService.clear();
-                    Navigator.pushReplacementNamed(context, '/landing');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFEF5350),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: const Text(
-                    'Log out',
-                    style: TextStyle(fontSize: 16, letterSpacing: 0.4),
-                  ),
-                ),
-              ),
-            ],
-=======
             ),
->>>>>>> Stashed changes
           ),
         ],
       ),
@@ -515,14 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               label,
               textAlign: TextAlign.center,
-<<<<<<< Updated upstream
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
-=======
               style: const TextStyle(color: _textSoft, fontSize: 12),
->>>>>>> Stashed changes
             ),
           ],
         ),

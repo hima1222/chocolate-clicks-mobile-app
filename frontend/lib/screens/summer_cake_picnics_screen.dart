@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/event_detail_page.dart';
 import 'package:chocolate_clicks/widgets/event_booking_button.dart';
 
 class SummerCakePicnicsScreen extends StatelessWidget {

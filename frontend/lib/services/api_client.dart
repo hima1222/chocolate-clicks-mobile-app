@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:chocolate_clicks/models/user_model.dart';
@@ -18,16 +17,32 @@ class ApiException implements Exception {
 
 /// Base API client for all HTTP communication
 class ApiClient {
+  static String errorMessage(String body, String fallback) {
+    try {
+      final decoded = json.decode(body);
+      if (decoded is Map &&
+          decoded['message'] is String &&
+          (decoded['message'] as String).trim().isNotEmpty) {
+        return decoded['message'] as String;
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
   ApiClient._internal();
 
   // static const String baseUrl = 'http://10.0.2.2:5000/api'; // Android emulator
-  static const String baseUrl = 'http://localhost:5000/api'; // Web/iOS simulator
+  static const String baseUrl =
+      'http://localhost:5000/api'; // Web/iOS simulator
   static const Duration timeout = Duration(seconds: 30);
 
   /// Generic GET request
-  Future<Map<String, dynamic>> get(String endpoint, {Map<String, String>? headers}) async {
+  Future<Map<String, dynamic>> get(
+    String endpoint, {
+    Map<String, String>? headers,
+  }) async {
     try {
       final url = Uri.parse('$baseUrl$endpoint');
       final response = await http.get(url, headers: headers).timeout(timeout);
@@ -36,7 +51,10 @@ class ApiClient {
         return json.decode(response.body);
       } else {
         throw ApiException(
-          message: 'GET request failed: $endpoint',
+          message: errorMessage(
+            response.body,
+            'Unable to complete the request. Please try again.',
+          ),
           statusCode: response.statusCode,
           originalError: response.body,
         );
@@ -58,20 +76,22 @@ class ApiClient {
   }) async {
     try {
       final url = Uri.parse('$baseUrl$endpoint');
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          ...?headers,
-        },
-        body: json.encode(body),
-      ).timeout(timeout);
+      final response = await http
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json', ...?headers},
+            body: json.encode(body),
+          )
+          .timeout(timeout);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return json.decode(response.body);
       } else {
         throw ApiException(
-          message: 'POST request failed: $endpoint',
+          message: errorMessage(
+            response.body,
+            'Unable to complete the request. Please try again.',
+          ),
           statusCode: response.statusCode,
           originalError: response.body,
         );
@@ -93,20 +113,22 @@ class ApiClient {
   }) async {
     try {
       final url = Uri.parse('$baseUrl$endpoint');
-      final response = await http.put(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          ...?headers,
-        },
-        body: json.encode(body),
-      ).timeout(timeout);
+      final response = await http
+          .put(
+            url,
+            headers: {'Content-Type': 'application/json', ...?headers},
+            body: json.encode(body),
+          )
+          .timeout(timeout);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return json.decode(response.body);
       } else {
         throw ApiException(
-          message: 'PUT request failed: $endpoint',
+          message: errorMessage(
+            response.body,
+            'Unable to complete the request. Please try again.',
+          ),
           statusCode: response.statusCode,
           originalError: response.body,
         );
@@ -127,13 +149,18 @@ class ApiClient {
   }) async {
     try {
       final url = Uri.parse('$baseUrl$endpoint');
-      final response = await http.delete(url, headers: headers).timeout(timeout);
+      final response = await http
+          .delete(url, headers: headers)
+          .timeout(timeout);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return json.decode(response.body);
       } else {
         throw ApiException(
-          message: 'DELETE request failed: $endpoint',
+          message: errorMessage(
+            response.body,
+            'Unable to complete the request. Please try again.',
+          ),
           statusCode: response.statusCode,
           originalError: response.body,
         );

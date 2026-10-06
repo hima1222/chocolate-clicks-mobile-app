@@ -1,4 +1,4 @@
-﻿// lib/screens/cake_items_screen.dart
+// lib/screens/cake_items_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/image_card.dart';
 import 'cake_type1.dart';
@@ -13,7 +13,8 @@ class CakeItemsScreen extends StatelessWidget {
       'rating': 9.0,
       'reviews': 15,
       'price': 3500.0,
-      'description': 'Light sponge cake with blueberry topping and lemon glaze.',
+      'description':
+          'Light sponge cake with blueberry topping and lemon glaze.',
     },
     {
       'image': 'assets/images/cake2.jpg',
@@ -29,7 +30,8 @@ class CakeItemsScreen extends StatelessWidget {
       'rating': 9.2,
       'reviews': 18,
       'price': 3500.0,
-      'description': 'Classic vanilla cake finished with rose-flavored frosting.',
+      'description':
+          'Classic vanilla cake finished with rose-flavored frosting.',
     },
     {
       'image': 'assets/images/cake4.jpg',
@@ -37,7 +39,8 @@ class CakeItemsScreen extends StatelessWidget {
       'rating': 8.8,
       'reviews': 25,
       'price': 3500.0,
-      'description': 'Chocolate sponge, cherries, and whipped cream in every layer.',
+      'description':
+          'Chocolate sponge, cherries, and whipped cream in every layer.',
     },
     {
       'image': 'assets/images/cake5.jpg',
@@ -179,10 +182,11 @@ class CakeItemsScreen extends StatelessWidget {
                 Expanded(
                   child: GridView.builder(
                     padding: const EdgeInsets.fromLTRB(14, 10, 14, 20),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.82,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.sizeOf(context).width < 360
+                          ? 1
+                          : 2,
+                      mainAxisExtent: 270,
                       mainAxisSpacing: 14,
                       crossAxisSpacing: 12,
                     ),
@@ -199,7 +203,8 @@ class CakeItemsScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CakeType1Screen(product: product),
+                              builder: (context) =>
+                                  CakeType1Screen(product: product),
                             ),
                           );
                         },

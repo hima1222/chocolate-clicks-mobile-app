@@ -1,8 +1,7 @@
-﻿import 'package:flutter/material.dart';
-import 'package:chocolate_clicks/services/favorites_service.dart';
+import 'package:flutter/material.dart';
+import '../widgets/favorite_button.dart';
 import 'package:chocolate_clicks/services/cart_service.dart';
 import 'package:chocolate_clicks/models/cart_item.dart';
-//import 'package:chocolate_clicks/models/favorite_item.dart';
 
 class BrowniesType1Screen extends StatefulWidget {
   final Map<String, dynamic>? product;
@@ -18,14 +17,15 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
   String selectedSize = 'Medium';
   String selectedTopping = 'Nuts';
   String selectedFrosting = 'Chocolate';
-  bool isFavorite = false;
-  final FavoritesService _favoritesService = FavoritesService();
   final CartService _cartService = CartService();
 
   @override
   Widget build(BuildContext context) {
-    final productTitle = widget.product?['title'] as String? ?? 'Brownies Type 1';
-    final productImage = widget.product?['image'] as String? ?? 'assets/images/brownies_type1.jpg';
+    final productTitle =
+        widget.product?['title'] as String? ?? 'Brownies Type 1';
+    final productImage =
+        widget.product?['image'] as String? ??
+        'assets/images/brownies_type1.jpg';
     final productPrice = widget.product?['price'] as double? ?? 3500.0;
 
     return Scaffold(
@@ -39,7 +39,10 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       child: Row(
                         children: [
                           IconButton(
@@ -49,16 +52,15 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                           const Spacer(),
                           Text(
                             productTitle,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const Spacer(),
-                          IconButton(
-                            icon: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
-                              size: 28,
-                              color: isFavorite ? Colors.red : Colors.grey,
-                            ),
-                            onPressed: () => setState(() => isFavorite = !isFavorite),
+                          FavoriteButton(
+                            name: productTitle,
+                            image: productImage,
                           ),
                         ],
                       ),
@@ -93,16 +95,26 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                               ),
                               Row(
                                 children: [
-                                  const Icon(Icons.star, color: Colors.amber, size: 18),
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 18,
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    widget.product?['rating']?.toString() ?? '9.0',
-                                    style: const TextStyle(fontWeight: FontWeight.w600),
+                                    widget.product?['rating']?.toString() ??
+                                        '9.0',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
                                     '(${widget.product?['reviews'] ?? 15} reviews)',
-                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -111,7 +123,11 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                           const SizedBox(height: 14),
                           const Text(
                             'Rich, fudgy brownies with premium ingredients. Perfect for chocolate lovers.',
-                            style: TextStyle(fontSize: 13, height: 1.5, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.5,
+                              color: Colors.grey,
+                            ),
                           ),
                         ],
                       ),
@@ -122,7 +138,13 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Size', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Size',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 6),
                           Container(
                             constraints: const BoxConstraints(maxHeight: 50),
@@ -132,20 +154,31 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                               isDense: true,
                               underline: Container(),
                               icon: const Icon(Icons.arrow_drop_down, size: 20),
-                              items: ['Small', 'Medium', 'Large'].map((String value) {
+                              items: ['Small', 'Medium', 'Large'].map((
+                                String value,
+                              ) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
                                     child: Text(value),
                                   ),
                                 );
                               }).toList(),
-                              onChanged: (value) => setState(() => selectedSize = value!),
+                              onChanged: (value) =>
+                                  setState(() => selectedSize = value!),
                             ),
                           ),
                           const SizedBox(height: 12),
-                          const Text('Toppings', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Toppings',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 6),
                           Container(
                             constraints: const BoxConstraints(maxHeight: 50),
@@ -155,20 +188,35 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                               isDense: true,
                               underline: Container(),
                               icon: const Icon(Icons.arrow_drop_down, size: 20),
-                              items: ['Nuts', 'Chocolate Chips', 'Caramel', 'Sea Salt'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Text(value),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) => setState(() => selectedTopping = value!),
+                              items:
+                                  [
+                                    'Nuts',
+                                    'Chocolate Chips',
+                                    'Caramel',
+                                    'Sea Salt',
+                                  ].map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 4,
+                                        ),
+                                        child: Text(value),
+                                      ),
+                                    );
+                                  }).toList(),
+                              onChanged: (value) =>
+                                  setState(() => selectedTopping = value!),
                             ),
                           ),
                           const SizedBox(height: 12),
-                          const Text('Frosting', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Frosting',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 6),
                           Container(
                             constraints: const BoxConstraints(maxHeight: 50),
@@ -178,16 +226,25 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                               isDense: true,
                               underline: Container(),
                               icon: const Icon(Icons.arrow_drop_down, size: 20),
-                              items: ['Chocolate', 'Vanilla', 'Cream Cheese', 'None'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Text(value),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) => setState(() => selectedFrosting = value!),
+                              items:
+                                  [
+                                    'Chocolate',
+                                    'Vanilla',
+                                    'Cream Cheese',
+                                    'None',
+                                  ].map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 4,
+                                        ),
+                                        child: Text(value),
+                                      ),
+                                    );
+                                  }).toList(),
+                              onChanged: (value) =>
+                                  setState(() => selectedFrosting = value!),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -229,9 +286,14 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown[700],
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('Add to Cart', style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        'Add to Cart',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -239,14 +301,21 @@ class _BrowniesType1ScreenState extends State<BrowniesType1Screen> {
                     child: ElevatedButton(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Proceeding to checkout...')),
+                          const SnackBar(
+                            content: Text('Proceeding to checkout...'),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[600],
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('Buy Now', style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        'Buy Now',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ],

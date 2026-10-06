@@ -1,13 +1,17 @@
 import 'package:chocolate_clicks/models/favorite_item.dart';
+import 'package:flutter/foundation.dart';
 
 /// Service managing user's favourites list
-class FavoritesService {
+class FavoritesService extends ChangeNotifier {
   static final FavoritesService _instance = FavoritesService._internal();
   factory FavoritesService() => _instance;
   FavoritesService._internal();
 
   // in-memory list for mock data
   final List<FavoriteItem> _favorites = [];
+
+  bool contains(String id) => _favorites.any((item) => item.id == id);
+  int get count => _favorites.length;
 
   /// Get all favourite items for the current user
   Future<List<FavoriteItem>> fetchFavorites() async {
@@ -20,6 +24,7 @@ class FavoritesService {
     await Future.delayed(const Duration(milliseconds: 300));
     if (!_favorites.any((f) => f.id == item.id)) {
       _favorites.add(item);
+      notifyListeners();
     }
   }
 
@@ -27,10 +32,12 @@ class FavoritesService {
   Future<void> removeFavorite(String itemId) async {
     await Future.delayed(const Duration(milliseconds: 300));
     _favorites.removeWhere((f) => f.id == itemId);
+    notifyListeners();
   }
 
   /// Clear all favourites (e.g. on logout)
   void clear() {
     _favorites.clear();
+    notifyListeners();
   }
 }

@@ -8,17 +8,20 @@ class MessagesScreen extends StatelessWidget {
     return [
       {
         'title': 'Hi $userName, your favorites are back',
-        'message': 'Our signature Dark Fudge Brownie is available again. Tap categories to order quickly.',
+        'message':
+            'Our signature Dark Fudge Brownie is available again. Tap categories to order quickly.',
         'time': '1h ago',
       },
       {
         'title': 'Order support reminder',
-        'message': 'Need help with customization? Our Chocolate Clicks team can assist you in minutes.',
+        'message':
+            'Need help with customization? Our Chocolate Clicks team can assist you in minutes.',
         'time': 'Today',
       },
       {
         'title': 'Taste profile recommendation',
-        'message': 'Based on your recent picks, try the Salted Caramel Cake this week.',
+        'message':
+            'Based on your recent picks, try the Salted Caramel Cake this week.',
         'time': 'Yesterday',
       },
     ];
@@ -69,7 +72,10 @@ class MessagesScreen extends StatelessWidget {
                             Icons.arrow_back,
                             color: Color(0xFFF6E6D7),
                           ),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () => Navigator.pushReplacementNamed(
+                            context,
+                            '/welcome_profile',
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -90,7 +96,8 @@ class MessagesScreen extends StatelessWidget {
                   child: ListView.separated(
                     padding: const EdgeInsets.fromLTRB(14, 12, 14, 20),
                     itemCount: messages.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 10),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final item = messages[index];
                       return Container(
@@ -137,7 +144,9 @@ class MessagesScreen extends StatelessWidget {
                                       Text(
                                         item['time']!,
                                         style: TextStyle(
-                                          color: Colors.white.withValues(alpha: 0.78),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.78,
+                                          ),
                                           fontSize: 11,
                                         ),
                                       ),
@@ -147,7 +156,9 @@ class MessagesScreen extends StatelessWidget {
                                   Text(
                                     item['message']!,
                                     style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.9),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
                                       fontSize: 13,
                                       height: 1.35,
                                     ),

@@ -13,7 +13,48 @@ class UpcomingEventsScreen extends StatefulWidget {
 
 class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
   final EventsService _service = EventsService();
-  List<EventModel> _events = [];
+  List<EventModel> _events = [
+    EventModel(
+      id: 'evt_1',
+      title: 'Mask Painting Workshop',
+      description:
+          'Join us for a creative and fun workshop where you will paint decorative masks.',
+      date: DateTime(2026, 5, 8),
+      location: 'Colombo',
+      price: 1500.0,
+      imageUrl: 'assets/images/mask_painting.jpg',
+    ),
+    EventModel(
+      id: 'evt_2',
+      title: 'Tasting LUXE',
+      description:
+          'Exclusive tasting event featuring our premium chocolate and dessert collection.',
+      date: DateTime(2026, 5, 14),
+      location: 'Colombo',
+      price: 2200.0,
+      imageUrl: 'assets/images/tasting_luxe.jpg',
+    ),
+    EventModel(
+      id: 'evt_3',
+      title: 'Bake It Happen',
+      description:
+          'Learn baking basics from our expert chefs in this beginner-friendly class.',
+      date: DateTime(2026, 5, 21),
+      location: 'Kandy',
+      price: 1800.0,
+      imageUrl: 'assets/images/bake_it_happen.jpg',
+    ),
+    EventModel(
+      id: 'evt_4',
+      title: 'Summer Cake Picnic',
+      description:
+          'Celebrate summer with outdoor picnic featuring fresh cakes and treats.',
+      date: DateTime(2026, 5, 28),
+      location: 'Negombo Beach',
+      price: 0.0,
+      imageUrl: 'assets/images/summer_picnic.jpg',
+    ),
+  ];
   bool _loading = true;
   int _selectedTab = 0;
   final BookingService _bookingService = BookingService();
@@ -25,11 +66,19 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
   }
 
   Future<void> _load() async {
-    final events = await _service.fetchUpcomingEvents();
-    setState(() {
-      _events = events;
-      _loading = false;
-    });
+    try {
+      final events = await _service.fetchUpcomingEvents();
+      if (!mounted) return;
+      if (events.isNotEmpty) {
+        setState(() => _events = events);
+      }
+    } catch (_) {
+      // Keep the event entries previously displayed on the Events screen.
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
   }
 
   List<EventModel> get _filteredEvents {

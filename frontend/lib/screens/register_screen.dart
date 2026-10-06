@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -42,6 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         phone: _mobileController.text.trim(),
         password: _passwordController.text,
       );
+      if (!mounted) return;
       if (response.success) {
         Navigator.pushReplacementNamed(context, '/welcome_profile');
       } else {
@@ -50,11 +52,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ).showSnackBar(SnackBar(content: Text(response.message)));
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e is AuthException
+                ? e.message
+                : 'Unable to complete the request. Please try again.',
+          ),
+        ),
+      );
     } finally {
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -166,6 +175,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     // Password
                     TextFormField(
                       controller: _passwordController,
+                      validator: (value) => value == null || value.length < 6
+                          ? 'Password must be at least 6 characters'
+                          : null,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         labelText: "Your Password",
@@ -239,6 +251,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
 
+                    const SizedBox(height: 16),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        const Text(
+                          'Already have an account?',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                            fontFamily: 'Roboto',
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pushReplacementNamed(context, '/login'),
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                              color: Color(0xFFFFC107),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              fontFamily: 'Roboto',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -258,6 +298,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }) {
     return TextFormField(
       controller: controller,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (value) {
+        final text = value?.trim() ?? '';
+        if (text.isEmpty) return '$label is required';
+        if (keyboardType == TextInputType.emailAddress &&
+            !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(text)) {
+          return 'Enter a valid email address';
+        }
+        if (keyboardType == TextInputType.phone &&
+            !RegExp(r'^\+?[0-9]{10,15}$').hasMatch(text)) {
+          return 'Enter a valid phone number';
+        }
+        return null;
+      },
       keyboardType: keyboardType,
       style: const TextStyle(
         color: Colors.white,

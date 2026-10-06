@@ -1,17 +1,21 @@
 import 'dart:async';
+import 'cake_type1.dart';
+import 'brownies_type1.dart';
+import 'cookies_type1.dart';
 
 import 'package:flutter/material.dart';
+import '../widgets/favorite_button.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
-import '../../screens/cake_items_screen.dart';
-import '../../screens/brownies_items_screen.dart';
-import '../../screens/cookies_items_screen.dart';
-import '../../screens/categories_screen.dart';
-import '../../screens/events_screen.dart';
-import '../../screens/profile_screen.dart';
-import '../../screens/messages_screen.dart';
+import 'cake_items_screen.dart';
+import 'brownies_items_screen.dart';
+import 'cookies_items_screen.dart';
+import 'categories_screen.dart';
+import 'events_screen.dart';
+import 'profile_screen.dart';
+import 'messages_screen.dart';
 // Add these later when you create the screens
-// import '../../screens/donuts_items_screen.dart';
-// import '../../screens/croissants_items_screen.dart';
+// import 'donuts_items_screen.dart';
+// import 'croissants_items_screen.dart';
 
 final List<Map<String, dynamic>> categories = [
   {'name': 'Cake', 'screen': const CakeItemsScreen()},
@@ -35,6 +39,8 @@ class WelcomeProfileScreen extends StatefulWidget {
 class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   final AuthService _authService = AuthService();
   int _currentIndex = 0;
+  String _searchQuery = '';
+  final _searchController = TextEditingController();
   bool _animate = false;
   int _offerIndex = 0;
   Timer? _offerTimer;
@@ -60,24 +66,46 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   List<Map<String, dynamic>> get _recommendedItems {
     final merged = <Map<String, dynamic>>[
       ...CakeItemsScreen.cakeProducts.map(
-        (item) => {...item, 'screen': const CakeItemsScreen()},
+        (item) => {
+          ...item,
+          'category': 'Cake',
+          'screen': CakeType1Screen(product: item),
+        },
       ),
       ...BrowniesItemsScreen.brownieProducts.map(
-        (item) => {...item, 'screen': const BrowniesItemsScreen()},
+        (item) => {
+          ...item,
+          'category': 'Brownies',
+          'screen': BrowniesType1Screen(product: item),
+        },
       ),
       ...CookiesItemsScreen.cookieProducts.map(
-        (item) => {...item, 'screen': const CookiesItemsScreen()},
+        (item) => {
+          ...item,
+          'category': 'Cookies',
+          'screen': CookiesType1Screen(product: item),
+        },
       ),
     ];
 
     merged.sort((a, b) {
-      final ratingCompare =
-          (b['rating'] as double).compareTo(a['rating'] as double);
+      final ratingCompare = (b['rating'] as double).compareTo(
+        a['rating'] as double,
+      );
       if (ratingCompare != 0) return ratingCompare;
       return (b['reviews'] as int).compareTo(a['reviews'] as int);
     });
 
-    return merged.take(6).toList();
+    final query = _searchQuery.trim().toLowerCase();
+    if (query.isEmpty) return merged.take(6).toList();
+    return merged
+        .where(
+          (item) =>
+              '${item['title']} ${item['description']} ${item['category']}'
+                  .toLowerCase()
+                  .contains(query),
+        )
+        .toList();
   }
 
   @override
@@ -100,6 +128,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   @override
   void dispose() {
     _offerTimer?.cancel();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -157,8 +186,10 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      spacing: 16,
+                      runSpacing: 12,
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,8 +230,11 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                                   color: Colors.white.withValues(alpha: 0.2),
                                 ),
                               ),
-                              child: Center(
-                                child: Text(
+                              child: IconButton(
+                                tooltip: 'Open profile',
+                                onPressed: () =>
+                                    Navigator.pushNamed(context, '/profile'),
+                                icon: Text(
                                   _userName.substring(0, 1).toUpperCase(),
                                   style: const TextStyle(
                                     color: Colors.white,
@@ -243,13 +277,23 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                           color: Colors.white.withValues(alpha: 0.2),
                         ),
                       ),
-                      child: const TextField(
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: (value) =>
+                            setState(() => _searchQuery = value),
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'Search cakes, brownies, cookies...',
                           hintStyle: TextStyle(color: Colors.white70),
                           prefixIcon: Icon(Icons.search, color: Colors.white),
-                          suffixIcon: Icon(Icons.tune, color: Colors.white),
+                          suffixIcon: IconButton(
+                            tooltip: 'Clear search',
+                            icon: const Icon(Icons.clear, color: Colors.white),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchQuery = '');
+                            },
+                          ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 16,
@@ -279,11 +323,15 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 28),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      spacing: 16,
+                      runSpacing: 12,
+                      children: [
                         Text(
-                          'Recommended For You...',
+                          _searchQuery.trim().isEmpty
+                              ? 'Recommended For You...'
+                              : 'Search results',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -300,22 +348,33 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    SizedBox(
-                      height: 230,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _recommendedItems.length,
-                        separatorBuilder: (context, index) =>
-                          const SizedBox(width: 12),
-                        itemBuilder: (context, index) {
-                          final product = _recommendedItems[index];
-                          return _buildProductCard(context, product);
-                        },
+                    if (_recommendedItems.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          'No items found. Try a different search.',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      )
+                    else
+                      SizedBox(
+                        height: 290,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _recommendedItems.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(width: 12),
+                          itemBuilder: (context, index) {
+                            final product = _recommendedItems[index];
+                            return _buildProductCard(context, product);
+                          },
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 28),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      spacing: 16,
+                      runSpacing: 12,
                       children: [
                         const Text(
                           'Shop Categories',
@@ -326,10 +385,8 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () => Navigator.pushNamed(
-                            context,
-                            '/categories',
-                          ),
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/categories'),
                           child: const Text(
                             'View All',
                             style: TextStyle(
@@ -345,10 +402,9 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                       spacing: 12,
                       runSpacing: 12,
                       children: categories
-                          .map((category) => _buildCategoryPill(
-                                context,
-                                category,
-                              ))
+                          .map(
+                            (category) => _buildCategoryPill(context, category),
+                          )
                           .toList(),
                     ),
                     const SizedBox(height: 14),
@@ -585,7 +641,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   Widget _buildProductCard(BuildContext context, Map<String, dynamic> product) {
     final Widget screen = product['screen'] as Widget;
     return Container(
-      width: 170,
+      width: 200,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         color: Colors.white.withValues(alpha: 0.1),
@@ -596,11 +652,27 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
-            child: Image.asset(
-              product['image'] as String,
-              height: 88,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            child: Stack(
+              children: [
+                Image.asset(
+                  product['image'] as String,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 2,
+                  right: 2,
+                  child: Material(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    shape: const CircleBorder(),
+                    child: FavoriteButton(
+                      name: product['title'] as String,
+                      image: product['image'] as String,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -693,9 +765,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
             }
           : () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${category['name']} coming soon!'),
-                ),
+                SnackBar(content: Text('${category['name']} coming soon!')),
               );
             },
       child: Container(
@@ -766,5 +836,3 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
     );
   }
 }
-
-
