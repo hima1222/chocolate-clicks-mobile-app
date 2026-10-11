@@ -15,11 +15,11 @@ import 'screens/favourites_screen.dart';
 import 'screens/upcoming_events_screen.dart';
 import 'screens/payment_info_screen.dart';
 import 'screens/mask_painting_workshop_screen.dart';
-import 'screens/tasting_luxe_screen.dart';
+// Future feature: import 'screens/tasting_luxe_screen.dart';
 import 'screens/bake_it_happen_screen.dart';
-import 'screens/backing_goods.dart';
-import 'screens/summer_cake_picnics_screen.dart';
-import 'screens/cake_dates_screen.dart';
+// Future feature: import 'screens/backing_goods.dart';
+// Future feature: import 'screens/summer_cake_picnics_screen.dart';
+// Future feature: import 'screens/cake_dates_screen.dart';
 import 'screens/cake_items_screen.dart';
 import 'screens/brownies_items_screen.dart';
 import 'screens/cookies_items_screen.dart';
@@ -66,11 +66,11 @@ class MyApp extends StatelessWidget {
         '/payment_info': (context) => const PaymentInfoScreen(),
         '/mask_painting_workshop': (context) =>
             const MaskPaintingWorkshopScreen(),
-        '/tasting_luxe': (context) => const TastingLuxeScreen(),
+        // Future feature: '/tasting_luxe': (context) => const TastingLuxeScreen(),
         '/bake_it_happen': (context) => const BakeItHappenScreen(),
-        '/baking_goods': (context) => const BakingGoodsScreen(),
-        '/summer_cake_picnics': (context) => const SummerCakePicnicsScreen(),
-        '/cake_dates': (context) => const CakeDatesScreen(),
+        // Future feature: '/baking_goods': (context) => const BakingGoodsScreen(),
+        // Future feature: '/summer_cake_picnics': (context) => const SummerCakePicnicsScreen(),
+        // Future feature: '/cake_dates': (context) => const CakeDatesScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/home': (context) => const HomeScreen(),
         '/cake': (context) => const CakeItemsScreen(),
