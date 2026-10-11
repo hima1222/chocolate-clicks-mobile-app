@@ -26,16 +26,21 @@ class Booking {
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) {
+    final event = json['eventId'] ?? json['event'];
+    final eventMap = event is Map<String, dynamic> ? event : <String, dynamic>{};
+    final rawEventId = event is String ? event : eventMap['_id'] ?? eventMap['id'];
+    final rawEventDate = eventMap['startDate'] ?? eventMap['date'];
+    final rawCreatedAt = json['createdAt'];
     return Booking(
-      id: json['_id'] ?? json['id'],
-      eventId: json['event']['_id'] ?? json['event']['id'],
-      eventTitle: json['event']['title'],
-      eventDate: DateTime.parse(json['event']['date']),
-      eventLocation: json['event']['location'],
-      eventPrice: (json['event']['price'] as num).toDouble(),
-      seats: json['seats'],
-      status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
+      id: (json['_id'] ?? json['id'])?.toString() ?? '',
+      eventId: rawEventId?.toString() ?? '',
+      eventTitle: eventMap['title']?.toString() ?? 'Untitled event',
+      eventDate: DateTime.tryParse(rawEventDate?.toString() ?? '') ?? DateTime.now(),
+      eventLocation: eventMap['location']?.toString() ?? '',
+      eventPrice: ((eventMap['price'] as num?) ?? 0).toDouble(),
+      seats: (json['seats'] as num?)?.toInt() ?? 1,
+      status: json['status']?.toString() ?? 'confirmed',
+      createdAt: DateTime.tryParse(rawCreatedAt?.toString() ?? '') ?? DateTime.now(),
     );
   }
 }
@@ -61,8 +66,6 @@ class BookingService {
 
       final response = await ApiClient().post('/bookings', body: {
         'eventId': eventId,
-        'seats': seats,
-        'notes': notes,
       }, headers: {
         'Authorization': 'Bearer $token',
       });
@@ -73,6 +76,7 @@ class BookingService {
         throw Exception(response['message'] ?? 'Failed to create booking');
       }
     } catch (e) {
+      if (e is ApiException) rethrow;
       throw Exception('Failed to create booking: $e');
     }
   }
@@ -86,7 +90,7 @@ class BookingService {
         throw Exception('Authentication required');
       }
 
-      final response = await ApiClient().get('/bookings', headers: {
+      final response = await ApiClient().get('/bookings/me', headers: {
         'Authorization': 'Bearer $token',
       });
 
@@ -99,6 +103,7 @@ class BookingService {
         throw Exception(response['message'] ?? 'Failed to fetch bookings');
       }
     } catch (e) {
+      if (e is ApiException) rethrow;
       throw Exception('Failed to fetch bookings: $e');
     }
   }

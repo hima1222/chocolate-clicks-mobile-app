@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { createError } = require('./errorMiddleware');
 
 const protect = async (req, res, next) => {
   let token;
@@ -19,22 +20,15 @@ const protect = async (req, res, next) => {
       req.user = await User.findById(decoded.id).select('-password');
 
       if (!req.user) {
-        return res.status(401).json({ success: false, message: 'User not found' });
+        return next(createError('User not found', 401));
       }
 
       next();
     } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: 'Not authorized, invalid token',
-        error: error.message,
-      });
+      return next(createError('Not authorized, invalid token', 401));
     }
   } else {
-    return res.status(401).json({
-      success: false,
-      message: 'Not authorized, token missing',
-    });
+    return next(createError('Not authorized, token missing', 401));
   }
 };
 
