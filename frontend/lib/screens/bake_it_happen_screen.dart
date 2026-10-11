@@ -9,11 +9,11 @@ class BakeItHappenScreen extends StatelessWidget {
   Widget build(BuildContext context) => EventDetailPage(
     title: 'Bake It Happen',
     subtitle: 'Mix, bake, and make something wonderful.',
-    image: 'assets/images/workshops_bg.jpg',
+    image: 'assets/images/bih1.jpg',
     gallery: [
-      'assets/images/workshops_collage2.jpg',
-      'assets/images/cake3.jpg',
-      'assets/images/cake8.jpg',
+      'assets/images/bih2.jpeg',
+      'assets/images/bih3.jpeg',
+      'assets/images/bih4.jpeg'
     ],
     description:
         'Turn your baking dreams into reality at Bake It Happen! Join our interactive baking workshop where you\'ll learn to create stunning chocolate desserts from scratch. Perfect for aspiring bakers and dessert lovers.',
