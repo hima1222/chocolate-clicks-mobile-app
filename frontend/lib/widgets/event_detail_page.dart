@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class EventDetailPage extends StatelessWidget {
   final String title, subtitle, image, description;
   final List<String> included, details, gallery;
+  final Widget? bottomAction;
 
   const EventDetailPage({
     super.key,
@@ -13,6 +14,7 @@ class EventDetailPage extends StatelessWidget {
     required this.included,
     this.details = const [],
     this.gallery = const [],
+    this.bottomAction,
   });
 
   @override
@@ -230,22 +232,24 @@ class EventDetailPage extends StatelessWidget {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
-          child: FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: gold,
-              foregroundColor: const Color(0xFF1C100C),
-              padding: const EdgeInsets.all(18),
-            ),
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Please contact the shop to reserve this experience.',
+          child:
+              bottomAction ??
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: gold,
+                  foregroundColor: const Color(0xFF1C100C),
+                  padding: const EdgeInsets.all(18),
                 ),
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Please contact the shop to reserve this experience.',
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.calendar_month_outlined),
+                label: const Text('Plan this experience'),
               ),
-            ),
-            icon: const Icon(Icons.calendar_month_outlined),
-            label: const Text('Plan this experience'),
-          ),
         ),
       ),
     );
