@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/events', eventRoutes);
 app.use('/api/bookings', bookingRoutes);
 

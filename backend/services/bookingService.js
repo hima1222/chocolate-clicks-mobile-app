@@ -11,6 +11,7 @@ const reserveEventSeat = (eventId) =>
   Event.findOneAndUpdate(
     {
       _id: eventId,
+      price: 0,
       startDate: { $gt: new Date() },
       $expr: { $lt: ['$bookedCount', '$capacity'] },
     },
@@ -19,6 +20,8 @@ const reserveEventSeat = (eventId) =>
   );
 
 const createBooking = async (userId, eventId) => {
+  const payableEvent = await Event.findById(eventId).select('price');
+  if (payableEvent && payableEvent.price > 0) throw serviceError('Payment required: create an event order first', 402);
   const event = await reserveEventSeat(eventId);
   if (!event) {
     const existingEvent = await Event.findById(eventId).select('_id startDate bookedCount capacity');
@@ -42,13 +45,14 @@ const createBooking = async (userId, eventId) => {
 };
 
 const cancelBooking = async (bookingId, userId) => {
-  const booking = await Booking.findById(bookingId).select('userId eventId status');
+  const booking = await Booking.findById(bookingId).select('userId eventId status seats orderId');
   if (!booking) {
     throw serviceError('Booking not found', 404);
   }
   if (booking.userId.toString() !== userId.toString()) {
     throw serviceError('You do not own this booking', 403);
   }
+  if (booking.orderId) throw serviceError('Paid bookings require support for cancellation and refund', 409);
   if (booking.status !== 'CONFIRMED') {
     throw serviceError('Booking is already cancelled', 400);
   }
@@ -89,13 +93,13 @@ const cancelBooking = async (bookingId, userId) => {
     throw error;
   }
 
-  await updatedBooking.populate('eventId', 'title startDate imageUrl');
+  await updatedBooking.populate('eventId', 'title startDate imageUrl location price');
   return updatedBooking;
 };
 
 const listUserBookings = (userId) =>
   Booking.find({ userId })
-    .populate('eventId', 'title startDate imageUrl')
+    .populate('eventId', 'title startDate imageUrl location price')
     .sort({ createdAt: -1 });
 
 module.exports = {

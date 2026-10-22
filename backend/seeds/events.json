@@ -1,0 +1,54 @@
+[
+  {
+    "slug": "bake-it-happen",
+    "title": "Bake It Happen",
+    "subtitle": "Mix, bake, and make something wonderful.",
+    "description": "Turn your baking dreams into reality at Bake It Happen! Join our interactive baking workshop where you'll learn to create stunning chocolate desserts from scratch. Perfect for aspiring bakers and dessert lovers.",
+    "imageUrl": "assets/images/bih1.jpg",
+    "cardImage": "assets/images/bake-it-happen-bg.png",
+    "gallery": [
+      "assets/images/bih2.jpeg",
+      "assets/images/bih3.jpeg",
+      "assets/images/bih4.jpeg"
+    ],
+    "included": [
+      "Professional baking equipment",
+      "Premium ingredients",
+      "Step-by-step instruction",
+      "Recipe booklet to take home",
+      "Finished baked goods to enjoy"
+    ],
+    "duration": "3 hours",
+    "schedule": "Every Sunday, 10:00 AM - 1:00 PM",
+    "location": "Chocolate Clicks",
+    "price": 3500,
+    "weekday": 0,
+    "hour": 10
+  },
+  {
+    "slug": "mask-painting-workshop",
+    "title": "Mask Painting Workshop",
+    "subtitle": "Colour your afternoon with a little creativity.",
+    "description": "Unleash your creativity in our Mask Painting Workshop! Join us for a fun-filled session where you'll learn to paint beautiful masks using chocolate-themed designs. Perfect for beginners and experienced artists alike.",
+    "imageUrl": "assets/images/workshops_bg.jpg",
+    "cardImage": "assets/images/mask_painting.jpg",
+    "gallery": [
+      "assets/images/workshops_collage1.jpg",
+      "assets/images/workshops_collage2.jpg",
+      "assets/images/workshops_collage3.jpg"
+    ],
+    "included": [
+      "Professional painting supplies",
+      "Chocolate-themed mask templates",
+      "Expert instructor guidance",
+      "Refreshments and snacks",
+      "Take-home finished mask"
+    ],
+    "duration": "2 hours",
+    "schedule": "Every Saturday, 2:00 PM - 4:00 PM",
+    "location": "Chocolate Clicks",
+    "price": 2500,
+    "weekday": 6,
+    "hour": 14
+  }
+]

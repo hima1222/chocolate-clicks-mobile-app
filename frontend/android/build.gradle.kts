@@ -2,6 +2,13 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
+        // Published Flutter SDK 3.2.3 still resolves its Android artifact on JitPack.
+        maven {
+            url = uri("https://jitpack.io")
+            content { includeGroup("com.github.PayHereDevs") }
+        }
+        maven { url = uri("https://repo.repsy.io/mvn/payhere/payhere-mobilesdk-android/") }
     }
 }
 
