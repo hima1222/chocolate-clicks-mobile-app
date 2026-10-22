@@ -1,17 +1,17 @@
 const dotenv = require('dotenv');
+dotenv.config();
 const connectDB = require('./config/db');
 const app = require('./app');
 
-dotenv.config();
-connectDB();
-
-//const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => {
-//   console.log(`Server listening on http://localhost:${PORT}`);
-// });
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
-});
+async function start() {
+  await connectDB();
+  // Unique indexes must exist before accepting payments.
+  await Promise.all([
+    require('./models/Order').init(), require('./models/Booking').init(),
+    require('./models/PaymentReceipt').init(),
+  ]);
+  require('./services/receiptService').startReceiptWorker();
+  const port = process.env.PORT || 3000;
+  app.listen(port, '0.0.0.0', () => console.log(`Server running on port ${port}`));
+}
+start().catch((error) => { console.error(error.message); process.exit(1); });

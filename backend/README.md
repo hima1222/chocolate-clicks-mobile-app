@@ -86,13 +86,6 @@ npm run dev
 ### Events
 - `GET /api/events`
 - `GET /api/events/:id`
-PS D:\Projects\Chocalate_Clicks\chocolate_clicks\backend> npm test
-
-> chocolate-clicks-backend@1.0.0 test
-> jest --runInBand
-
-Downloading MongoDB "6.0.14": 0.6% (2.9mb / 509.3mb)
- RUNS  tests/booking.test.js
 
 Event responses include `id`, `title`, `description`, `imageUrl`, `location`,
 `startDate`, `capacity`, `bookedCount`, `price`, and `remainingSeats`.
@@ -110,7 +103,7 @@ All booking routes require a JWT bearer token. `POST /api/bookings` accepts
 Confirmed bookings are unique per user and event. Cancellations are available
 only to the booking owner and only until 24 hours before the event.
 
-Seed five chocolate-themed future events with:
+Seed the two event-page workshops with:
 
 ```bash
 npm run seed:events
@@ -140,3 +133,12 @@ API errors use the consistent shape `{ "message": "..." }`.
 - `createOrder` expects item objects like:
   `[{ productId: '...', quantity: 2 }]`
  
+
+## Event page data
+
+Run `npm run seed:events` from backend to insert Bake It Happen and Mask Painting Workshop into the configured database. Reruns preserve existing records and bookings. Initial dates use the next Sunday at 10:00 and Saturday at 14:00 in Asia/Colombo. Capacity defaults to 20; set `EVENT_DEFAULT_CAPACITY` before the first seed to change it. Location defaults to Chocolate Clicks. Confirm these values before accepting bookings. Past sessions are excluded by the API; scheduling additional sessions is manual. The Flutter Events page loads cards and details from `GET /api/events`.
+
+## PayHere event payments
+
+See [PayHere setup](../PAYHERE_SETUP.md) for sandbox credentials, HTTPS callbacks, MongoDB transactions, Android configuration and receipt delivery.
+
