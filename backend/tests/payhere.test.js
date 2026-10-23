@@ -116,3 +116,20 @@ test('booking conflict rolls back payment status and receipt creation', async ()
   expect((await Order.findById(body.data._id)).payment_status).toBe('pending');
   expect(await Receipt.countDocuments()).toBe(0);
 });
+
+test('receipt status and resends enforce ownership and atomic cooldown', async () => {
+  const { body } = await create().expect(201);
+  const id = body.data._id;
+  await notify(notice(body.data)).expect(200);
+  process.env.SMTP_HOST = 'test';
+  await drainReceipts();
+  const status = await request(app).get(`/api/orders/${id}/confirmation`).set('Authorization', auth()).expect(200);
+  expect(status.body.data).toMatchObject({ paymentStatus: 'paid', emailStatus: 'sent' });
+  const other = await otherUser();
+  await request(app).post(`/api/orders/${id}/resend-confirmation`).set('Authorization', auth(other)).expect(404);
+  const results = await Promise.all([1, 2].map(() => request(app).post(`/api/orders/${id}/resend-confirmation`).set('Authorization', auth())));
+  expect(results.map(r => r.status).sort()).toEqual([202, 429]);
+  await drainReceipts();
+  await request(app).post(`/api/orders/${id}/resend-confirmation`).set('Authorization', auth()).expect(429);
+  expect(sendEmail).toHaveBeenCalledTimes(2);
+});
