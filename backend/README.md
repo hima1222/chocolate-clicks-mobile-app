@@ -142,3 +142,45 @@ Run `npm run seed:events` from backend to insert Bake It Happen and Mask Paintin
 
 See [PayHere setup](../PAYHERE_SETUP.md) for sandbox credentials, HTTPS callbacks, MongoDB transactions, Android configuration and receipt delivery.
 
+
+## SMTP email setup
+
+SMTP credentials belong only in `backend/.env`; Flutter uses authenticated APIs.
+Set `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_USER` to your Gmail address,
+`SMTP_PASSWORD` to a Google App Password (without spaces), and
+`MAIL_FROM="Chocolate Clicks <your-account@gmail.com>"`.
+Enable Google 2-Step Verification and create an App Password named Chocolate Clicks Backend.
+Port 587 requires STARTTLS; port 465 uses immediate TLS. The legacy SMTP_PASS name is also supported.
+Missing SMTP configuration fails account email requests instead of logging reset codes.
+
+From backend, run `npm run smtp:verify` to verify connectivity/authentication.
+Run `npm run smtp:verify -- --send` to send a test to SMTP_USER. Restart the backend after env changes.
+No delivery has been verified until these checks succeed and the message arrives.
+
+Verified PayHere payments atomically save the booking and one queued receipt.
+The worker checks every five seconds; SMTP failures never reverse payments.
+Failed sends require explicit resend because an interrupted SMTP exchange may already have delivered a message.
+A receipt left in `sending` after a crash requires operator reconciliation before changing it to failed.
+The `sent` status means the SMTP server accepted the message, not guaranteed inbox delivery.
+
+Authenticated owners can use `GET /api/orders/:id/confirmation` for separate payment/email status
+and `POST /api/orders/:id/resend-confirmation` to queue the saved receipt again.
+Resends use the stored recipient/template and an atomic five-minute cooldown per order;
+queued or sending receipts cannot be requested again. My Bookings displays these controls for paid bookings.
+Free-event bookings and unpaid shop orders do not generate payment receipts.
+
+### SMTP certificate errors on Windows
+
+If verification reports `unable to verify the first certificate` or `self-signed certificate`,
+TLS certificate validation failed before authentication. Check antivirus SMTP inspection
+and corporate network TLS proxies. If inspection is required, obtain the trusted root CA
+as a PEM file from your administrator and set it before starting Node in PowerShell:
+
+```powershell
+$env:NODE_EXTRA_CA_CERTS = 'C:\certificates\trusted-company-root.pem'
+npm run smtp:verify
+npm start
+```
+
+Set this in the launching shell or service environment, not backend/.env: Node loads extra
+CAs at process startup. Keep certificate verification enabled.

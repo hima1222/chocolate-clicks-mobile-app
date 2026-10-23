@@ -6,5 +6,6 @@ const receiptSchema = new mongoose.Schema({
   text: { type: String, required: true },
   status: { type: String, enum: ['queued', 'sending', 'sent', 'failed'], default: 'queued' },
   sentAt: Date,
+  resendRequestedAt: Date,
 }, { timestamps: true });
 module.exports = mongoose.model('PaymentReceipt', receiptSchema);

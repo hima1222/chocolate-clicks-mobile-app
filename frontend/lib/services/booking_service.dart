@@ -4,6 +4,7 @@ import 'package:chocolate_clicks/services/auth_service.dart';
 /// Booking model for frontend
 class Booking {
   final String id;
+  final String? orderId;
   final String eventId;
   final String eventTitle;
   final DateTime eventDate;
@@ -15,6 +16,7 @@ class Booking {
 
   Booking({
     required this.id,
+    this.orderId,
     required this.eventId,
     required this.eventTitle,
     required this.eventDate,
@@ -32,6 +34,7 @@ class Booking {
     final rawEventDate = eventMap['startDate'] ?? eventMap['date'];
     final rawCreatedAt = json['createdAt'];
     return Booking(
+      orderId: json['orderId']?.toString(),
       id: (json['_id'] ?? json['id'])?.toString() ?? '',
       eventId: rawEventId?.toString() ?? '',
       eventTitle: eventMap['title']?.toString() ?? 'Untitled event',

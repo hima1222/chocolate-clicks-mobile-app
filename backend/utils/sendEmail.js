@@ -1,25 +1,24 @@
 const nodemailer = require('nodemailer');
-
-const sendEmail = async ({ to, subject, text }) => {
-  // Dev fallback: no SMTP configured, so print to the terminal
-  if (!process.env.SMTP_HOST) {
-    console.log(`[DEV EMAIL] To: ${to}\nSubject: ${subject}\n${text}`);
-    return;
+let transporter;
+function getTransporter() {
+  if (transporter) return transporter;
+  const port = Number(process.env.SMTP_PORT || 587);
+  const password = process.env.SMTP_PASSWORD || process.env.SMTP_PASS;
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !password ||
+      !Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error('Configure SMTP_HOST, SMTP_PORT, SMTP_USER and SMTP_PASSWORD in backend/.env');
   }
-
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST, port, secure: port === 465, requireTLS: port !== 465,
+    auth: { user: process.env.SMTP_USER, pass: password },
+    connectionTimeout: 15000, greetingTimeout: 15000, socketTimeout: 30000,
   });
-
-  await transporter.sendMail({
-    from: process.env.MAIL_FROM || process.env.SMTP_USER,
-    to,
-    subject,
-    text,
+  return transporter;
+}
+async function sendEmail({ to, subject, text }) {
+  return getTransporter().sendMail({
+    from: process.env.MAIL_FROM || process.env.SMTP_USER, to, subject, text,
   });
-};
-
+}
+sendEmail.verify = () => getTransporter().verify();
 module.exports = sendEmail;

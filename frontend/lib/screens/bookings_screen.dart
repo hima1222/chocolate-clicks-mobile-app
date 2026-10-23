@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/booking_service.dart';
+import 'package:chocolate_clicks/widgets/confirmation_email_status.dart';
 
 class BookingsScreen extends StatefulWidget {
   const BookingsScreen({super.key});
@@ -161,6 +162,8 @@ class _BookingCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  if (booking.orderId != null)
+                    ConfirmationEmailStatus(orderId: booking.orderId!),
                 ],
               ),
             ),

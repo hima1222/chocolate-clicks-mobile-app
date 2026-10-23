@@ -1,5 +1,7 @@
 const express = require('express');
 const {
+  getConfirmation,
+  resendConfirmation,
   createOrder,
   getUserOrders,
   getOrderById,
@@ -13,6 +15,8 @@ router.use(protect);
 router.post('/', createOrder);
 router.get('/', getUserOrders);
 router.get('/:id', getOrderById);
+router.get('/:id/confirmation', getConfirmation);
+router.post('/:id/resend-confirmation', resendConfirmation);
 router.put('/:id/cancel', cancelOrder);
 
 module.exports = router;
