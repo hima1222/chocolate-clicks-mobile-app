@@ -4,6 +4,7 @@ class EventDetailPage extends StatelessWidget {
   final String title, subtitle, image, description;
   final List<String> included, details, gallery;
   final Widget? bottomAction;
+  final Widget? sessionDetails;
 
   const EventDetailPage({
     super.key,
@@ -15,6 +16,7 @@ class EventDetailPage extends StatelessWidget {
     this.details = const [],
     this.gallery = const [],
     this.bottomAction,
+    this.sessionDetails,
   });
 
   @override
@@ -208,6 +210,10 @@ class EventDetailPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
+                if (sessionDetails != null) ...[
+                  sessionDetails!,
+                  const SizedBox(height: 16),
+                ],
                 for (final detail in details)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),

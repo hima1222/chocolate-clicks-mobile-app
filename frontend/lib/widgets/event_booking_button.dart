@@ -6,9 +6,15 @@ import 'package:chocolate_clicks/services/events_service.dart';
 import 'package:chocolate_clicks/services/payment_service.dart';
 
 class EventBookingButton extends StatefulWidget {
-  const EventBookingButton({super.key, required this.eventTitle, this.eventId});
+  const EventBookingButton({
+    super.key,
+    required this.eventTitle,
+    this.eventId,
+    this.enabled = true,
+  });
   final String eventTitle;
   final String? eventId;
+  final bool enabled;
   @override
   State<EventBookingButton> createState() => _EventBookingButtonState();
 }
@@ -97,6 +103,7 @@ class _EventBookingButtonState extends State<EventBookingButton> {
   }
 
   Future<void> _book({bool retry = false}) async {
+    if (!widget.enabled && _orderId == null) return;
     if (!AuthService().isAuthenticated) {
       _showMessage('Please log in to book this event.');
       return;
@@ -134,6 +141,7 @@ class _EventBookingButtonState extends State<EventBookingButton> {
       final events = await EventsService().fetchUpcomingEvents();
       EventModel? event;
       for (final candidate in events) {
+        if (!candidate.date.isAfter(DateTime.now())) continue;
         if (widget.eventId != null
             ? candidate.id == widget.eventId
             : candidate.title.toLowerCase() ==
@@ -144,6 +152,9 @@ class _EventBookingButtonState extends State<EventBookingButton> {
       }
       if (event == null) {
         throw Exception('This event is not currently scheduled.');
+      }
+      if (event.capacity > 0 && event.remainingSeats <= 0) {
+        throw Exception('This session is fully booked.');
       }
       if (event.price <= 0) {
         await BookingService().createBooking(eventId: event.id, seats: 1);
@@ -184,7 +195,9 @@ class _EventBookingButtonState extends State<EventBookingButton> {
     mainAxisSize: MainAxisSize.min,
     children: [
       ElevatedButton(
-        onPressed: _booking || _paid ? null : () => _book(),
+        onPressed: _booking || _paid || (!widget.enabled && _orderId == null)
+            ? null
+            : () => _book(),
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color.fromARGB(255, 245, 157, 74),
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
