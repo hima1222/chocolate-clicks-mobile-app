@@ -56,7 +56,7 @@ async function createEventOrder(req, res, next) {
     } finally { await session.endSession(); }
     res.set('Cache-Control', 'no-store');
     res.status(201).json({ success: true, reused, data: order,
-      checkout: order.payment_status === 'paid' ? null : payhere.checkout(order) });
+      checkout: order.payment_status === 'paid' ? null : payhere.checkout(order, req.body.platform) });
   } catch (error) {
     if (error.code === 11000) return next(createError('An order already exists; retry to retrieve it', 409));
     next(error);
@@ -69,11 +69,17 @@ async function notify(req, res, next) {
     payhere.verifyNotification(req.body);
     const b = req.body;
     if (!mongoose.isValidObjectId(b.order_id)) throw createError('Invalid order ID', 400);
+    const paymentOrder = await Order.findById(b.order_id);
+    if (!paymentOrder || !paymentOrder.amount) throw createError('Order not found', 404);
+    if (!paymentOrder.eventId) {
+      await require('../services/productPaymentService').confirmProductPayment(paymentOrder, b);
+      return res.status(200).send('OK');
+    }
     const session = await mongoose.startSession();
     try {
       await session.withTransaction(async () => {
         const order = await Order.findById(b.order_id).session(session);
-        if (!order || !order.eventId) throw createError('Order not found', 404);
+        if (!order || !order.amount) throw createError('Order not found', 404);
         if (b.payhere_amount !== order.amount || b.payhere_currency !== order.currency) {
           throw createError('Payment amount or currency does not match order', 400);
         }
@@ -85,14 +91,14 @@ async function notify(req, res, next) {
           return;
         }
         if (b.status_code === '2') {
-          await Booking.create([{ userId: order.user, eventId: order.eventId,
+          if (order.eventId) await Booking.create([{ userId: order.user, eventId: order.eventId,
             orderId: order._id, seats: order.quantity }], { session });
           order.payment_status = 'paid';
           order.payhere_payment_id = b.payment_id;
           order.status = 'confirmed';
           await PaymentReceipt.create([{ orderId: order._id, to: order.customer.email,
-            subject: 'Chocolate Clicks booking confirmation',
-            text: `Your booking for ${order.eventTitle} is confirmed.\nSeats: ${order.quantity}\nAmount: ${order.currency} ${order.amount}\nOrder: ${order.id}`,
+            subject: order.eventId ? 'Chocolate Clicks booking confirmation' : 'Chocolate Clicks order confirmation',
+            text: order.eventId ? `Your booking for ${order.eventTitle} is confirmed.\nSeats: ${order.quantity}\nAmount: ${order.currency} ${order.amount}\nOrder: ${order.id}` : `Your order is confirmed.\n${order.items.map((item) => `${item.name} x ${item.quantity}`).join('\n')}\nAmount: ${order.currency} ${order.amount}\nOrder: ${order.id}\nDelivery to: ${order.deliveryAddress}`,
           }], { session });
         } else if (order.payment_status === 'pending' || b.status_code !== '0') {
           order.payment_status = ({ '0': 'pending', '-1': 'cancelled', '-2': 'failed', '-3': 'chargedback' })[b.status_code];
@@ -103,4 +109,4 @@ async function notify(req, res, next) {
     res.status(200).send('OK');
   } catch (error) { next(error); }
 }
-module.exports = { createEventOrder, notify };
+module.exports = { createEventOrder, notify, customerFor };

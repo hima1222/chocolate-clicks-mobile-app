@@ -1,5 +1,7 @@
 const { md5, verifyNotification, config } = require('../services/payhereService');
 beforeEach(() => {
+  delete process.env.PAYHERE_WEB_MERCHANT_SECRET;
+  delete process.env.PUBLIC_API_URL;
   process.env.PAYHERE_MERCHANT_ID = '12345';
   process.env.PAYHERE_MERCHANT_SECRET = 'registered-app-secret';
   process.env.PAYHERE_NOTIFY_URL = 'https://example.com/api/payments/payhere/notify';
@@ -34,4 +36,30 @@ test('requires sandbox or live mode, credentials and a public HTTPS callback', (
   for (const url of ['http://example.com/notify', 'https://localhost/notify', 'invalid']) {
     process.env.PAYHERE_NOTIFY_URL = url; expect(() => config()).toThrow('configured');
   }
+});
+
+test('web checkout signs the exact payment amount without disclosing the merchant secret', () => {
+  const { checkout } = require('../services/payhereService');
+  const order = { id: 'order-123', amount: '2500.50', currency: 'LKR', eventTitle: 'Workshop',
+    toObject: () => ({ customer: { first_name: 'Test' } }) };
+  const web = checkout(order, 'web');
+  expect(web.merchant_secret).toBeUndefined();
+  expect(web.hash).toBe(md5('12345order-1232500.50LKR' + md5('registered-app-secret')));
+  expect(web.first_name).toBe('Test');
+  expect(checkout(order).merchant_secret).toBe('registered-app-secret');
+});
+
+test('accepts web notifications signed with the registered domain secret', () => {
+  process.env.PAYHERE_WEB_MERCHANT_SECRET = 'registered-domain-secret';
+  const body = valid();
+  body.md5sig = md5(body.merchant_id + body.order_id + body.payhere_amount +
+    body.payhere_currency + body.status_code + md5('registered-domain-secret'));
+  expect(() => verifyNotification(body)).not.toThrow();
+});
+
+test('derives the callback from a public API base and reports a missing callback clearly', () => {
+  delete process.env.PAYHERE_NOTIFY_URL;
+  expect(() => config()).toThrow('PAYHERE_NOTIFY_URL');
+  process.env.PUBLIC_API_URL = 'https://api.example.com/api/';
+  expect(config().notifyUrl).toBe('https://api.example.com/api/payments/payhere/notify');
 });

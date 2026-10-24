@@ -133,3 +133,28 @@ test('receipt status and resends enforce ownership and atomic cooldown', async (
   await request(app).post(`/api/orders/${id}/resend-confirmation`).set('Authorization', auth()).expect(429);
   expect(sendEmail).toHaveBeenCalledTimes(2);
 });
+
+test('product payments use catalog totals, reuse checkout and confirm once without event bookings', async () => {
+  const Product = require('../models/Product');
+  const product = await Product.create({ name: 'Chocolate cake', description: 'Cake', price: 1250.25, categoryId: 'Cakes', imageUrl: 'cake.jpg' });
+  try {
+    const payload = { items: [{ productId: product.id, quantity: 2 }], billing,
+      expectedTotal: 3050.55, checkoutKey: 'product-checkout-123456', platform: 'web' };
+    const createProduct = () => request(app).post('/api/orders').set('Authorization', auth()).send(payload);
+    const first = await createProduct().expect(201);
+    expect(first.body.checkout.merchant_secret).toBeUndefined();
+    expect(first.body.checkout.hash).toBeDefined();
+    expect(first.body.data.amount).toBe('3050.55');
+    const second = await createProduct().expect(200);
+    expect(second.body.data._id).toBe(first.body.data._id);
+    const other = await otherUser();
+    await request(app).post(`/api/orders/${first.body.data._id}/checkout`).set('Authorization', auth(other)).send({ platform: 'web' }).expect(404);
+    await notify(notice(first.body.data, { payhere_amount: '0.01' })).expect(400);
+    await Promise.all([notify(notice(first.body.data)).expect(200), notify(notice(first.body.data)).expect(200)]);
+    expect((await Order.findById(first.body.data._id)).status).toBe('confirmed');
+    expect(await Booking.countDocuments()).toBe(0);
+    expect(await Receipt.countDocuments()).toBe(1);
+    const paid = await request(app).post(`/api/orders/${first.body.data._id}/checkout`).set('Authorization', auth()).send({ platform: 'web' }).expect(200);
+    expect(paid.body.checkout).toBeNull();
+  } finally { await Product.deleteMany({}); }
+});

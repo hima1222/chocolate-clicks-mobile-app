@@ -123,7 +123,19 @@ class ProductCard extends StatelessWidget {
                             height: 32,
                             child: ElevatedButton(
                               onPressed: () {
-                                PaymentManager.initiatePayment(context, price);
+                                PaymentManager.initiatePayment(
+                                  context,
+                                  price,
+                                  items: [
+                                    CartItem(
+                                      id: imageAsset,
+                                      name: title,
+                                      price: price,
+                                      quantity: 1,
+                                      imageUrl: imageAsset,
+                                    ),
+                                  ],
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,

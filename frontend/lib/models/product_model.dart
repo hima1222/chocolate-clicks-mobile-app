@@ -23,7 +23,7 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      id: json['id'] as String,
+      id: (json['_id'] ?? json['id']).toString(),
       name: json['name'] as String,
       imageUrl: json['imageUrl'] as String?,
       description: json['description'] as String?,
@@ -71,7 +71,7 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'] as String,
+      id: (json['_id'] ?? json['id']).toString(),
       name: json['name'] as String,
       description: json['description'] as String? ?? '',
       price: (json['price'] as num).toDouble(),

@@ -23,6 +23,7 @@ class _CartScreenState extends State<CartScreen> {
 
   Future<void> _load() async {
     final items = await _cart.fetchCartItems();
+    if (!mounted) return;
     setState(() {
       _items = items;
       _loading = false;
@@ -133,13 +134,19 @@ class _CartScreenState extends State<CartScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // directly pay total
+                        onPressed: () async {
+                          // Review the selected cart before checkout.
                           final total = _items.fold<double>(
                             0,
                             (sum, i) => sum + i.totalPrice,
                           );
-                          PaymentManager.initiatePayment(context, total);
+                          await PaymentManager.initiatePayment(
+                            context,
+                            total,
+                            items: _items,
+                            fromCart: true,
+                          );
+                          if (mounted) _load();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(

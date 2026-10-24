@@ -2,9 +2,11 @@ const PaymentReceipt = require('../models/PaymentReceipt');
 const sendEmail = require('../utils/sendEmail');
 let running = false;
 async function drainReceipts() {
-  if (running || !process.env.SMTP_HOST) return;
+  if (running) return;
   running = true;
   try {
+    await require('./productPaymentService').repairProductReceipts();
+    if (!process.env.SMTP_HOST) return;
     let receipt;
     while ((receipt = await PaymentReceipt.findOneAndUpdate(
       { status: 'queued' }, { $set: { status: 'sending' } }, { new: true }
