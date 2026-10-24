@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/event_detail_page.dart';
-import '../widgets/event_booking_button.dart';
+import '../widgets/scheduled_event_page.dart';
 
 class MaskPaintingWorkshopScreen extends StatelessWidget {
   const MaskPaintingWorkshopScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => EventDetailPage(
+  Widget build(BuildContext context) => ScheduledEventPage(
     title: 'Mask Painting Workshop',
     subtitle: 'Colour your afternoon with a little creativity.',
     image: 'assets/images/workshops_bg.jpg',
@@ -24,13 +23,5 @@ class MaskPaintingWorkshopScreen extends StatelessWidget {
       'Refreshments and snacks',
       'Take-home finished mask',
     ],
-    details: [
-      'Duration: 2 hours',
-      'Price: Rs. 2,500 per person',
-      'Date: Every Saturday, 2:00 PM - 4:00 PM',
-    ],
-    bottomAction: const EventBookingButton(
-      eventTitle: 'Mask Painting Workshop',
-    ),
   );
 }

@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import '../widgets/favorite_button.dart';
 import 'package:chocolate_clicks/services/cart_service.dart';
@@ -64,7 +65,7 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                         ],
                       ),
                     ),
-                    Image.asset(
+                    AppImage.asset(
                       productImage,
                       width: double.infinity,
                       height: 350,
@@ -289,3 +290,4 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
     );
   }
 }
+

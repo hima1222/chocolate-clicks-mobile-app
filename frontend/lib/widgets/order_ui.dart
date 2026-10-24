@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import '../models/order_pricing.dart';
 import '../models/cart_item.dart';
@@ -152,7 +153,7 @@ class OrderItemTile extends StatelessWidget {
             fit: BoxFit.cover,
             errorBuilder: (_, error, stack) => fallback,
           )
-        : Image.asset(
+        : AppImage.asset(
             item.imageUrl,
             fit: BoxFit.cover,
             errorBuilder: (_, error, stack) => fallback,
@@ -250,3 +251,4 @@ class OrderPriceBreakdown extends StatelessWidget {
     ],
   );
 }
+

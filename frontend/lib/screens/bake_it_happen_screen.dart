@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import '../widgets/event_detail_page.dart';
-import '../widgets/event_booking_button.dart';
+import '../widgets/scheduled_event_page.dart';
 
 class BakeItHappenScreen extends StatelessWidget {
   const BakeItHappenScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => EventDetailPage(
+  Widget build(BuildContext context) => ScheduledEventPage(
     title: 'Bake It Happen',
     subtitle: 'Mix, bake, and make something wonderful.',
     image: 'assets/images/bih1.jpg',
     gallery: [
       'assets/images/bih2.jpeg',
       'assets/images/bih3.jpeg',
-      'assets/images/bih4.jpeg'
+      'assets/images/bih4.jpeg',
     ],
     description:
         'Turn your baking dreams into reality at Bake It Happen! Join our interactive baking workshop where you\'ll learn to create stunning chocolate desserts from scratch. Perfect for aspiring bakers and dessert lovers.',
@@ -24,11 +23,5 @@ class BakeItHappenScreen extends StatelessWidget {
       'Recipe booklet to take home',
       'Finished baked goods to enjoy',
     ],
-    details: [
-      'Duration: 3 hours',
-      'Price: Rs. 3,500 per person',
-      'Date: Every Sunday, 10:00 AM - 1:00 PM',
-    ],
-    bottomAction: const EventBookingButton(eventTitle: 'Bake It Happen'),
   );
 }

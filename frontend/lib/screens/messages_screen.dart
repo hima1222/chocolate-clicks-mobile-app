@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 
@@ -39,7 +40,7 @@ class MessagesScreen extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
+            child: AppImage.asset(
               'assets/images/cafe_background.jpeg',
               fit: BoxFit.cover,
             ),
@@ -180,3 +181,4 @@ class MessagesScreen extends StatelessWidget {
     );
   }
 }
+

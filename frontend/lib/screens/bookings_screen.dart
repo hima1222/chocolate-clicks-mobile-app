@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/booking_service.dart';
 import 'package:chocolate_clicks/widgets/confirmation_email_status.dart';
@@ -38,7 +39,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
         children: [
           // Background image
           Positioned.fill(
-            child: Image.asset(
+            child: AppImage.asset(
               _backgroundImage,
               fit: BoxFit.cover,
               alignment: Alignment.center,

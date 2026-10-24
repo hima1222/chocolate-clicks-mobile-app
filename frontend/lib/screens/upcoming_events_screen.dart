@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/widgets/event_booking_button.dart';
 import 'package:chocolate_clicks/models/event_model.dart';
@@ -117,7 +118,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
           Positioned.fill(
             child: Opacity(
               opacity: _bgImageOpacity,
-              child: Image.asset(
+              child: AppImage.asset(
                 _bgImage,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => const SizedBox.shrink(),
@@ -508,3 +509,4 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
 
   String _formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';
 }
+

@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 // lib/widgets/image_card.dart
 import 'package:flutter/material.dart';
 import 'favorite_button.dart';
@@ -53,7 +54,7 @@ class ProductCard extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    Image.asset(
+                    AppImage.asset(
                       imageAsset,
                       height: 120,
                       width: double.infinity,
@@ -200,3 +201,4 @@ class ProductCard extends StatelessWidget {
     );
   }
 }
+

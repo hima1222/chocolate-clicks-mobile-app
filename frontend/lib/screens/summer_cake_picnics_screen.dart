@@ -9,9 +9,9 @@ class SummerCakePicnicsScreen extends StatelessWidget {
   Widget build(BuildContext context) => EventDetailPage(
     title: 'Summer Cake Picnics',
     subtitle: 'Fresh air, good company, and a basket of sweetness.',
-    image: 'assets/images/c5.jpg',
+    image: 'assets/images/c5.jpeg',
     gallery: [
-      'assets/images/c4.jpg',
+      'assets/images/c4.jpeg',
       'assets/images/cp3.jpg',
       'assets/images/cp4.jpg',
     ],
@@ -33,3 +33,4 @@ class SummerCakePicnicsScreen extends StatelessWidget {
     bottomAction: const EventBookingButton(eventTitle: 'Summer Cake Picnics'),
   );
 }
+

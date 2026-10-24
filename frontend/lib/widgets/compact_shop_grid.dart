@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'shop_page.dart';
 
@@ -46,7 +47,7 @@ class CompactShopCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.asset(image, height: 110, fit: BoxFit.cover),
+            AppImage.asset(image, height: 110, fit: BoxFit.cover),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
@@ -109,3 +110,4 @@ class CompactShopCard extends StatelessWidget {
     );
   }
 }
+

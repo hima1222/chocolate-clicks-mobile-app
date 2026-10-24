@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 // lib/screens/workshops.dart  (Second page - "Workshops")
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class WorkshopsScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset(
+          AppImage.asset(
             'assets/images/workshops_bg.jpg',
             width: double.infinity,
             height: double.infinity,
@@ -45,7 +46,7 @@ class WorkshopsScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
+                    child: AppImage.asset(
                       collageImages[index],
                       fit: BoxFit.cover,
                     ),
@@ -165,3 +166,4 @@ class WorkshopsScreen extends StatelessWidget {
     );
   }
 }
+
