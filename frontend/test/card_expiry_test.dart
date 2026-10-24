@@ -54,7 +54,10 @@ void main() {
     expect(field.validator!('1234'), isNotNull);
 
     final checkbox = find.byType(Checkbox);
-    await tester.ensureVisible(checkbox);
+    tester.testTextInput.hide();
+    await tester.pump();
+    await tester.drag(find.byType(ListView).first, const Offset(0, -1200));
+    await tester.pumpAndSettle();
     expect(tester.widget<Checkbox>(checkbox).value, isTrue);
     await tester.tap(checkbox);
     await tester.pump();
