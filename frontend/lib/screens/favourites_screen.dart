@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import '../widgets/shop_page.dart';
 import '../services/favorites_service.dart';
@@ -135,7 +136,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                         width: 88,
                         height: 100,
                         child: item.imageUrl.startsWith('assets/')
-                            ? Image.asset(
+                            ? AppImage.asset(
                                 item.imageUrl,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, _, _) => _imageFallback(),
@@ -199,3 +200,4 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
     child: Icon(Icons.cake_outlined, color: shopGold, size: 36),
   );
 }
+

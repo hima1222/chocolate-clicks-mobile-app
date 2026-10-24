@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/cart_service.dart';
 import 'package:chocolate_clicks/models/cart_item.dart';
@@ -91,7 +92,7 @@ class _CartScreenState extends State<CartScreen> {
                                 color: Colors.white.withOpacity(0.9),
                                 margin: const EdgeInsets.symmetric(vertical: 8),
                                 child: ListTile(
-                                  leading: Image.asset(
+                                  leading: AppImage.asset(
                                     item.imageUrl,
                                     width: 50,
                                     fit: BoxFit.cover,
@@ -169,3 +170,4 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 }
+

@@ -184,3 +184,17 @@ npm start
 
 Set this in the launching shell or service environment, not backend/.env: Node loads extra
 CAs at process startup. Keep certificate verification enabled.
+
+### Cloudinary images
+
+Backend-only credentials in `.env`:
+```
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+```
+Run `npm run images:migrate` from `backend` to upload bundled JPEG/PNG/WebP/GIF images, generate the public URL map used by Flutter, and replace local event/product database image references (including event card images and galleries). The script preserves every local file, all seed source data, booking counts, prices and dates. It checkpoints uploads in `config/cloudinary-images.json`; reruns skip unchanged files. Rebuild/restart Flutter after migration. Background decorations remain bundled for immediate rendering; the same images are also uploaded.
+
+Future web/mobile uploads: `POST /api/uploads`, authenticated with the existing `Authorization: Bearer <token>`, using multipart field `image`. Maximum 10 MB; JPEG, PNG, WebP and GIF only. Returns `{success: true, data: {imageUrl, publicId, width, height}}`. Save `imageUrl` in the product/event record. The shared Flutter `ImageUploadService.upload(bytes: ..., filename: ..., mimeType: ...)` handles this request without platform-specific file APIs or exposing Cloudinary secrets. No event/product creation or image-picker UI existed in this client; this service is the integration point for those future forms.
+
+All widget images accept cloud URLs and bundled asset paths through `AppImage.asset`. Migrated bundled images fall back to the original file if network loading fails. Credentials never enter the generated public URL map. Uploads use the Cloudinary Node SDK: https://cloudinary.com/documentation/node_image_and_video_upload

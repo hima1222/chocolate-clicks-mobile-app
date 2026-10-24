@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 
 class EventDetailPage extends StatelessWidget {
@@ -36,7 +37,7 @@ class EventDetailPage extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(image, fit: BoxFit.cover),
+                  AppImage.asset(image, fit: BoxFit.cover),
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -114,7 +115,7 @@ class EventDetailPage extends StatelessWidget {
                       separatorBuilder: (_, _) => const SizedBox(width: 12),
                       itemBuilder: (_, index) => ClipRRect(
                         borderRadius: BorderRadius.circular(18),
-                        child: Image.asset(
+                        child: AppImage.asset(
                           gallery[index],
                           width: 140,
                           fit: BoxFit.cover,
@@ -261,3 +262,4 @@ class EventDetailPage extends StatelessWidget {
     );
   }
 }
+

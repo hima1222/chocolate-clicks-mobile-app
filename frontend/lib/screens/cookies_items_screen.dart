@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 // lib/screens/cookies_items_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/image_card.dart';
@@ -79,7 +80,7 @@ class CookiesItemsScreen extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
+            child: AppImage.asset(
               'assets/images/cookies_type1.jpg',
               fit: BoxFit.cover,
             ),
@@ -193,3 +194,4 @@ class CookiesItemsScreen extends StatelessWidget {
     );
   }
 }
+

@@ -19,7 +19,7 @@ async function seedEvents() {
   for (const { weekday, hour, ...data } of events) {
     // Insert only: reruns preserve dates, edits, bookings and seat counts.
     await Event.updateOne({ title: data.title }, { $setOnInsert: {
-      ...data, startDate: nextSession(weekday, hour), capacity, bookedCount: 0,
+      ...require('../utils/resolveImages')(data), startDate: nextSession(weekday, hour), capacity, bookedCount: 0,
     } }, { upsert: true, runValidators: true });
   }
   return Event.find({ title: { $in: events.map(e => e.title) } }).sort({ startDate: 1 });
@@ -41,3 +41,4 @@ if (require.main === module) {
   })();
 }
 module.exports = { seedEvents, nextSession };
+

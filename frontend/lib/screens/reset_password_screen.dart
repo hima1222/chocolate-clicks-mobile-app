@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
@@ -109,7 +110,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           Positioned.fill(
             child: Opacity(
               opacity: 0.80,
-              child: Image.asset(
+              child: AppImage.asset(
                 _bgImage,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => const SizedBox.shrink(),
@@ -140,7 +141,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           ],
                         ),
                         child: ClipOval(
-                          child: Image.asset(
+                          child: AppImage.asset(
                             _logoImage,
                             height: 80,
                             width: 80,
