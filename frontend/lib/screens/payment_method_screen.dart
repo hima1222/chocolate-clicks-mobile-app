@@ -87,15 +87,15 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       value: 'bank',
                       onTap: () => setState(() => _selectedMethod = 'bank'),
                     ),
-                    const SizedBox(height: 15),
-                    // UPI Option
-                    _buildPaymentMethodCard(
-                      icon: Icons.qr_code_2,
-                      title: 'UPI Payment',
-                      description: 'UPI enabled apps',
-                      value: 'upi',
-                      onTap: () => setState(() => _selectedMethod = 'upi'),
-                    ),
+                    // const SizedBox(height: 15),
+                    // // UPI Option
+                    // _buildPaymentMethodCard(
+                    //   icon: Icons.qr_code_2,
+                    //   title: 'UPI Payment',
+                    //   description: 'UPI enabled apps',
+                    //   value: 'upi',
+                    //   onTap: () => setState(() => _selectedMethod = 'upi'),
+                    // ),
                     const SizedBox(height: 50),
                     // Continue Button
                     SizedBox(
