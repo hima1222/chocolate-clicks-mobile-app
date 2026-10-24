@@ -11,43 +11,36 @@ class OrderService {
 
   final List<Order> _orders = [];
 
-  /// Place a new order
-  Future<Order> placeOrder({
-    required String userId,
-    required List<CartItem> items,
-    required double totalAmount,
-    String? deliveryAddress,
-    String? notes,
-  }) async {
-    try {
-      final authService = AuthService();
-      final token = authService.authToken;
-      if (token == null) {
-        throw Exception('Authentication required');
+  Future<List<CartItem>> resolveCheckoutItems(List<CartItem> items) async {
+    final response = await ApiClient().get('/products');
+    final catalog = (response['data'] as List).cast<Map<String, dynamic>>();
+    return items.map((item) {
+      final byId = catalog
+          .where((p) => p['_id'].toString() == item.id)
+          .toList();
+      final matches = byId.isNotEmpty
+          ? byId
+          : catalog
+                .where(
+                  (p) =>
+                      p['name'].toString().trim().toLowerCase() ==
+                      item.name.trim().toLowerCase(),
+                )
+                .toList();
+      if (matches.length != 1) {
+        throw Exception(
+          '${item.name} is unavailable. Please contact the shop.',
+        );
       }
-
-      final orderItems = items.map((item) => {
-        'productId': item.id,
-        'quantity': item.quantity,
-      }).toList();
-
-      final response = await ApiClient().post('/orders', body: {
-        'items': orderItems,
-        'totalAmount': totalAmount,
-        'deliveryAddress': deliveryAddress,
-        'notes': notes,
-      }, headers: {
-        'Authorization': 'Bearer $token',
-      });
-
-      if (response['success'] == true) {
-        return Order.fromJson(response['data']);
-      } else {
-        throw Exception(response['message'] ?? 'Failed to place order');
-      }
-    } catch (e) {
-      throw Exception('Failed to place order: $e');
-    }
+      final product = matches.single;
+      return CartItem(
+        id: product['_id'].toString(),
+        name: product['name'].toString(),
+        price: (product['price'] as num).toDouble(),
+        quantity: item.quantity,
+        imageUrl: (product['imageUrl'] ?? item.imageUrl).toString(),
+      );
+    }).toList();
   }
 
   /// Fetch all orders for a user
@@ -59,9 +52,10 @@ class OrderService {
         throw Exception('Authentication required');
       }
 
-      final response = await ApiClient().get('/orders', headers: {
-        'Authorization': 'Bearer $token',
-      });
+      final response = await ApiClient().get(
+        '/orders',
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
       if (response['success'] == true) {
         final orders = (response['data'] as List)
@@ -85,9 +79,10 @@ class OrderService {
         throw Exception('Authentication required');
       }
 
-      final response = await ApiClient().get('/orders/$orderId', headers: {
-        'Authorization': 'Bearer $token',
-      });
+      final response = await ApiClient().get(
+        '/orders/$orderId',
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
       if (response['success'] == true) {
         return Order.fromJson(response['data']);
@@ -108,9 +103,11 @@ class OrderService {
         throw Exception('Authentication required');
       }
 
-      final response = await ApiClient().put('/orders/$orderId/cancel', body: {}, headers: {
-        'Authorization': 'Bearer $token',
-      });
+      final response = await ApiClient().put(
+        '/orders/$orderId/cancel',
+        body: {},
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
       if (response['success'] == true) {
         return true;

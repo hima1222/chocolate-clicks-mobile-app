@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/widgets/event_booking_button.dart';
 import 'package:chocolate_clicks/models/event_model.dart';
 import 'package:chocolate_clicks/services/api_client.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
@@ -6,7 +7,8 @@ import 'package:chocolate_clicks/services/booking_service.dart';
 import 'package:chocolate_clicks/services/events_service.dart';
 
 class UpcomingEventsScreen extends StatefulWidget {
-  const UpcomingEventsScreen({super.key});
+  const UpcomingEventsScreen({super.key, this.loadEvents});
+  final Future<List<EventModel>> Function()? loadEvents;
 
   @override
   State<UpcomingEventsScreen> createState() => _UpcomingEventsScreenState();
@@ -35,7 +37,6 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
   bool _loading = true;
   String? _error;
   int _selectedTab = 0;
-  String? _bookingEventId;
 
   @override
   void initState() {
@@ -51,7 +52,9 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
       });
     }
     try {
-      final events = await _eventsService.fetchUpcomingEvents();
+      final events =
+          await (widget.loadEvents?.call() ??
+              _eventsService.fetchUpcomingEvents());
       var bookings = <Booking>[];
       if (_authService.isAuthenticated) {
         bookings = await _bookingService.getUserBookings();
@@ -170,10 +173,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                       ),
                     )
                   else if (_selectedTab == 2)
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: _buildBookingsState(),
-                    )
+                    SliverToBoxAdapter(child: _buildBookingsState())
                   else if (_filteredEvents.isEmpty)
                     SliverFillRemaining(
                       hasScrollBody: false,
@@ -211,12 +211,14 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
           icon: const Icon(Icons.arrow_back, color: _cream),
         ),
         const SizedBox(width: 8),
-        const Text(
-          'Upcoming Events',
-          style: TextStyle(
-            color: _cream,
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
+        const Expanded(
+          child: Text(
+            'Upcoming Events',
+            style: TextStyle(
+              color: _cream,
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
@@ -360,7 +362,6 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
   Widget _buildEventCard(EventModel event) {
     final full = event.remainingSeats <= 0;
     final booked = _isBooked(event);
-    final booking = _bookingEventId == event.id;
     final buttonText = booked
         ? 'Booked'
         : full
@@ -374,7 +375,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
         border: Border.all(color: _cardBorder),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 74,
@@ -410,7 +411,10 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 8,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -426,7 +430,6 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                           style: const TextStyle(color: _caramel, fontSize: 12),
                         ),
                       ),
-                      const Spacer(),
                       Text(
                         'LKR ${event.price.toStringAsFixed(0)}',
                         style: const TextStyle(color: _textSoft, fontSize: 12),
@@ -469,27 +472,13 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: booking || full || booked
-                          ? null
-                          : () => _reserveEvent(event),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _cream,
-                        foregroundColor: _bg,
-                        disabledBackgroundColor: _cream.withValues(alpha: 0.35),
-                        disabledForegroundColor: _bg.withValues(alpha: 0.6),
-                      ),
-                      child: booking
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(buttonText),
-                    ),
-                  ),
+                  if (!full && !booked)
+                    EventBookingButton(
+                      eventTitle: event.title,
+                      eventId: event.id,
+                    )
+                  else
+                    Text(buttonText, style: const TextStyle(color: _cream)),
                 ],
               ),
             ),
@@ -497,37 +486,6 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> _reserveEvent(EventModel event) async {
-    if (!_authService.isAuthenticated) {
-      _showSnackBar('Please log in to reserve a spot.');
-      return;
-    }
-    setState(() => _bookingEventId = event.id);
-    try {
-      await _bookingService.createBooking(eventId: event.id, seats: 1);
-      if (!mounted) return;
-      _showSnackBar(
-        'Your booking is confirmed.',
-        action: SnackBarAction(
-          label: 'VIEW',
-          textColor: _caramel,
-          onPressed: () => Navigator.pushNamed(context, '/bookings'),
-        ),
-      );
-      await _load(showLoading: false);
-    } catch (error) {
-      if (mounted) _showSnackBar(_errorMessage(error));
-    } finally {
-      if (mounted) setState(() => _bookingEventId = null);
-    }
-  }
-
-  void _showSnackBar(String message, {SnackBarAction? action}) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message), action: action));
   }
 
   String _monthAbbreviation(int month) {

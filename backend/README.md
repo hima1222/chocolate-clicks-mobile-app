@@ -167,7 +167,7 @@ Authenticated owners can use `GET /api/orders/:id/confirmation` for separate pay
 and `POST /api/orders/:id/resend-confirmation` to queue the saved receipt again.
 Resends use the stored recipient/template and an atomic five-minute cooldown per order;
 queued or sending receipts cannot be requested again. My Bookings displays these controls for paid bookings.
-Free-event bookings and unpaid shop orders do not generate payment receipts.
+Free-event bookings and unpaid shop orders do not generate payment receipts. Verified product payments queue one order receipt. See PAYHERE_SETUP.md for checkout configuration and standalone MongoDB support.
 
 ### SMTP certificate errors on Windows
 

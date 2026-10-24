@@ -9,6 +9,7 @@ import 'screens/categories_screen.dart';
 import 'screens/events_screen.dart';
 import 'screens/bookings_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/orders_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/favourites_screen.dart';
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
         // Future feature: '/baking_goods': (context) => const BakingGoodsScreen(),
         // Future feature: '/summer_cake_picnics': (context) => const SummerCakePicnicsScreen(),
         // Future feature: '/cake_dates': (context) => const CakeDatesScreen(),
+        '/orders': (context) => const OrdersScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/home': (context) => const HomeScreen(),
         '/cake': (context) => const CakeItemsScreen(),

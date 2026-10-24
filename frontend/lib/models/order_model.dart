@@ -1,4 +1,5 @@
 import 'package:chocolate_clicks/models/cart_item.dart';
+import 'order_pricing.dart';
 
 /// Order status enum
 enum OrderStatus { pending, confirmed, preparing, ready, completed, cancelled }
@@ -33,6 +34,11 @@ class Order {
   final DateTime? completedAt;
   final String? deliveryAddress;
   final String? notes;
+  final String? eventTitle;
+  final String? paymentStatus;
+  final bool fromCart;
+  final String? checkoutKey;
+  final OrderPricing? pricing;
 
   Order({
     required this.id,
@@ -44,10 +50,16 @@ class Order {
     this.completedAt,
     this.deliveryAddress,
     this.notes,
+    this.eventTitle,
+    this.paymentStatus,
+    this.fromCart = false,
+    this.checkoutKey,
+    this.pricing,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      'pricing': pricing?.toJson(),
       'id': id,
       'userId': userId,
       'items': items.map((i) => i.toJson()).toList(),
@@ -62,9 +74,9 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
-      id: json['id'] as String,
-      userId: json['userId'] as String,
-      items: (json['items'] as List<dynamic>)
+      id: (json['_id'] ?? json['id']).toString(),
+      userId: (json['userId'] ?? json['user'] ?? '').toString(),
+      items: (json['items'] as List<dynamic>? ?? [])
           .map((i) => CartItem.fromJson(i as Map<String, dynamic>))
           .toList(),
       totalAmount: (json['totalAmount'] as num).toDouble(),
@@ -78,6 +90,13 @@ class Order {
           : null,
       deliveryAddress: json['deliveryAddress'] as String?,
       notes: json['notes'] as String?,
+      eventTitle: json['eventTitle'] as String?,
+      paymentStatus: json['payment_status'] as String?,
+      fromCart: json['fromCart'] == true,
+      checkoutKey: json['checkoutKey'] as String?,
+      pricing: json['pricing'] is Map
+          ? OrderPricing.fromJson(Map<String, dynamic>.from(json['pricing']))
+          : null,
     );
   }
 }

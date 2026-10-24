@@ -8,7 +8,10 @@
     "dev": "nodemon server.js",
     "test": "jest --runInBand",
     "seed:events": "node seeds/seedEvents.js",
-    "smtp:verify": "node scripts/verifySmtp.js"
+    "smtp:verify": "node scripts/verifySmtp.js",
+    "seed:products": "node seeds/seedProducts.js",
+    "payhere:check": "node scripts/checkPayhere.js",
+    "test:products:db": "node scripts/testProductPayments.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

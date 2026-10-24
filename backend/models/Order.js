@@ -23,6 +23,9 @@ const orderSchema = new mongoose.Schema(
     },
     eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
     eventTitle: String,
+    checkoutKey: String,
+    receiptQueued: { type: Boolean, default: false },
+    fromCart: { type: Boolean, default: false },
     quantity: { type: Number, min: 1 },
     amount: String,
     currency: { type: String, default: 'LKR' },
@@ -33,6 +36,8 @@ const orderSchema = new mongoose.Schema(
       address: String, city: String, country: String,
     },
     items: [orderItemSchema],
+    pricing: { type: new mongoose.Schema({ subtotal: Number, deliveryFee: Number, serviceCharge: Number,
+      taxAmount: Number, taxRate: Number, totalAmount: Number }, { _id: false }), default: undefined },
     totalAmount: { type: Number, required: true },
     status: {
       type: String,
@@ -47,6 +52,8 @@ const orderSchema = new mongoose.Schema(
 );
 
 orderSchema.index({ user: 1, eventId: 1 }, { unique: true, partialFilterExpression: { eventId: { $exists: true } } });
+orderSchema.index({ payment_status: 1, receiptQueued: 1 });
+orderSchema.index({ user: 1, checkoutKey: 1 }, { unique: true, partialFilterExpression: { checkoutKey: { $exists: true } } });
 orderSchema.index({ payhere_payment_id: 1 }, { unique: true, sparse: true });
 const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;
