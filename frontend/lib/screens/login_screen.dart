@@ -59,6 +59,34 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _googleSignIn() async {
+    setState(() => _loading = true);
+    try {
+      final resp = await _auth.loginWithGoogle();
+      if (!mounted) return;
+      if (resp.success) {
+        Navigator.pushReplacementNamed(context, '/welcome_profile');
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(resp.message)));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e is AuthException
+                ? e.message
+                : 'Unable to complete the request. Please try again.',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const ForgotPasswordScreen()
+                                  builder: (_) => const ForgotPasswordScreen(),
                                 ),
                               );
                             },
@@ -273,6 +301,45 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontFamily: 'Roboto',
                                   ),
                                 ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // Google Sign-In Button
+                        OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black87,
+                            side: BorderSide.none,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 6,
+                              horizontal: 16,
+                            ),
+                            minimumSize: const Size(0, 48),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: _loading ? null : _googleSignIn,
+                          icon: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: Image.asset(
+                                'assets/images/GL.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          label: const Text(
+                            "Continue with Google",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Roboto',
+                            ),
+                          ),
                         ),
                       ],
                     ),

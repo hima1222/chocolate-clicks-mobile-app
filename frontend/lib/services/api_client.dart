@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/storage_service.dart';
 
@@ -33,9 +34,14 @@ class ApiClient {
   factory ApiClient() => _instance;
   ApiClient._internal();
 
-  // static const String baseUrl = 'http://10.0.2.2:5000/api'; // Android emulator
-  static const String baseUrl =
-      'http://localhost:5000/api'; // Web/iOS simulator
+static String get baseUrl {
+  if (kIsWeb) return 'http://localhost:5000/api'; // browser
+  if (defaultTargetPlatform == TargetPlatform.android) {
+  return 'http://10.0.2.2:5000/api'; // Android emulator
+  }
+  return 'http://localhost:5000/api'; // iOS simulator / desktop
+}
+
   static const Duration timeout = Duration(seconds: 30);
 
   /// Generic GET request
