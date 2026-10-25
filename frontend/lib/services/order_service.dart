@@ -125,29 +125,20 @@ class OrderService {
   /// Update order status (admin only)
   Future<Order> updateOrderStatus(String orderId, OrderStatus status) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      // TODO: Replace with API call
+      final token = AuthService().authToken;
+      if (token == null) {
+        throw Exception('Authentication required');
+      }
 
-      final index = _orders.indexWhere((o) => o.id == orderId);
-      if (index == -1) throw Exception('Order not found');
-
-      final order = _orders[index];
-      final updated = Order(
-        id: order.id,
-        userId: order.userId,
-        items: order.items,
-        totalAmount: order.totalAmount,
-        status: status,
-        createdAt: order.createdAt,
-        completedAt: status == OrderStatus.completed
-            ? DateTime.now()
-            : order.completedAt,
-        deliveryAddress: order.deliveryAddress,
-        notes: order.notes,
+      final response = await ApiClient().put(
+        '/orders/$orderId/status',
+        body: {'status': status.name},
+        headers: {'Authorization': 'Bearer $token'},
       );
-
-      _orders[index] = updated;
-      return updated;
+      if (response['success'] != true) {
+        throw Exception(response['message'] ?? 'Failed to update order status');
+      }
+      return Order.fromJson(response['data']);
     } catch (e) {
       throw Exception('Failed to update order: $e');
     }

@@ -1,40 +1,111 @@
-import 'package:flutter/material.dart';
-import 'package:chocolate_clicks/services/auth_service.dart';
+import 'package:flutter/material.dart' hide Notification;
+import 'package:chocolate_clicks/services/notification_service.dart';
 
-class MessagesScreen extends StatelessWidget {
+class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
 
-  List<Map<String, String>> _personalMessages(String userName) {
-    return [
-      {
-        'title': 'Hi $userName, your favorites are back',
-        'message':
-            'Our signature Dark Fudge Brownie is available again. Tap categories to order quickly.',
-        'time': '1h ago',
-      },
-      {
-        'title': 'Order support reminder',
-        'message':
-            'Need help with customization? Our Chocolate Clicks team can assist you in minutes.',
-        'time': 'Today',
-      },
-      {
-        'title': 'Taste profile recommendation',
-        'message':
-            'Based on your recent picks, try the Salted Caramel Cake this week.',
-        'time': 'Yesterday',
-      },
-    ];
+  @override
+  State<MessagesScreen> createState() => _MessagesScreenState();
+}
+
+class _MessagesScreenState extends State<MessagesScreen> {
+  final NotificationService _service = NotificationService();
+  List<Notification> _messages = [];
+  bool _loading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+  }
+
+  Future<void> _loadMessages() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final messages = await _service.fetchNotifications();
+      if (!mounted) return;
+      setState(() => _messages = messages);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _error = error.toString());
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _markAllAsRead() async {
+    try {
+      await _service.markAllAsRead();
+      if (!mounted) return;
+      setState(() => _messages = _messages.map(_asRead).toList());
+    } catch (error) {
+      if (mounted) _showError(error);
+    }
+  }
+
+  Future<void> _markAsRead(Notification message) async {
+    if (message.isRead) return;
+    try {
+      await _service.markAsRead(message.id);
+      if (!mounted) return;
+      setState(() {
+        final index = _messages.indexWhere((item) => item.id == message.id);
+        if (index != -1) _messages[index] = _asRead(message);
+      });
+    } catch (error) {
+      if (mounted) _showError(error);
+    }
+  }
+
+  Notification _asRead(Notification message) {
+    return Notification(
+      id: message.id,
+      title: message.title,
+      message: message.message,
+      type: message.type,
+      createdAt: message.createdAt,
+      isRead: true,
+      actionUrl: message.actionUrl,
+    );
+  }
+
+  void _showError(Object error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error.toString())),
+    );
+  }
+
+  String _relativeTime(DateTime createdAt) {
+    final difference = DateTime.now().difference(createdAt.toLocal());
+    if (difference.inMinutes < 1) return 'Just now';
+    if (difference.inHours < 1) return '${difference.inMinutes}m ago';
+    if (difference.inDays < 1) return '${difference.inHours}h ago';
+    if (difference.inDays < 7) return '${difference.inDays}d ago';
+    return '${createdAt.day}/${createdAt.month}/${createdAt.year}';
+  }
+
+  IconData _iconForType(String type) {
+    switch (type) {
+      case 'event':
+        return Icons.event_available_outlined;
+      case 'product':
+        return Icons.cake_outlined;
+      case 'delivery':
+        return Icons.local_shipping_outlined;
+      case 'order':
+        return Icons.receipt_long_outlined;
+      default:
+        return Icons.notifications_none;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = AuthService().currentUser;
-    final userName = (user?.firstName.trim().isNotEmpty ?? false)
-        ? user!.firstName
-        : 'Guest';
-    final messages = _personalMessages(userName);
-
+    final unreadCount = _messages.where((message) => !message.isRead).length;
     return Scaffold(
       body: Stack(
         children: [
@@ -89,93 +160,171 @@ class MessagesScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (unreadCount > 0)
+                        TextButton(
+                          onPressed: _markAllAsRead,
+                          child: const Text(
+                            'Mark all read',
+                            style: TextStyle(color: Color(0xFFF8B84E)),
+                          ),
+                        ),
                     ],
                   ),
                 ),
                 Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(14, 12, 14, 20),
-                    itemCount: messages.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final item = messages[index];
-                      return Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.16),
+                  child: _loading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFFF8B84E),
                           ),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CircleAvatar(
-                              radius: 18,
-                              backgroundColor: const Color(0xFFF6E6D7),
-                              child: Text(
-                                'C',
-                                style: TextStyle(
-                                  color: Colors.brown.shade900,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          item['title']!,
-                                          style: const TextStyle(
-                                            color: Color(0xFFF6E6D7),
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w700,
+                        )
+                      : _error != null
+                          ? _buildErrorState()
+                          : RefreshIndicator(
+                              color: const Color(0xFFF8B84E),
+                              onRefresh: _loadMessages,
+                              child: _messages.isEmpty
+                                  ? ListView(
+                                      children: const [
+                                        SizedBox(height: 220),
+                                        Center(
+                                          child: Text(
+                                            'No messages yet',
+                                            style: TextStyle(
+                                              color: Color(0xFFF6E6D7),
+                                            ),
                                           ),
                                         ),
+                                      ],
+                                    )
+                                  : ListView.separated(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        6,
+                                        12,
+                                        6,
+                                        20,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        item['time']!,
-                                        style: TextStyle(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.78,
-                                          ),
-                                          fontSize: 11,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item['message']!,
-                                    style: TextStyle(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.9,
-                                      ),
-                                      fontSize: 13,
-                                      height: 1.35,
+                                      itemCount: _messages.length,
+                                      separatorBuilder: (_, __) =>
+                                          const SizedBox(height: 10),
+                                      itemBuilder: (context, index) =>
+                                          _buildMessageCard(_messages[index]),
                                     ),
-                                  ),
-                                ],
-                              ),
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Could not load messages',
+              style: TextStyle(
+                color: Color(0xFFF6E6D7),
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
+            ),
+            const SizedBox(height: 14),
+            FilledButton(
+              onPressed: _loadMessages,
+              child: const Text('Try again'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageCard(Notification message) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () => _markAsRead(message),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: message.isRead
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.white.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: message.isRead
+                ? Colors.white.withValues(alpha: 0.14)
+                : const Color(0xFFF8B84E).withValues(alpha: 0.55),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: const Color(0xFFF6E6D7),
+              child: Icon(
+                _iconForType(message.type),
+                color: Colors.brown.shade900,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          message.title,
+                          style: TextStyle(
+                            color: const Color(0xFFF6E6D7),
+                            fontSize: 15,
+                            fontWeight: message.isRead
+                                ? FontWeight.w600
+                                : FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _relativeTime(message.createdAt),
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.78),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    message.message,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 13,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const { notifyUser } = require('../services/notificationService');
 
 const createOrder = async (req, res, next) => {
   try {
@@ -30,6 +31,13 @@ const createOrder = async (req, res, next) => {
       totalAmount,
       deliveryAddress,
       notes,
+    });
+
+    await notifyUser(req.user._id, {
+      title: 'Order received',
+      message: `Your order ${order._id} has been received and is being processed.`,
+      type: 'order',
+      actionUrl: `/orders/${order._id}`,
     });
 
     res.status(201).json({ success: true, data: order });
@@ -70,6 +78,45 @@ const cancelOrder = async (req, res, next) => {
     }
     order.status = 'cancelled';
     await order.save();
+    await notifyUser(req.user._id, {
+      title: 'Order cancelled',
+      message: `Your order ${order._id} has been cancelled.`,
+      type: 'delivery',
+      actionUrl: `/orders/${order._id}`,
+    });
+    res.json({ success: true, data: order });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateOrderStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    const validStatuses = ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid order status' });
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+    if (order.status === status) {
+      return res.json({ success: true, data: order });
+    }
+
+    order.status = status;
+    if (status === 'completed') order.completedAt = new Date();
+    await order.save();
+
+    await notifyUser(order.user, {
+      title: 'Delivery status updated',
+      message: `Your order ${order._id} is now ${status}.`,
+      type: 'delivery',
+      actionUrl: `/orders/${order._id}`,
+    });
+
     res.json({ success: true, data: order });
   } catch (error) {
     next(error);
@@ -81,4 +128,5 @@ module.exports = {
   getUserOrders,
   getOrderById,
   cancelOrder,
+  updateOrderStatus,
 };

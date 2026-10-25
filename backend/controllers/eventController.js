@@ -4,6 +4,8 @@ const {
   listUpcomingEvents,
   findEventById,
 } = require('../services/eventService');
+const Event = require('../models/Event');
+const { notifyAllUsers } = require('../services/notificationService');
 
 const getEvents = async (req, res, next) => {
   try {
@@ -26,4 +28,19 @@ const getEventById = async (req, res, next) => {
   }
 };
 
-module.exports = { getEvents, getEventById };
+const createEvent = async (req, res, next) => {
+  try {
+    const event = await Event.create(req.body);
+    await notifyAllUsers({
+      title: 'New event announced',
+      message: `${event.title} is now open for bookings.`,
+      type: 'event',
+      actionUrl: `/events/${event._id}`,
+    });
+    res.status(201).json({ success: true, data: withAvailability(event) });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getEvents, getEventById, createEvent };

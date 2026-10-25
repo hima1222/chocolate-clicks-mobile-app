@@ -148,6 +148,42 @@ static String get baseUrl {
     }
   }
 
+  /// Generic PATCH request
+  Future<Map<String, dynamic>> patch(
+    String endpoint, {
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl$endpoint');
+      final response = await http
+          .patch(
+            url,
+            headers: {'Content-Type': 'application/json', ...?headers},
+            body: json.encode(body),
+          )
+          .timeout(timeout);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return json.decode(response.body);
+      }
+      throw ApiException(
+        message: errorMessage(
+          response.body,
+          'Unable to complete the request. Please try again.',
+        ),
+        statusCode: response.statusCode,
+        originalError: response.body,
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(
+        message: 'PATCH request failed: $endpoint',
+        originalError: e,
+      );
+    }
+  }
+
   /// Generic DELETE request
   Future<Map<String, dynamic>> delete(
     String endpoint, {

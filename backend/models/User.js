@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, required: isLocalAccount, unique: true, sparse: true },
     password: { type: String, required: isLocalAccount },
     googleId: { type: String, unique: true, sparse: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
     profileImageUrl: { type: String },
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
