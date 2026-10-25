@@ -2,6 +2,9 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
+const { OAuth2Client } = require('google-auth-library');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_WEB_CLIENT_ID);
 
 const hashCode = (code) =>
   crypto.createHash('sha256').update(String(code)).digest('hex');
@@ -68,6 +71,71 @@ const login = async (req, res, next) => {
     return res.json({
       success: true,
       message: 'Login successful',
+      data: {
+        user: user.toJSON(),
+        token: generateToken(user._id),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const googleLogin = async (req, res, next) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google idToken is required',
+      });
+    }
+
+    // Verify the token with Google (a failure here means a bad token, not a server error)
+    let payload;
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_WEB_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    } catch (err) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid Google token',
+      });
+    }
+
+    if (!payload.email_verified) {
+      return res.status(401).json({
+        success: false,
+        message: 'Google email is not verified',
+      });
+    }
+
+    const email = payload.email.toLowerCase();
+    let user = await User.findOne({ $or: [{ googleId: payload.sub }, { email }] });
+
+    if (!user) {
+      user = await User.create({
+        googleId: payload.sub,
+        email,
+        firstName: payload.given_name || payload.name || 'User',
+        lastName: payload.family_name || '',
+        profileImageUrl: payload.picture,
+        isEmailVerified: true,
+      });
+    } else if (!user.googleId) {
+      // existing email/password account: link it to Google
+      user.googleId = payload.sub;
+      user.isEmailVerified = true;
+      if (!user.profileImageUrl) user.profileImageUrl = payload.picture;
+      await user.save();
+    }
+
+    return res.json({
+      success: true,
+      message: 'Google login successful',
       data: {
         user: user.toJSON(),
         token: generateToken(user._id),
@@ -190,7 +258,7 @@ const resetPassword = async (req, res, next) => {
       return invalid();
     }
 
-    user.password = password;                              // User.js has a pre('save') bcrypt hook
+    user.password = password; // User.js has a pre('save') bcrypt hook
 
     user.resetCodeHash = undefined;
     user.resetCodeExpires = undefined;
@@ -206,6 +274,7 @@ const resetPassword = async (req, res, next) => {
 module.exports = {
   register,
   login,
+  googleLogin,
   getMe,
   updateProfile, 
   forgotPassword, 

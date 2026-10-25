@@ -247,16 +247,6 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                             const SizedBox(width: 8),
                             IconButton(
                               icon: const Icon(
-                                Icons.notifications_outlined,
-                                color: Colors.white,
-                                size: 26,
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/notifications');
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(
                                 Icons.shopping_bag_outlined,
                                 color: Colors.white,
                                 size: 26,
@@ -828,7 +818,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message_outlined),
+            icon: Icon(Icons.notifications_outlined),
             label: '',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),

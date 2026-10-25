@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/storage_service.dart';
 
@@ -33,11 +34,14 @@ class ApiClient {
   factory ApiClient() => _instance;
   ApiClient._internal();
 
-  // static const String baseUrl = 'http://10.0.2.2:5000/api'; // Android emulator
-  static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:5000/api',
-  );
+static String get baseUrl {
+  if (kIsWeb) return 'http://localhost:5000/api'; // browser
+  if (defaultTargetPlatform == TargetPlatform.android) {
+  return 'http://10.0.2.2:5000/api'; // Android emulator change this for you IP adress if needed 
+  }
+  return 'http://localhost:5000/api'; // iOS simulator / desktop
+}
+
   static const Duration timeout = Duration(seconds: 30);
 
   /// Generic GET request
@@ -139,6 +143,42 @@ class ApiClient {
       if (e is ApiException) rethrow;
       throw ApiException(
         message: 'PUT request failed: $endpoint',
+        originalError: e,
+      );
+    }
+  }
+
+  /// Generic PATCH request
+  Future<Map<String, dynamic>> patch(
+    String endpoint, {
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl$endpoint');
+      final response = await http
+          .patch(
+            url,
+            headers: {'Content-Type': 'application/json', ...?headers},
+            body: json.encode(body),
+          )
+          .timeout(timeout);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return json.decode(response.body);
+      }
+      throw ApiException(
+        message: errorMessage(
+          response.body,
+          'Unable to complete the request. Please try again.',
+        ),
+        statusCode: response.statusCode,
+        originalError: response.body,
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(
+        message: 'PATCH request failed: $endpoint',
         originalError: e,
       );
     }

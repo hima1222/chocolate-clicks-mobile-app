@@ -6,8 +6,10 @@ const {
   getUserOrders,
   getOrderById,
   cancelOrder,
+  updateOrderStatus,
 } = require('../controllers/orderController');
 const { protect } = require('../middleware/authMiddleware');
+const { adminOnly } = require('../middleware/adminMiddleware');
 
 const router = express.Router();
 
@@ -20,5 +22,6 @@ router.get('/:id', getOrderById);
 router.get('/:id/confirmation', getConfirmation);
 router.post('/:id/resend-confirmation', resendConfirmation);
 router.put('/:id/cancel', cancelOrder);
+router.put('/:id/status', adminOnly, updateOrderStatus);
 
 module.exports = router;
