@@ -35,8 +35,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   http: ^1.2.1
+  http_parser: ^4.0.2
   shared_preferences: ^2.2.3
   google_sign_in: ^7.2.0
+  payhere_mobilesdk_flutter: ^3.2.3
 
 dev_dependencies:
   flutter_test:
@@ -89,3 +91,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+

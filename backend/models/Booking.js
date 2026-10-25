@@ -12,6 +12,8 @@ const bookingSchema = new mongoose.Schema(
       ref: 'Event',
       required: true,
     },
+    orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
+    seats: { type: Number, default: 1, min: 1 },
     status: {
       type: String,
       enum: ['CONFIRMED', 'CANCELLED'],
@@ -26,6 +28,8 @@ bookingSchema.index(
   { userId: 1, eventId: 1 },
   { unique: true, partialFilterExpression: { status: 'CONFIRMED' } }
 );
+
+bookingSchema.index({ orderId: 1 }, { unique: true, sparse: true });
 
 const Booking = mongoose.model('Booking', bookingSchema);
 module.exports = Booking;

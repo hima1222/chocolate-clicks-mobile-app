@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 // lib/screens/cake_items_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/image_card.dart';
@@ -106,7 +107,7 @@ class CakeItemsScreen extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
+            child: AppImage.asset(
               'assets/images/cake_type1.jpg',
               fit: BoxFit.cover,
             ),
@@ -220,3 +221,4 @@ class CakeItemsScreen extends StatelessWidget {
     );
   }
 }
+

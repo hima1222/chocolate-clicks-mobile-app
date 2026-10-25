@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -36,7 +37,7 @@ class NotificationsScreen extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
+            child: AppImage.asset(
               'assets/images/chocolate_treates.jpg',
               fit: BoxFit.cover,
             ),
@@ -184,3 +185,4 @@ class NotificationsScreen extends StatelessWidget {
     );
   }
 }
+

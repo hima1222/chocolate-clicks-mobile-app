@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart' hide Notification;
 import 'package:chocolate_clicks/services/notification_service.dart';
+import 'package:chocolate_clicks/widgets/app_image.dart';
+import 'package:chocolate_clicks/services/auth_service.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -110,7 +112,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
+            child: AppImage.asset(
               'assets/images/cafe_background.jpeg',
               fit: BoxFit.cover,
             ),
@@ -329,3 +331,4 @@ class _MessagesScreenState extends State<MessagesScreen> {
     );
   }
 }
+

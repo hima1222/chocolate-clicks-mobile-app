@@ -1,5 +1,7 @@
 /// Represents an event that user can view or attend
 class EventModel {
+  final String subtitle, cardImage, schedule, duration;
+  final List<String> gallery, included;
   final String id;
   final String title;
   final String description;
@@ -12,6 +14,12 @@ class EventModel {
   final int remainingSeats;
 
   EventModel({
+    this.subtitle = '',
+    this.cardImage = '',
+    this.schedule = '',
+    this.duration = '',
+    this.gallery = const [],
+    this.included = const [],
     required this.id,
     required this.title,
     required this.description,
@@ -40,6 +48,14 @@ class EventModel {
     final rawId = json['_id'] ?? json['id'];
     final rawDate = json['startDate'] ?? json['date'];
     return EventModel(
+      subtitle: json['subtitle']?.toString() ?? '',
+      cardImage: json['cardImage']?.toString() ?? '',
+      schedule: json['schedule']?.toString() ?? '',
+      duration: json['duration']?.toString() ?? '',
+      gallery:
+          (json['gallery'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      included:
+          (json['included'] as List?)?.map((e) => e.toString()).toList() ?? [],
       id: rawId?.toString() ?? '',
       title: json['title']?.toString() ?? 'Untitled event',
       description: json['description']?.toString() ?? '',

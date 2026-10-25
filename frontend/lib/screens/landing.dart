@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:chocolate_clicks/widgets/app_image.dart';
+import 'package:flutter/material.dart';
 
 class LandingScreen extends StatefulWidget {
 
@@ -118,7 +119,7 @@ class _LandingScreenState extends State<LandingScreen>
                                 ],
                               ),
                               child: ClipOval(
-                                child: Image.asset(
+                                child: AppImage.asset(
                                   'assets/images/logo.jpg',
                                   fit: BoxFit.cover,
                                 ),
@@ -210,4 +211,5 @@ class _LandingScreenState extends State<LandingScreen>
   }
 
 }
+
 

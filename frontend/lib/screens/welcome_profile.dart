@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'dart:async';
 import 'cake_type1.dart';
 import 'brownies_type1.dart';
@@ -135,7 +136,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   Widget _buildHomeContent(BuildContext context) {
     return Stack(
       children: [
-        Image.asset(
+        AppImage.asset(
           'assets/images/welcome_profile_bg.jpg',
           width: double.infinity,
           height: double.infinity,
@@ -644,7 +645,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
             child: Stack(
               children: [
-                Image.asset(
+                AppImage.asset(
                   product['image'] as String,
                   height: 120,
                   width: double.infinity,
@@ -826,3 +827,4 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
     );
   }
 }
+

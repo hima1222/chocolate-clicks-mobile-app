@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/cart_service.dart';
 import 'package:chocolate_clicks/models/cart_item.dart';
@@ -23,6 +24,7 @@ class _CartScreenState extends State<CartScreen> {
 
   Future<void> _load() async {
     final items = await _cart.fetchCartItems();
+    if (!mounted) return;
     setState(() {
       _items = items;
       _loading = false;
@@ -90,7 +92,7 @@ class _CartScreenState extends State<CartScreen> {
                                 color: Colors.white.withOpacity(0.9),
                                 margin: const EdgeInsets.symmetric(vertical: 8),
                                 child: ListTile(
-                                  leading: Image.asset(
+                                  leading: AppImage.asset(
                                     item.imageUrl,
                                     width: 50,
                                     fit: BoxFit.cover,
@@ -133,13 +135,19 @@ class _CartScreenState extends State<CartScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // directly pay total
+                        onPressed: () async {
+                          // Review the selected cart before checkout.
                           final total = _items.fold<double>(
                             0,
                             (sum, i) => sum + i.totalPrice,
                           );
-                          PaymentManager.initiatePayment(context, total);
+                          await PaymentManager.initiatePayment(
+                            context,
+                            total,
+                            items: _items,
+                            fromCart: true,
+                          );
+                          if (mounted) _load();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(
@@ -162,3 +170,4 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 }
+

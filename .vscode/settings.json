@@ -1,3 +1,4 @@
 {
-    "idf.currentSetup": "C:/Espressif/frameworks/esp-idf-v5.0.7/"
+    "idf.currentSetup": "C:/Espressif/frameworks/esp-idf-v5.0.7/",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
