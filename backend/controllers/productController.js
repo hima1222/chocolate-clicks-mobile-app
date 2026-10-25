@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const { notifyAllUsers } = require('../services/notificationService');
 
 const getProducts = async (req, res, next) => {
   try {
@@ -64,6 +65,13 @@ const createProduct = async (req, res, next) => {
       categoryId,
       imageUrl,
       quantity: quantity || 0,
+    });
+
+    await notifyAllUsers({
+      title: 'New baking goods available',
+      message: `${product.name} is now available to order.`,
+      type: 'product',
+      actionUrl: '/baking_goods',
     });
 
     res.status(201).json({ success: true, data: product });

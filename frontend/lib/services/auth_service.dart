@@ -2,6 +2,8 @@ import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/api_client.dart';
 import 'package:chocolate_clicks/services/storage_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 /// Service for handling authentication operations
 /// This is a complete authentication service that manages login, signup, and user sessions
 class AuthService {
@@ -16,6 +18,11 @@ class AuthService {
     _session = SessionManager();
     _storage = StorageService();
   }
+
+  // Use the WEB client ID from Google Cloud (not the Android one)
+  static const String _googleWebClientId =
+      '86612520610-58lvicvbj3o954p46egc7cgpm97ku4t1.apps.googleusercontent.com';
+  static bool _googleReady = false;
 
   late SessionManager _session;
   late StorageService _storage;
@@ -79,6 +86,78 @@ class AuthService {
             ? e.message
             : 'Unable to sign in. Check your connection and try again.',
         code: 'LOGIN_FAILED',
+      );
+    }
+  }
+
+  /// Sign in (or sign up) with a Google account
+  /// Gets an ID token from Google, sends it to the backend, and stores
+  /// the backend's own JWT the same way a normal login does
+  Future<AuthResponse> loginWithGoogle() async {
+    try {
+      if (!_googleReady) {
+        await GoogleSignIn.instance.initialize(
+          serverClientId: _googleWebClientId,
+        );
+        _googleReady = true;
+      }
+
+      final account = await GoogleSignIn.instance.authenticate();
+      final idToken = account.authentication.idToken;
+      if (idToken == null) {
+        throw AuthException(
+          message: 'Google did not return an ID token',
+          code: 'GOOGLE_NO_TOKEN',
+        );
+      }
+
+      final response = await ApiClient().post(
+        '/auth/google',
+        body: {'idToken': idToken},
+      );
+
+      if (response['success'] == true) {
+        final data = response['data'];
+        final userJson = Map<String, dynamic>.from(data['user'] as Map);
+        userJson['id'] ??= userJson['_id'];
+        userJson['phone'] ??= ''; // Google accounts have no phone number
+        final user = User.fromJson(userJson);
+        final token = data['token'];
+
+        // Update session and storage
+        await _session.setSession(token: token, user: user);
+        await _storage.save('auth_token', token);
+        await _storage.save('user_id', user.id);
+
+        return AuthResponse(
+          success: true,
+          message: response['message'] ?? 'Google login successful',
+          user: user,
+          token: token,
+        );
+      } else {
+        throw AuthException(
+          message: response['message'] ?? 'Google login failed',
+          code: 'GOOGLE_FAILED',
+        );
+      }
+    } on GoogleSignInException catch (e) {
+      debugPrint(
+        'GOOGLE ERROR: code=${e.code} description=${e.description} details=${e.details}',
+      );
+      throw AuthException(
+        message: e.code == GoogleSignInExceptionCode.canceled
+            ? 'Google sign-in was cancelled'
+            : 'Google sign-in failed (${e.code.name})',
+        code: 'GOOGLE_FAILED',
+      );
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw AuthException(
+        message: e is ApiException
+            ? e.message
+            : 'Unable to sign in with Google. Check your connection and try again.',
+        code: 'GOOGLE_FAILED',
       );
     }
   }
@@ -341,7 +420,6 @@ Future<void> resetPasswordWithCode({
         );
       }
 
-      // TODO: Replace with actual API call
       await Future.delayed(const Duration(seconds: 1));
 
       return AuthResponse(
@@ -364,6 +442,15 @@ Future<void> resetPasswordWithCode({
     try {
       // TODO: Call API to invalidate token on backend
       await Future.delayed(const Duration(milliseconds: 500));
+
+      // Sign out of Google too, so the next Google login shows the account picker
+      if (_googleReady) {
+        try {
+          await GoogleSignIn.instance.signOut();
+        } catch (_) {
+          // ignore: Google sign-out is best effort
+        }
+      }
 
       // Clear session and storage
       await _session.clearSession();

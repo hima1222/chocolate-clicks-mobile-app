@@ -67,6 +67,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  /// Sign up (or log in) with Google. The backend creates the account
+  /// if it doesn't exist yet, so this works as sign-up and sign-in.
+  Future<void> _googleSignUp() async {
+    setState(() => _loading = true);
+    try {
+      final response = await AuthService().loginWithGoogle();
+      if (!mounted) return;
+      if (response.success) {
+        Navigator.pushReplacementNamed(context, '/welcome_profile');
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(response.message)));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e is AuthException
+                ? e.message
+                : 'Unable to complete the request. Please try again.',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,6 +277,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.6,
                           fontFamily: 'Roboto', // Changed font
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+                    // Google Sign-Up Button
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
+                        side: BorderSide.none,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 6,
+                          horizontal: 16,
+                        ),
+                        minimumSize: const Size(0, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: _loading ? null : _googleSignUp,
+                      icon: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: Image.asset(
+                            'assets/images/GL.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      label: const Text(
+                        "Sign up with Google",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Roboto',
                         ),
                       ),
                     ),

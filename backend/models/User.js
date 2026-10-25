@@ -1,13 +1,19 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const isLocalAccount = function () {
+  return !this.googleId; // only email/password accounts must fill these in
+};
+
 const userSchema = new mongoose.Schema(
   {
     firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+    lastName: { type: String, required: isLocalAccount },
     email: { type: String, required: true, unique: true, lowercase: true },
-    phone: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    phone: { type: String, required: isLocalAccount, unique: true, sparse: true },
+    password: { type: String, required: isLocalAccount },
+    googleId: { type: String, unique: true, sparse: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
     profileImageUrl: { type: String },
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
@@ -19,7 +25,7 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+  if (!this.password || !this.isModified('password')) {
     return next();
   }
 
@@ -29,6 +35,7 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
+  if (!this.password) return false; // Google-only account
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

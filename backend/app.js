@@ -5,6 +5,7 @@ const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 const errorHandler = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/events', eventRoutes);
 app.use('/api/uploads', require('./routes/uploadRoutes'));
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use((req, res, next) => {
   const error = new Error('Route not found');
