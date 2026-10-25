@@ -37,7 +37,7 @@ class ApiClient {
 static String get baseUrl {
   if (kIsWeb) return 'http://localhost:5000/api'; // browser
   if (defaultTargetPlatform == TargetPlatform.android) {
-  return 'http://10.0.2.2:5000/api'; // Android emulator
+  return 'http://10.0.2.2:5000/api'; // Android emulator change this for you IP adress if needed 
   }
   return 'http://localhost:5000/api'; // iOS simulator / desktop
 }
