@@ -12,7 +12,7 @@ import 'cookies_items_screen.dart';
 import 'categories_screen.dart';
 import 'events_screen.dart';
 import 'profile_screen.dart';
-import 'messages_screen.dart';
+import 'cart_screen.dart';
 // Add these later when you create the screens
 // import 'donuts_items_screen.dart';
 // import 'croissants_items_screen.dart';
@@ -186,75 +186,65 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      spacing: 16,
-                      runSpacing: 12,
+                    const Text(
+                      'Chocolate Clicks',
+                      style: TextStyle(
+                        color: Color(0xFFF6E6D7),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4,
+                        height: 1.2,
+                        fontFamily: 'serif',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Chocolate Clicks',
-                              style: TextStyle(
-                                color: Color(0xFFF6E6D7),
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.4,
-                                height: 1.2,
-                                fontFamily: 'serif',
-                              ),
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Hello $_userName',
+                          ),
+                          child: IconButton(
+                            tooltip: 'Open profile',
+                            onPressed: () =>
+                                Navigator.pushNamed(context, '/profile'),
+                            icon: Text(
+                              _userName.substring(0, 1).toUpperCase(),
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                height: 1.1,
-                                letterSpacing: 0.2,
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.12),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                ),
-                              ),
-                              child: IconButton(
-                                tooltip: 'Open profile',
-                                onPressed: () =>
-                                    Navigator.pushNamed(context, '/profile'),
-                                icon: Text(
-                                  _userName.substring(0, 1).toUpperCase(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Hello $_userName',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              height: 1.1,
+                              letterSpacing: 0.2,
                             ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.shopping_bag_outlined,
-                                color: Colors.white,
-                                size: 26,
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/cart');
-                              },
-                            ),
-                          ],
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Open messages',
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/messages'),
+                          icon: const Icon(
+                            Icons.notifications_outlined,
+                            color: Colors.white,
+                            size: 26,
+                          ),
                         ),
                       ],
                     ),
@@ -789,7 +779,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
       _buildHomeContent(context),
       const CategoriesScreen(),
       const EventsScreen(),
-      const MessagesScreen(),
+      const CartScreen(),
       const ProfileScreen(),
     ];
 
@@ -817,7 +807,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_outlined),
+            icon: Icon(Icons.shopping_bag_outlined),
             label: '',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
