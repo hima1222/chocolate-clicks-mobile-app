@@ -224,8 +224,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           icon: Icons.edit,
                           label: 'Edit Profile',
                           subtitle: 'Name, photo, preferences',
-                          onTap: () =>
-                              Navigator.pushNamed(context, '/edit_profile'),
+                          onTap: () async {
+                            await Navigator.pushNamed(context, '/edit_profile');
+                            if (mounted) setState(() {});
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          icon: Icons.confirmation_number_outlined,
+                          label: 'Order Details',
+                          subtitle: 'Order history and progress',
+                          badgeCount: _ordersCount,
+                          onTap: () async {
+                            await Navigator.pushNamed(context, '/orders');
+                            if (mounted) _loadCounts();
+                          },
                         ),
                         _buildDivider(),
                         _buildMenuItem(
@@ -259,8 +272,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           icon: Icons.calendar_today,
                           label: 'Upcoming Events',
                           subtitle: 'See your next experiences',
-                          onTap: () => Navigator.pushNamed(
-                              context, '/upcoming_events'),
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/upcoming_events'),
                         ),
                         _buildDivider(),
                         _buildMenuItem(

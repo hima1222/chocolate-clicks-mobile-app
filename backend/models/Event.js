@@ -2,6 +2,13 @@ const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema(
   {
+    slug: { type: String, index: true },
+    subtitle: { type: String, default: '' },
+    cardImage: { type: String, default: '' },
+    gallery: { type: [String], default: [] },
+    included: { type: [String], default: [] },
+    schedule: { type: String, default: '' },
+    duration: { type: String, default: '' },
     title: { type: String, required: true },
     description: { type: String, required: true },
     imageUrl: { type: String, required: true },

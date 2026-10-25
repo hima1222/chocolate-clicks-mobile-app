@@ -40,8 +40,49 @@ class CartService {
     _items.removeWhere((i) => i.id == itemId);
   }
 
+  final Set<String> _consumedOrders = {};
+  final Set<String> _pendingCartOrders = {};
+  void trackCheckout(String orderId) {
+    if (!_consumedOrders.contains(orderId)) _pendingCartOrders.add(orderId);
+  }
+
+  void removePaidItems(String orderId, List<CartItem> purchased) {
+    if (!_pendingCartOrders.remove(orderId) || !_consumedOrders.add(orderId))
+      return;
+    for (final item in purchased) {
+      var remaining = item.quantity;
+      for (
+        var index = _items.length - 1;
+        index >= 0 && remaining > 0;
+        index--
+      ) {
+        final current = _items[index];
+        if (current.id != item.id &&
+            current.name.trim().toLowerCase() !=
+                item.name.trim().toLowerCase()) {
+          continue;
+        }
+        if (current.quantity <= remaining) {
+          remaining -= current.quantity;
+          _items.removeAt(index);
+        } else {
+          _items[index] = CartItem(
+            id: current.id,
+            name: current.name,
+            price: current.price,
+            quantity: current.quantity - remaining,
+            imageUrl: current.imageUrl,
+          );
+          remaining = 0;
+        }
+      }
+    }
+  }
+
   /// Clear all cart items (e.g. after checkout or logout)
   void clear() {
     _items.clear();
+    _consumedOrders.clear();
+    _pendingCartOrders.clear();
   }
 }

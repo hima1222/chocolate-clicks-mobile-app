@@ -1,266 +1,201 @@
 import 'package:flutter/material.dart';
-import 'package:chocolate_clicks/services/auth_service.dart';
+import '../widgets/shop_page.dart';
+import '../services/auth_service.dart';
+import '../models/user_model.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
-
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _cardController = TextEditingController();
-
-  late AuthService authService;
-
+  final _name = TextEditingController();
+  final _email = TextEditingController();
+  final _phone = TextEditingController();
+  final _auth = AuthService();
+  bool _saving = false;
   @override
   void initState() {
     super.initState();
-    authService = AuthService();
-    final user = authService.currentUser;
-    if (user != null) {
-      _nameController.text = user.fullName;
-      _emailController.text = user.email;
-      _phoneController.text = user.phone;
-      // address and card info fields are not part of user model currently
-    }
+    final user = _auth.currentUser;
+    _name.text = user?.fullName ?? '';
+    _email.text = user?.email ?? '';
+    _phone.text = user?.phone ?? '';
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _addressController.dispose();
-    _cardController.dispose();
+    _name.dispose();
+    _email.dispose();
+    _phone.dispose();
     super.dispose();
   }
 
-  Future<void> _saveProfile() async {
-    if (!_formKey.currentState!.validate()) return;
-
+  Future<void> _save() async {
+    if (_saving || !_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
+    setState(() => _saving = true);
     try {
-      final nameParts = _nameController.text.trim().split(' ');
-      final firstName = nameParts.isNotEmpty ? nameParts.first : '';
-      final lastName = nameParts.length > 1
-          ? nameParts.sublist(1).join(' ')
-          : '';
-
-      final response = await authService.updateProfile(
-        firstName: firstName,
-        lastName: lastName,
-        phone: _phoneController.text.trim(),
+      final parts = _name.text.trim().split(RegExp(r'\s+'));
+      final response = await _auth.updateProfile(
+        firstName: parts.first,
+        lastName: parts.skip(1).join(' '),
+        phone: _phone.text.trim(),
       );
-
-      if (response.success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile information saved')),
-        );
-        Navigator.of(context).pop();
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(response.message)));
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            response.success ? 'Profile information saved' : response.message,
+          ),
+        ),
+      );
+      if (response.success) Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e is AuthException
+                ? e.message
+                : 'Unable to save your profile. Please try again.',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Background image
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/fav_background.png'),
-                fit: BoxFit.contain,
-              ),
-            ),
+  Widget build(BuildContext context) => ShopPage(
+    title: 'Edit Profile',
+    subtitle:
+        'A little about you. Keep your contact details up to date for your next sweet visit.',
+    bottomBar: SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+        child: FilledButton.icon(
+          onPressed: _saving ? null : _save,
+          style: FilledButton.styleFrom(
+            backgroundColor: shopGold,
+            foregroundColor: shopBackground,
+            padding: const EdgeInsets.all(18),
           ),
-          // Overlay
-          Container(color: Colors.black.withValues(alpha: 0.3)),
-          // Content
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header with back button and title
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Edit Profile',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'serif',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                    // Form container with transparent background
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            const Text(
-                              'Edit Your Profile',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'serif',
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            // Profile edit form fields
-                            TextFormField(
-                              controller: _nameController,
-                              validator: (v) => v == null || v.isEmpty
-                                  ? 'Name required'
-                                  : null,
-                              decoration: InputDecoration(
-                                labelText: 'Full Name',
-                                labelStyle: const TextStyle(
-                                  fontFamily: 'serif',
-                                  color: Colors.white,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                filled: true,
-                                fillColor: Colors.white.withValues(alpha: 0.8),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            TextFormField(
-                              controller: _emailController,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                labelText: 'Email',
-                                labelStyle: const TextStyle(
-                                  fontFamily: 'serif',
-                                  color: Colors.white,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                filled: true,
-                                fillColor: Colors.white.withValues(alpha: 0.8),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            TextFormField(
-                              controller: _phoneController,
-                              validator: (v) => v == null || v.isEmpty
-                                  ? 'Phone required'
-                                  : null,
-                              decoration: InputDecoration(
-                                labelText: 'Phone Number',
-                                labelStyle: const TextStyle(
-                                  fontFamily: 'serif',
-                                  color: Colors.white,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                filled: true,
-                                fillColor: Colors.white.withValues(alpha: 0.8),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Address',
-                                labelStyle: const TextStyle(
-                                  fontFamily: 'serif',
-                                  color: Colors.white,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                filled: true,
-                                fillColor: Colors.white.withOpacity(0.8),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Card Info',
-                                labelStyle: const TextStyle(
-                                  fontFamily: 'serif',
-                                  color: Colors.white,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                filled: true,
-                                fillColor: Colors.white.withOpacity(0.8),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 45,
-                              child: ElevatedButton(
-                                onPressed: _saveProfile,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.brown[700],
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Save Changes',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'serif',
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+          icon: _saving
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.check),
+          label: Text(_saving ? 'Saving...' : 'Save Changes'),
+        ),
+      ),
+    ),
+    children: [
+      ShopPanel(
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 32,
+              backgroundColor: shopGold,
+              child: Text(
+                _name.text.trim().isEmpty
+                    ? '?'
+                    : _name.text.trim()[0].toUpperCase(),
+                style: const TextStyle(
+                  color: shopBackground,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _name.text.trim().isEmpty
+                        ? 'Your profile'
+                        : _name.text.trim(),
+                    style: const TextStyle(
+                      color: shopCream,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Chocolate Clicks member',
+                    style: TextStyle(color: shopGold, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    );
-  }
+      const SizedBox(height: 24),
+      ShopPanel(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Personal details',
+                style: TextStyle(
+                  color: shopCream,
+                  fontSize: 22,
+                  fontFamily: 'serif',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _name,
+                onChanged: (_) => setState(() {}),
+                style: const TextStyle(color: shopCream),
+                textCapitalization: TextCapitalization.words,
+                decoration: shopInput('Full Name', Icons.person_outline),
+                validator: (v) =>
+                    v == null || v.trim().isEmpty ? 'Name required' : null,
+              ),
+              const SizedBox(height: 18),
+              TextFormField(
+                controller: _email,
+                readOnly: true,
+                style: const TextStyle(color: Colors.white60),
+                decoration: shopInput('Email', Icons.email_outlined).copyWith(
+                  suffixIcon: const Icon(
+                    Icons.lock_outline,
+                    color: Colors.white38,
+                    size: 18,
+                  ),
+                  helperText: 'Your sign-in email',
+                  helperStyle: const TextStyle(color: Colors.white54),
+                ),
+              ),
+              const SizedBox(height: 18),
+              TextFormField(
+                controller: _phone,
+                keyboardType: TextInputType.phone,
+                style: const TextStyle(color: shopCream),
+                decoration: shopInput('Phone Number', Icons.phone_outlined),
+                validator: (v) =>
+                    v == null ||
+                        !RegExp(r'^\+?[0-9]{10,15}$').hasMatch(v.trim())
+                    ? 'Enter a valid phone number'
+                    : null,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
 }

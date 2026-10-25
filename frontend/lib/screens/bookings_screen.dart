@@ -1,5 +1,7 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/booking_service.dart';
+import 'package:chocolate_clicks/widgets/confirmation_email_status.dart';
 
 class BookingsScreen extends StatefulWidget {
   const BookingsScreen({super.key});
@@ -37,7 +39,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
         children: [
           // Background image
           Positioned.fill(
-            child: Image.asset(
+            child: AppImage.asset(
               _backgroundImage,
               fit: BoxFit.cover,
               alignment: Alignment.center,
@@ -161,6 +163,8 @@ class _BookingCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  if (booking.orderId != null)
+                    ConfirmationEmailStatus(orderId: booking.orderId!),
                 ],
               ),
             ),

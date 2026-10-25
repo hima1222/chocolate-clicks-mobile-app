@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 import 'package:chocolate_clicks/models/user_model.dart';
@@ -62,7 +63,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget _asset(String path, {double? height, required IconData fallback}) {
-    return Image.asset(
+    return AppImage.asset(
       path,
       height: height,
       fit: BoxFit.contain,
@@ -87,7 +88,7 @@ Widget build(BuildContext context) {
         Positioned.fill(
           child: Opacity(
             opacity: 0.80, 
-            child: Image.asset(
+            child: AppImage.asset(
               _bgImage,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => const SizedBox.shrink(),
@@ -118,7 +119,7 @@ Widget build(BuildContext context) {
                         ],
                       ),
                       child: ClipOval(
-                        child: Image.asset(
+                        child: AppImage.asset(
                           _logoImage,
                           height: 80,
                           width: 80,

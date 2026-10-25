@@ -1,0 +1,177 @@
+[
+  {
+    "name": "Blueberry Lemon Cake",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cake1.jpg",
+    "description": "Light sponge cake with blueberry topping and lemon glaze.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Chocolate Truffle Cake",
+    "price": 3800.0,
+    "imageUrl": "assets/images/cake2.jpg",
+    "description": "Rich chocolate layers filled with silky truffle cream.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Vanilla Rose Cake",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cake3.jpg",
+    "description": "Classic vanilla cake finished with rose-flavored frosting.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Black Forest Cake",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cake4.jpg",
+    "description": "Chocolate sponge, cherries, and whipped cream in every layer.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Caramel Drip Cake",
+    "price": 4200.0,
+    "imageUrl": "assets/images/cake5.jpg",
+    "description": "Soft caramel cake topped with a glossy caramel drip.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Strawberry Dream Cake",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cake6.jpg",
+    "description": "Fresh strawberry filling with a light cream finish.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Pistachio Delight Cake",
+    "price": 3800.0,
+    "imageUrl": "assets/images/cake7.jpg",
+    "description": "Nutty pistachio layers with a smooth buttercream coat.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Red Velvet Cake",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cake8.jpg",
+    "description": "Soft red velvet sponge with cream cheese frosting.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Mango Cream Cake",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cake9.jpg",
+    "description": "Tropical mango cake finished with fresh cream.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Coffee Mocha Cake",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cake10.jpg",
+    "description": "A bold mocha cake with a smooth coffee aroma.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "White Forest Cake",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cake11.jpg",
+    "description": "Delicate white chocolate cake with soft cream layers.",
+    "categoryId": "Cakes"
+  },
+  {
+    "name": "Classic Fudge Brownie",
+    "price": 3500.0,
+    "imageUrl": "assets/images/brownies1.jpg",
+    "description": "Rich chocolate brownie with a soft center and deep cocoa flavor.",
+    "categoryId": "Brownies"
+  },
+  {
+    "name": "Nutty Crunch Brownie",
+    "price": 3800.0,
+    "imageUrl": "assets/images/brownies2.jpg",
+    "description": "Brownie topped with roasted nuts and a crisp finish.",
+    "categoryId": "Brownies"
+  },
+  {
+    "name": "Salted Caramel Brownie",
+    "price": 3500.0,
+    "imageUrl": "assets/images/brownies3.jpg",
+    "description": "Soft brownie layered with salted caramel drizzle.",
+    "categoryId": "Brownies"
+  },
+  {
+    "name": "Triple Chocolate Brownie",
+    "price": 3200.0,
+    "imageUrl": "assets/images/brownies4.jpg",
+    "description": "Dark, milk, and white chocolate in one dense brownie.",
+    "categoryId": "Brownies"
+  },
+  {
+    "name": "Coffee Mocha Brownie",
+    "price": 3500.0,
+    "imageUrl": "assets/images/brownies5.jpg",
+    "description": "Chocolate brownie blended with a smooth coffee finish.",
+    "categoryId": "Brownies"
+  },
+  {
+    "name": "Red Velvet Brownie",
+    "price": 3800.0,
+    "imageUrl": "assets/images/brownies6.jpg",
+    "description": "A soft red velvet brownie with cream cheese notes.",
+    "categoryId": "Brownies"
+  },
+  {
+    "name": "Classic Choco Chip",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cookies1.jpg",
+    "description": "Warm chocolate chip cookie with a soft center.",
+    "categoryId": "Cookies"
+  },
+  {
+    "name": "Oatmeal Raisin Cookie",
+    "price": 3200.0,
+    "imageUrl": "assets/images/cookies2.jpg",
+    "description": "Chewy oatmeal cookie with sweet raisin bites.",
+    "categoryId": "Cookies"
+  },
+  {
+    "name": "Double Chocolate Cookie",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cookies3.jpg",
+    "description": "Deep cocoa cookie packed with chocolate chunks.",
+    "categoryId": "Cookies"
+  },
+  {
+    "name": "Peanut Butter Cookie",
+    "price": 3800.0,
+    "imageUrl": "assets/images/cookies4.jpg",
+    "description": "Smooth peanut butter cookie baked to a golden finish.",
+    "categoryId": "Cookies"
+  },
+  {
+    "name": "White Chocolate Cookie",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cookies5.jpg",
+    "description": "Sweet vanilla cookie with creamy white chocolate chips.",
+    "categoryId": "Cookies"
+  },
+  {
+    "name": "Coconut Crunch Cookie",
+    "price": 3500.0,
+    "imageUrl": "assets/images/cookies6.jpg",
+    "description": "Crunchy cookie with toasted coconut flakes.",
+    "categoryId": "Cookies"
+  },
+  {
+    "name": "Red Velvet Cookie",
+    "price": 3800.0,
+    "imageUrl": "assets/images/cookies7.jpg",
+    "description": "Soft red velvet cookie with cream cheese flavor.",
+    "categoryId": "Cookies"
+  },
+  {
+    "name": "Salted Caramel Cookie",
+    "price": 3800.0,
+    "imageUrl": "assets/images/cookies8.jpg",
+    "description": "Chewy caramel cookie with a hint of sea salt.",
+    "categoryId": "Cookies"
+  }
+]

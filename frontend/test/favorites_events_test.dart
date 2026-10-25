@@ -62,7 +62,10 @@ void main() {
         await tester.pumpWidget(MaterialApp(home: page));
         await tester.pumpAndSettle();
         expect(find.text('Next'), findsNothing);
-        expect(find.text('Plan this experience'), findsOneWidget);
+        expect(
+          find.text(page is BakingGoodsScreen ? 'Back to Events' : 'Book Now'),
+          findsOneWidget,
+        );
         await tester.drag(
           find.byType(CustomScrollView),
           const Offset(0, -1000),

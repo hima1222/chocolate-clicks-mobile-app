@@ -1,3 +1,4 @@
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -28,7 +29,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: Image.asset(
+                    child: AppImage.asset(
                       'assets/images/home1.jpg',
                       fit: BoxFit.cover,
                       height: isSmallScreen ? 150 : 200,
@@ -38,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 15),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: Image.asset(
+                    child: AppImage.asset(
                       'assets/images/home2.jpg',
                       fit: BoxFit.cover,
                       height: isSmallScreen ? 150 : 200,
@@ -48,7 +49,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 15),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: Image.asset(
+                    child: AppImage.asset(
                       'assets/images/home3.jpg',
                       fit: BoxFit.cover,
                       height: isSmallScreen ? 150 : 200,
@@ -130,4 +131,5 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
 
