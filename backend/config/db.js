@@ -23,6 +23,10 @@
 // module.exports = connectDB;
 
 
+
+// module.exports = connectDB;
+
+
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
@@ -48,20 +52,21 @@ const connectDB = async () => {
     return conn;
 
   } catch (error) {
-    console.error('MongoDB connection failed!');
-    console.error('Error name:', error.name);
-    console.error('Error message:', error.message);
+  console.error("MongoDB connection failed");
+  console.error("Name:", error.name);
+  console.error("Message:", error.message);
 
-    if (error.reason) {
-      console.error('Server selection details:', error.reason);
+  if (error.reason?.servers) {
+    for (const [address, server] of error.reason.servers) {
+      console.error("Server:", address);
+      console.error("Error:", server.error?.message);
+      console.error("Cause:", server.error?.cause);
+      console.error("Code:", server.error?.code);
     }
-
-    if (error.cause) {
-      console.error('Underlying cause:', error.cause);
-    }
-
-    throw error;
   }
+
+  throw error;
+}
 };
 
 module.exports = connectDB;
