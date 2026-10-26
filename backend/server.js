@@ -21,6 +21,42 @@ require('dotenv').config();
 const connectDB = require('./config/db');
 const app = require('./app');
 
+const net = require('node:net');
+const dns = require('node:dns').promises;
+
+async function testMongoNetwork() {
+  const host = 'ac-qimc7ot-shard-00-00.uwmr2zf.mongodb.net';
+
+  try {
+    const addresses = await dns.lookup(host, { all: true });
+    console.log('MongoDB DNS:', addresses);
+  } catch (err) {
+    console.error('MongoDB DNS failed:', err.message);
+  }
+
+  const socket = net.connect({
+    host,
+    port: 27017,
+    timeout: 10000
+  });
+
+  socket.on('connect', () => {
+    console.log('MongoDB TCP port 27017 reachable');
+    socket.destroy();
+  });
+
+  socket.on('timeout', () => {
+    console.error('MongoDB TCP connection timed out');
+    socket.destroy();
+  });
+
+  socket.on('error', (err) => {
+    console.error('MongoDB TCP error:', err.code, err.message);
+  });
+}
+
+testMongoNetwork();
+
 async function start() {
   try {
     console.log('Starting Chocolate Clicks Backend...');
