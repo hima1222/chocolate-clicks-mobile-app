@@ -136,7 +136,9 @@ This checks the HTTP server; also check the terminal for database connection err
 
 ### 3. Configure the frontend API URL
 
-Edit `ApiClient.baseUrl` in [`frontend/lib/services/api_client.dart`](frontend/lib/services/api_client.dart). Include the `/api` suffix.
+`ApiClient` uses the defaults below. To override the URL without editing source,
+run Flutter with `--dart-define=API_BASE_URL=<backend-url>/api`. Include the
+`/api` suffix.
 
 | Run target | Backend URL |
 | --- | --- |
@@ -145,7 +147,10 @@ Edit `ApiClient.baseUrl` in [`frontend/lib/services/api_client.dart`](frontend/l
 | iOS simulator with backend on the same Mac | `http://localhost:5000/api` |
 | Physical device on the same network | `http://<backend-computer-LAN-IP>:5000/api` |
 
-The current default is `http://localhost:5000/api`. Update the port if you changed `PORT`. For a physical device, allow inbound connections to the backend port through the host firewall.
+The Android default in this checkout is `http://10.224.55.121:5000/api`.
+Update the address if the backend computer's LAN IP changes. For a physical
+device, allow inbound connections to the backend port through the host
+firewall.
 
 ### 4. Run the frontend
 
