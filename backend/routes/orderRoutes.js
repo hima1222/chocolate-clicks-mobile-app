@@ -19,8 +19,8 @@ router.post('/', createOrder);
 router.post('/:id/checkout', require('../controllers/productCheckoutController').resumeCheckout);
 router.get('/', getUserOrders);
 router.get('/:id', getOrderById);
-router.get('/:id/confirmation', getConfirmation);
-router.post('/:id/resend-confirmation', resendConfirmation);
+//router.get('/:id/confirmation', getConfirmation);
+//router.post('/:id/resend-confirmation', resendConfirmation);
 router.put('/:id/cancel', cancelOrder);
 router.put('/:id/status', adminOnly, updateOrderStatus);
 
