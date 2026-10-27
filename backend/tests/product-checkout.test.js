@@ -104,3 +104,17 @@ test('city delivery and 10 percent subtotal tax are shared by quotes and order c
   await createProductOrder(req, response(), next);
   expect(Order.create).toHaveBeenCalledWith(expect.objectContaining({ amount: '3200.55' }));
 });
+
+test('dotenv example preserves quoted city names and configured delivery rates', async () => {
+  const fs = require('fs');
+  const path = require('path');
+  const parsed = require('dotenv').parse(fs.readFileSync(path.join(__dirname, '../payhere.env.example')));
+  process.env.DELIVERY_CITY_FEES = parsed.DELIVERY_CITY_FEES;
+  const { quoteProducts } = require('../services/productPricingService');
+  for (const [city, expected] of [['Colombo 06', 300], ['Mount Lavinia', 500], ['Maharagama', 700]]) {
+    const quote = await quoteProducts(request().body.items, city);
+    expect(quote.pricing.deliveryFee).toBe(expected);
+    expect(quote.pricing.taxAmount).toBe(250.05);
+    expect(quote.pricing.totalAmount).toBe(2500.5 + expected + 250.05);
+  }
+});

@@ -406,5 +406,29 @@
     "publicId": "chocolate-clicks/assets/ca0d20c5e377ac4999b8ba559621fbc9937300214979d4cf5bcda687e7779659",
     "hash": "ca0d20c5e377ac4999b8ba559621fbc9937300214979d4cf5bcda687e7779659",
     "cloud": "kypjwevn"
+  },
+  "assets/images/GL.png": {
+    "url": "https://res.cloudinary.com/kypjwevn/image/upload/v1793079801/chocolate-clicks/assets/f664f297d14d4b7f6854d73cd2f231730b5e8244dc36b6fd3e7b7cdb9d2d27f8.png",
+    "publicId": "chocolate-clicks/assets/f664f297d14d4b7f6854d73cd2f231730b5e8244dc36b6fd3e7b7cdb9d2d27f8",
+    "hash": "f664f297d14d4b7f6854d73cd2f231730b5e8244dc36b6fd3e7b7cdb9d2d27f8",
+    "cloud": "kypjwevn"
+  },
+  "assets/images/welcome_latte.jpeg": {
+    "url": "https://res.cloudinary.com/kypjwevn/image/upload/v1793079802/chocolate-clicks/assets/66d24a37cc1390652401c0804c73eae6d351609c44c5d95c73756faa6a5043cc.jpg",
+    "publicId": "chocolate-clicks/assets/66d24a37cc1390652401c0804c73eae6d351609c44c5d95c73756faa6a5043cc",
+    "hash": "66d24a37cc1390652401c0804c73eae6d351609c44c5d95c73756faa6a5043cc",
+    "cloud": "kypjwevn"
+  },
+  "assets/images/workshop_1.jpeg": {
+    "url": "https://res.cloudinary.com/kypjwevn/image/upload/v1793079803/chocolate-clicks/assets/772bf638c1a6e9c7e860cf279ab64503cb2eef7760d361ca33b109fb8bca696f.jpg",
+    "publicId": "chocolate-clicks/assets/772bf638c1a6e9c7e860cf279ab64503cb2eef7760d361ca33b109fb8bca696f",
+    "hash": "772bf638c1a6e9c7e860cf279ab64503cb2eef7760d361ca33b109fb8bca696f",
+    "cloud": "kypjwevn"
+  },
+  "assets/images/workshop_2.jpeg": {
+    "url": "https://res.cloudinary.com/kypjwevn/image/upload/v1793079804/chocolate-clicks/assets/b1a9a88fcba0d836f99e4bc766aa84a05bcdbefb8204dbee234bf10214a1ad6f.jpg",
+    "publicId": "chocolate-clicks/assets/b1a9a88fcba0d836f99e4bc766aa84a05bcdbefb8204dbee234bf10214a1ad6f",
+    "hash": "b1a9a88fcba0d836f99e4bc766aa84a05bcdbefb8204dbee234bf10214a1ad6f",
+    "cloud": "kypjwevn"
   }
 }

@@ -1,3 +1,5 @@
+import '../widgets/google_auth_button.dart';
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
@@ -306,40 +308,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 12),
 
                         // Google Sign-In Button
-                        OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black87,
-                            side: BorderSide.none,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 6,
-                              horizontal: 16,
-                            ),
-                            minimumSize: const Size(0, 48),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
+                        GoogleAuthButton(
                           onPressed: _loading ? null : _googleSignIn,
-                          icon: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: Image.asset(
-                                'assets/images/GL.png',
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                          label: const Text(
-                            "Continue with Google",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Roboto',
-                            ),
-                          ),
+                          onBusyChanged: (busy) {
+                            if (mounted) setState(() => _loading = busy);
+                          },
                         ),
                       ],
                     ),

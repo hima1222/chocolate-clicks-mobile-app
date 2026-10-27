@@ -127,3 +127,14 @@ Stratford Avenue, Colombo 06. These are placeholder rates, not live distance or 
 time calculations. Unknown cities use the base delivery fee. Update the table when
 actual delivery zones and rates are finalized. Saved orders retain their original
 pricing snapshot; quote changes apply only to new checkouts.
+
+
+Keep DELIVERY_CITY_FEES as valid JSON with double-quoted city names. Wrap the entire
+JSON value in single quotes in .env, for example:
+
+```dotenv
+DELIVERY_CITY_FEES='{"Colombo 06":300,"Mount Lavinia":500,"Maharagama":700}'
+```
+
+Unquoted city names such as `{Colombo:300}` are invalid JSON. Restart the backend
+after editing this value so dotenv reloads the configuration.

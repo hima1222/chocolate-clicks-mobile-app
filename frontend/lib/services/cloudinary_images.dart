@@ -136,4 +136,12 @@ const cloudinaryImages = <String, String>{
       "https://res.cloudinary.com/kypjwevn/image/upload/v1792869766/chocolate-clicks/assets/b86399c357687bfc1af5b885133db5288be993cf2f9562a724f43abcb5b72688.jpg",
   "assets/images/workshops_collage4.jpg":
       "https://res.cloudinary.com/kypjwevn/image/upload/v1792869767/chocolate-clicks/assets/ca0d20c5e377ac4999b8ba559621fbc9937300214979d4cf5bcda687e7779659.jpg",
+  "assets/images/GL.png":
+      "https://res.cloudinary.com/kypjwevn/image/upload/v1793079801/chocolate-clicks/assets/f664f297d14d4b7f6854d73cd2f231730b5e8244dc36b6fd3e7b7cdb9d2d27f8.png",
+  "assets/images/welcome_latte.jpeg":
+      "https://res.cloudinary.com/kypjwevn/image/upload/v1793079802/chocolate-clicks/assets/66d24a37cc1390652401c0804c73eae6d351609c44c5d95c73756faa6a5043cc.jpg",
+  "assets/images/workshop_1.jpeg":
+      "https://res.cloudinary.com/kypjwevn/image/upload/v1793079803/chocolate-clicks/assets/772bf638c1a6e9c7e860cf279ab64503cb2eef7760d361ca33b109fb8bca696f.jpg",
+  "assets/images/workshop_2.jpeg":
+      "https://res.cloudinary.com/kypjwevn/image/upload/v1793079804/chocolate-clicks/assets/b1a9a88fcba0d836f99e4bc766aa84a05bcdbefb8204dbee234bf10214a1ad6f.jpg",
 };

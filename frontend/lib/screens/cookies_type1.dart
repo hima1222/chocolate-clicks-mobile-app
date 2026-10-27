@@ -220,7 +220,9 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         final item = CartItem(
-                          id: 'cookies_${widget.index ?? 0}',
+                          id:
+                              widget.product?['id'] as String? ??
+                              'cookies_${widget.index ?? 0}',
                           name: productTitle,
                           price: productPrice,
                           quantity: 1,
@@ -274,4 +276,3 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
     );
   }
 }
-

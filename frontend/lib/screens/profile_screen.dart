@@ -1,3 +1,5 @@
+import '../widgets/welcome_highlights.dart';
+import 'about_us_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
@@ -20,12 +22,12 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   // Home page theme (dark chocolate)
-  static const _bg = Color(0xFF2A1C15);
-  static const _card = Color(0xFF44372F);
-  static const _cardBorder = Color(0xFF6B5B52);
-  static const _caramel = Color(0xFFD9A066);
-  static const _cream = Color(0xFFF7E6D8);
-  static const _textSoft = Color(0xFFD8CCC4);
+  static const _bg = welcomeBackground;
+  static const _card = welcomeSurface;
+  static const _cardBorder = Color(0xFF594638);
+  static const _caramel = welcomeAccent;
+  static const _cream = welcomeCream;
+  static const _textSoft = welcomeMuted;
 
   final AuthService _authService = AuthService();
   final FavoritesService _favoritesService = FavoritesService();
@@ -160,332 +162,283 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final user = _authService.currentUser;
     final fullName = user?.fullName ?? 'Guest User';
-    final subtitle = 'Sweet member since ${_memberSinceYear(user?.createdAt)}';
-
     return Scaffold(
       backgroundColor: _bg,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: IgnorePointer(
-              child: Opacity(
-                opacity: 0.22,
-                child: Image.asset(
-                  'assets/images/event_background.png',
-                  fit: BoxFit.cover,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  tooltip: 'Back',
+                  onPressed: () => Navigator.pushReplacementNamed(
+                    context,
+                    '/welcome_profile',
+                  ),
+                  icon: const Icon(Icons.arrow_back, color: _cream),
                 ),
-              ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Your account',
+                    style: TextStyle(
+                      color: _cream,
+                      fontSize: 26,
+                      fontFamily: 'serif',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-          Positioned.fill(
-            child: IgnorePointer(child: ColoredBox(color: Color(0xAA2A1C15))),
-          ),
-          // Soft decorative circle (like the home page header)
-          Positioned(
-            top: -60,
-            right: -60,
-            child: Container(
-              height: 220,
-              width: 220,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.05),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.pushReplacementNamed(
-                          context,
-                          '/welcome_profile',
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    CircleAvatar(
+                      radius: 36,
+                      backgroundColor: _card,
+                      child: user?.profileImageUrl?.isNotEmpty == true
+                          ? ClipOval(
+                              child: Image.network(
+                                user!.profileImageUrl!,
+                                width: 72,
+                                height: 72,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, _, _) =>
+                                    _profileInitials(fullName),
+                              ),
+                            )
+                          : _profileInitials(fullName),
+                    ),
+                    Positioned(
+                      right: -8,
+                      bottom: -8,
+                      child: IconButton(
+                        tooltip: 'Update profile photo',
+                        onPressed: _uploadingProfileImage
+                            ? null
+                            : _uploadProfileImage,
+                        style: IconButton.styleFrom(
+                          backgroundColor: _card,
+                          side: const BorderSide(color: _cardBorder),
                         ),
-                        icon: const Icon(Icons.arrow_back, color: _cream),
+                        icon: _uploadingProfileImage
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: _caramel,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.camera_alt_outlined,
+                                size: 18,
+                                color: _caramel,
+                              ),
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Profile',
-                        style: TextStyle(
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        fullName,
+                        style: const TextStyle(
                           color: _cream,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 23,
+                          fontWeight: FontWeight.w600,
                         ),
+                      ),
+                      const SizedBox(height: 6),
+                      if (user?.phone.isNotEmpty == true)
+                        Text(
+                          user!.phone,
+                          style: const TextStyle(
+                            color: _textSoft,
+                            fontSize: 14,
+                          ),
+                        ),
+                      const SizedBox(height: 6),
+                      Text(
+                        user?.createdAt == null
+                            ? 'Your Chocolate Clicks account'
+                            : 'Member since ${_memberSinceYear(user!.createdAt)}',
+                        style: const TextStyle(color: _caramel, fontSize: 12),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
-
-                  // Profile header card
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(22),
-                    decoration: BoxDecoration(
-                      color: _card,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: _cardBorder),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFE8B77C), Color(0xFFB9783A)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              CircleAvatar(
-                                radius: 48,
-                                backgroundColor: _bg,
-                                child:
-                                    user?.profileImageUrl != null &&
-                                        user!.profileImageUrl!.isNotEmpty
-                                    ? ClipOval(
-                                        child: Image.network(
-                                          user.profileImageUrl!,
-                                          width: 96,
-                                          height: 96,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (_, _, _) =>
-                                              _profileInitials(fullName),
-                                        ),
-                                      )
-                                    : _profileInitials(fullName),
-                              ),
-                              Positioned(
-                                right: -4,
-                                bottom: -4,
-                                child: Material(
-                                  color: _caramel,
-                                  shape: const CircleBorder(),
-                                  child: InkWell(
-                                    onTap: _uploadingProfileImage
-                                        ? null
-                                        : _uploadProfileImage,
-                                    customBorder: const CircleBorder(),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(9),
-                                      child: _uploadingProfileImage
-                                          ? const SizedBox(
-                                              width: 18,
-                                              height: 18,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: _bg,
-                                              ),
-                                            )
-                                          : const Icon(
-                                              Icons.camera_alt,
-                                              color: _bg,
-                                              size: 18,
-                                            ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          fullName,
-                          style: const TextStyle(
-                            color: _cream,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          subtitle,
-                          style: const TextStyle(
-                            color: _textSoft,
-                            fontSize: 13,
-                            letterSpacing: 0.6,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        _loading
-                            ? const SizedBox(
-                                height: 68,
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    color: _caramel,
-                                  ),
-                                ),
-                              )
-                            : Row(
-                                children: [
-                                  _buildStatItem('Orders', _ordersCount),
-                                  const SizedBox(width: 10),
-                                  _buildStatItem('Events', _eventsCount),
-                                  const SizedBox(width: 10),
-                                  _buildStatItem('Points', 240),
-                                ],
-                              ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Menu card
-                  Container(
-                    decoration: BoxDecoration(
-                      color: _card,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: _cardBorder),
-                    ),
-                    child: Column(
-                      children: [
-                        _buildMenuItem(
-                          icon: Icons.edit,
-                          label: 'Edit Profile',
-                          subtitle: 'Name, photo, preferences',
-                          onTap: () async {
-                            await Navigator.pushNamed(context, '/edit_profile');
-                            if (mounted) setState(() {});
-                          },
-                        ),
-                        _buildDivider(),
-                        _buildMenuItem(
-                          icon: Icons.confirmation_number_outlined,
-                          label: 'Order Details',
-                          subtitle: 'Order history and progress',
-                          badgeCount: _ordersCount,
-                          onTap: () async {
-                            await Navigator.pushNamed(context, '/orders');
-                            if (mounted) _loadCounts();
-                          },
-                        ),
-                        _buildDivider(),
-                        _buildMenuItem(
-                          icon: Icons.confirmation_number_outlined,
-                          label: 'My Bookings',
-                          subtitle: 'View your reserved experiences',
-                          onTap: () =>
-                              Navigator.pushNamed(context, '/bookings'),
-                        ),
-                        _buildDivider(),
-                        _buildMenuItem(
-                          icon: Icons.favorite_border,
-                          label: 'Favourites',
-                          subtitle: 'Your saved treats',
-                          badgeCount: _favouritesCount,
-                          onTap: () async {
-                            await Navigator.pushNamed(context, '/favourites');
-                            if (mounted) _loadCounts();
-                          },
-                        ),
-                        _buildDivider(),
-                        _buildMenuItem(
-                          icon: Icons.shopping_cart_outlined,
-                          label: 'Cart',
-                          subtitle: '$_cartCount items ready',
-                          badgeCount: _cartCount,
-                          onTap: () => Navigator.pushNamed(context, '/cart'),
-                        ),
-                        _buildDivider(),
-                        _buildMenuItem(
-                          icon: Icons.calendar_today,
-                          label: 'Upcoming Events',
-                          subtitle: 'See your next experiences',
-                          onTap: () =>
-                              Navigator.pushNamed(context, '/upcoming_events'),
-                        ),
-                        _buildDivider(),
-                        _buildMenuItem(
-                          icon: Icons.payment,
-                          label: 'Payment Info',
-                          subtitle: 'Visa ending 4242',
-                          onTap: () =>
-                              Navigator.pushNamed(context, '/payment_info'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Log out button (cream, like "View Item" / "Shop Now")
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        await _authService.logout();
-                        _favoritesService.clear();
-                        _cartService.clear();
-                        _eventsService.clear();
-                        _paymentService.clear();
-                        _orderService.clear();
-                        _notificationService.clear();
-                        if (!context.mounted) return;
-                        Navigator.pushReplacementNamed(context, '/landing');
-                      },
-                      icon: const Icon(Icons.logout, size: 20),
-                      label: const Text(
-                        'Log out',
-                        style: TextStyle(fontSize: 16, letterSpacing: 0.4),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _cream,
-                        foregroundColor: _bg,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: _card,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.person_outline, color: _caramel),
+                  SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      'Make it yours. Keep your name, photo, and contact details up to date.',
+                      style: TextStyle(color: _textSoft, height: 1.5),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String label, int value) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.06),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _cardBorder.withOpacity(0.6)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              value.toString(),
-              style: const TextStyle(
-                color: _caramel,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            const SizedBox(height: 24),
+            _sectionLabel('ACCOUNT'),
+            _menuGroup([
+              _buildMenuItem(
+                icon: Icons.person_outline,
+                label: 'Personal details',
+                subtitle: 'Name, photo, and contact details',
+                onTap: () async {
+                  await Navigator.pushNamed(context, '/edit_profile');
+                  if (mounted) setState(() {});
+                },
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.payment_outlined,
+                label: 'Payment methods',
+                subtitle: 'Manage your payment information',
+                onTap: () => Navigator.pushNamed(context, '/payment_info'),
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.notifications_outlined,
+                label: 'Notifications',
+                subtitle: 'Updates about your orders',
+                onTap: () => Navigator.pushNamed(context, '/notifications'),
+              ),
+            ]),
+            const SizedBox(height: 24),
+            _sectionLabel('YOUR SWEET COLLECTION'),
+            _menuGroup([
+              _buildMenuItem(
+                icon: Icons.receipt_long_outlined,
+                label: 'Order Details',
+                subtitle: _loading
+                    ? 'Loading your orders...'
+                    : 'Order history and progress',
+                badgeCount: _ordersCount,
+                onTap: () async {
+                  await Navigator.pushNamed(context, '/orders');
+                  if (mounted) _loadCounts();
+                },
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.confirmation_number_outlined,
+                label: 'My Bookings',
+                subtitle: 'Your reserved experiences',
+                onTap: () => Navigator.pushNamed(context, '/bookings'),
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.favorite_border,
+                label: 'Favourites',
+                subtitle: 'Your saved treats',
+                badgeCount: _favouritesCount,
+                onTap: () async {
+                  await Navigator.pushNamed(context, '/favourites');
+                  if (mounted) _loadCounts();
+                },
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.shopping_bag_outlined,
+                label: 'Cart',
+                subtitle: '$_cartCount items ready',
+                badgeCount: _cartCount,
+                onTap: () => Navigator.pushNamed(context, '/cart'),
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.calendar_today_outlined,
+                label: 'Upcoming Events',
+                subtitle: '$_eventsCount scheduled experiences',
+                onTap: () => Navigator.pushNamed(context, '/upcoming_events'),
+              ),
+            ]),
+            const SizedBox(height: 24),
+            _sectionLabel('GET TO KNOW US'),
+            _menuGroup([
+              _buildMenuItem(
+                icon: Icons.storefront_outlined,
+                label: 'About us',
+                subtitle: 'Our cafes, art studio, and visiting details',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AboutUsScreen()),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 24),
+            TextButton.icon(
+              onPressed: () async {
+                await _authService.logout();
+                _favoritesService.clear();
+                _cartService.clear();
+                _eventsService.clear();
+                _paymentService.clear();
+                _orderService.clear();
+                _notificationService.clear();
+                if (!context.mounted) return;
+                Navigator.pushReplacementNamed(context, '/landing');
+              },
+              icon: const Icon(Icons.logout, size: 20),
+              label: const Text('Sign out'),
+              style: TextButton.styleFrom(
+                foregroundColor: _caramel,
+                padding: const EdgeInsets.all(16),
               ),
             ),
-            const SizedBox(height: 6),
-            Text(
-              label,
+            const SizedBox(height: 12),
+            const Text(
+              'Chocolate Clicks · Colombo',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: _textSoft, fontSize: 12),
+              style: TextStyle(color: _textSoft, fontSize: 12),
             ),
           ],
         ),
       ),
     );
   }
+
+  Widget _sectionLabel(String label) => Padding(
+    padding: const EdgeInsets.only(left: 4, bottom: 12),
+    child: Text(
+      label,
+      style: const TextStyle(
+        color: _textSoft,
+        fontSize: 10,
+        letterSpacing: 1.5,
+      ),
+    ),
+  );
+
+  Widget _menuGroup(List<Widget> children) => Container(
+    decoration: BoxDecoration(
+      color: _card,
+      borderRadius: BorderRadius.circular(22),
+      border: Border.all(color: _cardBorder.withValues(alpha: 0.5)),
+    ),
+    child: Column(children: children),
+  );
 
   Widget _buildMenuItem({
     required IconData icon,
@@ -499,10 +452,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: _caramel,
+          color: const Color(0xFF49382A),
           borderRadius: BorderRadius.circular(14),
         ),
-        child: Icon(icon, color: _bg, size: 20),
+        child: Icon(icon, color: _caramel, size: 20),
       ),
       title: Text(
         label,
@@ -542,7 +495,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildDivider() {
     return Divider(
-      color: _cardBorder.withOpacity(0.5),
+      color: _cardBorder.withValues(alpha: 0.5),
       height: 1,
       thickness: 1,
       indent: 18,

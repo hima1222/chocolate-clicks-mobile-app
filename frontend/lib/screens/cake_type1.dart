@@ -236,7 +236,9 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         final item = CartItem(
-                          id: 'cake_${widget.index ?? 0}',
+                          id:
+                              widget.product?['id'] as String? ??
+                              'cake_${widget.index ?? 0}',
                           name: productTitle,
                           price: productPrice,
                           quantity: 1,
@@ -290,4 +292,3 @@ class _CakeType1ScreenState extends State<CakeType1Screen> {
     );
   }
 }
-
