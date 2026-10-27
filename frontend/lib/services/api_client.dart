@@ -34,13 +34,16 @@ class ApiClient {
   factory ApiClient() => _instance;
   ApiClient._internal();
 
-static String get baseUrl {
-  if (kIsWeb) return 'http://localhost:5000/api'; // browser
-  if (defaultTargetPlatform == TargetPlatform.android) {
-  return 'http://10.0.2.2:5000/api'; // Android emulator change this for you IP adress if needed 
-  }
-  return 'http://localhost:5000/api'; // iOS simulator / desktop
-}
+// static String get baseUrl {
+//   if (kIsWeb) return 'http://localhost:5000/api'; // browser
+//   if (defaultTargetPlatform == TargetPlatform.android) {
+//   return 'http://10.0.2.2:5000/api'; // Android emulator change this for you IP adress if needed 
+//   }
+//   return 'http://localhost:5000/api'; // iOS simulator / desktop
+// }
+
+static const String baseUrl =
+    'https://chocolate-clicks-backend.hostless.app/api';
 
   static const Duration timeout = Duration(seconds: 30);
 
