@@ -10,12 +10,18 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  // Change this to your photo (add it to pubspec assets first).
+  static const _backgroundImage = 'assets/images/profile_bg.jpg';
+  // Higher = darker, more readable. Lower = more photo.
+  static const _overlayOpacity = 0.45;
+
   final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
   final _auth = AuthService();
   bool _saving = false;
+
   @override
   void initState() {
     super.initState();
@@ -70,130 +76,155 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => ShopPage(
-    title: 'Edit Profile',
-    subtitle:
-        'A little about you. Keep your contact details up to date for your next sweet visit.',
-    bottomBar: SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-        child: FilledButton.icon(
-          onPressed: _saving ? null : _save,
-          style: FilledButton.styleFrom(
-            backgroundColor: shopGold,
-            foregroundColor: shopBackground,
-            padding: const EdgeInsets.all(18),
-          ),
-          icon: _saving
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.check),
-          label: Text(_saving ? 'Saving...' : 'Save Changes'),
+  Widget build(BuildContext context) => Stack(
+    children: [
+      // 1. Photo
+      Positioned.fill(
+        child: Image.asset(_backgroundImage, fit: BoxFit.cover),
+      ),
+      // 2. Dark overlay so text stays readable
+      Positioned.fill(
+        child: ColoredBox(
+          color: shopBackground.withValues(alpha: _overlayOpacity),
         ),
       ),
-    ),
-    children: [
-      ShopPanel(
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 32,
-              backgroundColor: shopGold,
-              child: Text(
-                _name.text.trim().isEmpty
-                    ? '?'
-                    : _name.text.trim()[0].toUpperCase(),
-                style: const TextStyle(
-                  color: shopBackground,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+      // 3. Your original page, with a see-through scaffold
+      Theme(
+        data: Theme.of(
+          context,
+        ).copyWith(scaffoldBackgroundColor: Colors.transparent),
+        child: ShopPage(
+          title: 'Edit Profile',
+          subtitle:
+              'A little about you. Keep your contact details up to date for your next sweet visit.',
+          bottomBar: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+              child: FilledButton.icon(
+                onPressed: _saving ? null : _save,
+                style: FilledButton.styleFrom(
+                  backgroundColor: shopGold,
+                  foregroundColor: shopBackground,
+                  padding: const EdgeInsets.all(18),
                 ),
+                icon: _saving
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.check),
+                label: Text(_saving ? 'Saving...' : 'Save Changes'),
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          children: [
+            ShopPanel(
+              child: Row(
                 children: [
-                  Text(
-                    _name.text.trim().isEmpty
-                        ? 'Your profile'
-                        : _name.text.trim(),
-                    style: const TextStyle(
-                      color: shopCream,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundColor: shopGold,
+                    child: Text(
+                      _name.text.trim().isEmpty
+                          ? '?'
+                          : _name.text.trim()[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: shopBackground,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Chocolate Clicks member',
-                    style: TextStyle(color: shopGold, fontSize: 12),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _name.text.trim().isEmpty
+                              ? 'Your profile'
+                              : _name.text.trim(),
+                          style: const TextStyle(
+                            color: shopCream,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Chocolate Clicks member',
+                          style: TextStyle(color: shopGold, fontSize: 12),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+            ShopPanel(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Personal details',
+                      style: TextStyle(
+                        color: shopCream,
+                        fontSize: 22,
+                        fontFamily: 'serif',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _name,
+                      onChanged: (_) => setState(() {}),
+                      style: const TextStyle(color: shopCream),
+                      textCapitalization: TextCapitalization.words,
+                      decoration: shopInput('Full Name', Icons.person_outline),
+                      validator: (v) => v == null || v.trim().isEmpty
+                          ? 'Name required'
+                          : null,
+                    ),
+                    const SizedBox(height: 18),
+                    TextFormField(
+                      controller: _email,
+                      readOnly: true,
+                      style: const TextStyle(color: Colors.white60),
+                      decoration: shopInput('Email', Icons.email_outlined)
+                          .copyWith(
+                            suffixIcon: const Icon(
+                              Icons.lock_outline,
+                              color: Colors.white38,
+                              size: 18,
+                            ),
+                            helperText: 'Your sign-in email',
+                            helperStyle: const TextStyle(color: Colors.white54),
+                          ),
+                    ),
+                    const SizedBox(height: 18),
+                    TextFormField(
+                      controller: _phone,
+                      keyboardType: TextInputType.phone,
+                      style: const TextStyle(color: shopCream),
+                      decoration: shopInput(
+                        'Phone Number',
+                        Icons.phone_outlined,
+                      ),
+                      validator: (v) =>
+                          v == null ||
+                              !RegExp(r'^\+?[0-9]{10,15}$').hasMatch(v.trim())
+                          ? 'Enter a valid phone number'
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
-        ),
-      ),
-      const SizedBox(height: 24),
-      ShopPanel(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Personal details',
-                style: TextStyle(
-                  color: shopCream,
-                  fontSize: 22,
-                  fontFamily: 'serif',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _name,
-                onChanged: (_) => setState(() {}),
-                style: const TextStyle(color: shopCream),
-                textCapitalization: TextCapitalization.words,
-                decoration: shopInput('Full Name', Icons.person_outline),
-                validator: (v) =>
-                    v == null || v.trim().isEmpty ? 'Name required' : null,
-              ),
-              const SizedBox(height: 18),
-              TextFormField(
-                controller: _email,
-                readOnly: true,
-                style: const TextStyle(color: Colors.white60),
-                decoration: shopInput('Email', Icons.email_outlined).copyWith(
-                  suffixIcon: const Icon(
-                    Icons.lock_outline,
-                    color: Colors.white38,
-                    size: 18,
-                  ),
-                  helperText: 'Your sign-in email',
-                  helperStyle: const TextStyle(color: Colors.white54),
-                ),
-              ),
-              const SizedBox(height: 18),
-              TextFormField(
-                controller: _phone,
-                keyboardType: TextInputType.phone,
-                style: const TextStyle(color: shopCream),
-                decoration: shopInput('Phone Number', Icons.phone_outlined),
-                validator: (v) =>
-                    v == null ||
-                        !RegExp(r'^\+?[0-9]{10,15}$').hasMatch(v.trim())
-                    ? 'Enter a valid phone number'
-                    : null,
-              ),
-            ],
-          ),
         ),
       ),
     ],

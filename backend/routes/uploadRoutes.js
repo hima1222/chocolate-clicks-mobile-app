@@ -20,7 +20,14 @@ router.post('/', protect, (req, res, next) => {
       const result = await uploadBuffer(req.file.buffer);
       res.status(201).json({ success: true, data: { imageUrl: result.secure_url, publicId: result.public_id, width: result.width, height: result.height } });
     } catch (err) {
-      next(Object.assign(new Error(err.statusCode === 503 ? err.message : 'Image upload failed. Please try again.'), { statusCode: err.statusCode === 503 ? 503 : 502 }));
+      if (err.statusCode === 503) {
+        return next(err);
+      }
+      console.error('[uploads] Cloudinary upload failed:', {
+        httpCode: err.http_code,
+        message: err.message,
+      });
+      next(Object.assign(new Error('Cloudinary rejected the image upload. Check the backend Cloudinary configuration.'), { statusCode: 502 }));
     }
   });
 });

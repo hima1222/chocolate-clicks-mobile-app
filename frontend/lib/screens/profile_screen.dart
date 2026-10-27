@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 import 'package:chocolate_clicks/services/favorites_service.dart';
 import 'package:chocolate_clicks/services/cart_service.dart';
@@ -6,6 +7,9 @@ import 'package:chocolate_clicks/services/events_service.dart';
 import 'package:chocolate_clicks/services/payment_service.dart';
 import 'package:chocolate_clicks/services/order_service.dart';
 import 'package:chocolate_clicks/services/notification_service.dart';
+import 'package:chocolate_clicks/services/image_upload_service.dart';
+import 'package:chocolate_clicks/services/api_client.dart';
+import 'package:chocolate_clicks/models/user_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -30,12 +34,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final PaymentService _paymentService = PaymentService();
   final OrderService _orderService = OrderService();
   final NotificationService _notificationService = NotificationService();
+  final ImagePicker _imagePicker = ImagePicker();
+  final ImageUploadService _imageUploadService = ImageUploadService();
 
   int _favouritesCount = 0;
   int _cartCount = 0;
   int _ordersCount = 0;
   int _eventsCount = 0;
   bool _loading = true;
+  bool _uploadingProfileImage = false;
 
   @override
   void initState() {
@@ -84,6 +91,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _uploadProfileImage() async {
+    if (_uploadingProfileImage) return;
+
+    final image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (image == null || !mounted) return;
+
+    setState(() => _uploadingProfileImage = true);
+    try {
+      final bytes = await image.readAsBytes();
+      final mimeType = image.mimeType ?? _mimeTypeFor(image.name);
+      final upload = await _imageUploadService.upload(
+        bytes: bytes,
+        filename: image.name,
+        mimeType: mimeType,
+      );
+      final imageUrl = upload['imageUrl']?.toString();
+      if (imageUrl == null || imageUrl.isEmpty) {
+        throw ApiException(message: 'The uploaded image URL was missing');
+      }
+
+      final response = await _authService.updateProfile(
+        profileImageUrl: imageUrl,
+      );
+      if (!mounted) return;
+      if (!response.success) {
+        throw AuthException(message: response.message);
+      }
+      setState(() {});
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Profile photo updated')));
+    } catch (error) {
+      if (!mounted) return;
+      final message = error is AuthException
+          ? error.message
+          : error is ApiException
+          ? error.message
+          : 'Unable to update your profile photo. Please try again.';
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } finally {
+      if (mounted) setState(() => _uploadingProfileImage = false);
+    }
+  }
+
+  String _mimeTypeFor(String filename) {
+    switch (filename.toLowerCase().split('.').last) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'webp':
+        return 'image/webp';
+      case 'gif':
+        return 'image/gif';
+      case 'png':
+        return 'image/png';
+      default:
+        return 'image/jpeg';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = _authService.currentUser;
@@ -94,6 +166,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: _bg,
       body: Stack(
         children: [
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.22,
+                child: Image.asset(
+                  'assets/images/event_background.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(child: ColoredBox(color: Color(0xAA2A1C15))),
+          ),
           // Soft decorative circle (like the home page header)
           Positioned(
             top: -60,
@@ -156,17 +242,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               end: Alignment.bottomRight,
                             ),
                           ),
-                          child: CircleAvatar(
-                            radius: 48,
-                            backgroundColor: _bg,
-                            child: Text(
-                              _getInitials(fullName),
-                              style: const TextStyle(
-                                color: _cream,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              CircleAvatar(
+                                radius: 48,
+                                backgroundColor: _bg,
+                                child:
+                                    user?.profileImageUrl != null &&
+                                        user!.profileImageUrl!.isNotEmpty
+                                    ? ClipOval(
+                                        child: Image.network(
+                                          user.profileImageUrl!,
+                                          width: 96,
+                                          height: 96,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, _, _) =>
+                                              _profileInitials(fullName),
+                                        ),
+                                      )
+                                    : _profileInitials(fullName),
                               ),
-                            ),
+                              Positioned(
+                                right: -4,
+                                bottom: -4,
+                                child: Material(
+                                  color: _caramel,
+                                  shape: const CircleBorder(),
+                                  child: InkWell(
+                                    onTap: _uploadingProfileImage
+                                        ? null
+                                        : _uploadProfileImage,
+                                    customBorder: const CircleBorder(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(9),
+                                      child: _uploadingProfileImage
+                                          ? const SizedBox(
+                                              width: 18,
+                                              height: 18,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: _bg,
+                                              ),
+                                            )
+                                          : const Icon(
+                                              Icons.camera_alt,
+                                              color: _bg,
+                                              size: 18,
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -427,6 +555,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (parts.isEmpty || parts.first.isEmpty) return 'G';
     if (parts.length == 1) return parts.first.substring(0, 1).toUpperCase();
     return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+  }
+
+  Widget _profileInitials(String fullName) {
+    return Center(
+      child: Text(
+        _getInitials(fullName),
+        style: const TextStyle(
+          color: _cream,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   String _memberSinceYear(DateTime? date) {

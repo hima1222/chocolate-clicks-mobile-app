@@ -1,6 +1,10 @@
 const Order = require('../models/Order');
+const PaymentReceipt = require('../models/PaymentReceipt');
 const Product = require('../models/Product');
 const { notifyUser } = require('../services/notificationService');
+const { createError } = require('../middleware/errorMiddleware');
+
+const RESEND_COOLDOWN_MS = 5 * 60 * 1000;
 
 const createOrder = async (req, res, next) => {
   try {
@@ -198,10 +202,98 @@ const updateOrderStatus = async (req, res, next) => {
   }
 };
 
+const getConfirmation = async (req, res, next) => {
+  try {
+    const order = await Order.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    }).select('payment_status');
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found',
+      });
+    }
+
+    const receipt = await PaymentReceipt.findOne({ orderId: order._id })
+      .select('status');
+
+    res.set('Cache-Control', 'no-store');
+    res.json({
+      success: true,
+      data: {
+        paymentStatus: order.payment_status,
+        emailStatus: order.payment_status === 'paid'
+          ? receipt?.status || 'unavailable'
+          : 'unavailable',
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resendConfirmation = async (req, res, next) => {
+  try {
+    const order = await Order.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    }).select('payment_status');
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found',
+      });
+    }
+
+    if (order.payment_status !== 'paid') {
+      return next(createError('A confirmation is available only for paid orders', 409));
+    }
+
+    const now = new Date();
+    const cooldownCutoff = new Date(now.getTime() - RESEND_COOLDOWN_MS);
+    const receipt = await PaymentReceipt.findOneAndUpdate(
+      {
+        orderId: order._id,
+        status: { $in: ['sent', 'failed'] },
+        $or: [
+          { resendRequestedAt: { $exists: false } },
+          { resendRequestedAt: { $lte: cooldownCutoff } },
+        ],
+      },
+      {
+        $set: {
+          status: 'queued',
+          resendRequestedAt: now,
+        },
+      },
+      { new: true }
+    );
+
+    if (!receipt) {
+      return next(createError(
+        'Confirmation email is already queued or was requested recently',
+        429
+      ));
+    }
+
+    res.status(202).json({
+      success: true,
+      data: { emailStatus: receipt.status },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createOrder,
   getUserOrders,
   getOrderById,
   cancelOrder,
   updateOrderStatus,
+  getConfirmation,
+  resendConfirmation,
 };
