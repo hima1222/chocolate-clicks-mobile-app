@@ -6,6 +6,15 @@ const { OAuth2Client } = require('google-auth-library');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_WEB_CLIENT_ID);
 
+const googleConfig = (req, res) => {
+  const clientId = (process.env.GOOGLE_WEB_CLIENT_ID || '').trim();
+  if (!clientId.endsWith('.apps.googleusercontent.com')) {
+    return res.status(503).json({ success: false, message: 'Google sign-in is not configured on the server.' });
+  }
+  // OAuth client IDs are public. Never return client secrets or other env values.
+  return res.json({ success: true, data: { clientId } });
+};
+
 const hashCode = (code) =>
   crypto.createHash('sha256').update(String(code)).digest('hex');
 
@@ -83,6 +92,10 @@ const login = async (req, res, next) => {
 
 const googleLogin = async (req, res, next) => {
   try {
+    const clientId = (process.env.GOOGLE_WEB_CLIENT_ID || '').trim();
+    if (!clientId.endsWith('.apps.googleusercontent.com')) {
+      return res.status(503).json({ success: false, message: 'Google sign-in is not configured on the server.' });
+    }
     const { idToken } = req.body;
     if (!idToken) {
       return res.status(400).json({
@@ -96,7 +109,7 @@ const googleLogin = async (req, res, next) => {
     try {
       const ticket = await googleClient.verifyIdToken({
         idToken,
-        audience: process.env.GOOGLE_WEB_CLIENT_ID,
+        audience: clientId,
       });
       payload = ticket.getPayload();
     } catch (err) {
@@ -275,6 +288,7 @@ module.exports = {
   register,
   login,
   googleLogin,
+  googleConfig,
   getMe,
   updateProfile, 
   forgotPassword, 

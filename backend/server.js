@@ -16,7 +16,7 @@
 // }
 // start().catch((error) => { console.error(error.message); process.exit(1); });
 
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
 const connectDB = require('./config/db');
 const app = require('./app');
