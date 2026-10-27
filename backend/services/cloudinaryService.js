@@ -1,8 +1,16 @@
 const cloudinary = require('cloudinary').v2;
 function client() {
   const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
-  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-    const error = new Error('Cloudinary credentials are not configured on the server');
+  if (
+    !CLOUDINARY_CLOUD_NAME ||
+    !CLOUDINARY_API_KEY ||
+    !CLOUDINARY_API_SECRET ||
+    CLOUDINARY_API_SECRET.length < 10 ||
+    /^(your|example|change|replace|test|secret)/i.test(CLOUDINARY_API_SECRET)
+  ) {
+    const error = new Error(
+      'Cloudinary credentials are missing or invalid. Configure the real CLOUDINARY_* values in backend/.env.',
+    );
     error.statusCode = 503;
     throw error;
   }

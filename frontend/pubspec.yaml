@@ -38,7 +38,9 @@ dependencies:
   http_parser: ^4.0.2
   shared_preferences: ^2.2.3
   google_sign_in: ^7.2.0
+  image_picker: ^1.1.2
   payhere_mobilesdk_flutter: ^3.2.3
+  google_fonts: ^8.2.1
 
 dev_dependencies:
   flutter_test:
@@ -91,4 +93,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-
