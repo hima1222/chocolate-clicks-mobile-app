@@ -6,6 +6,7 @@ class BakeItHappenScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ScheduledEventPage(
+    eventSlug: 'bake-it-happen',
     title: 'Bake It Happen',
     subtitle: 'Mix, bake, and make something wonderful.',
     image: 'assets/images/bih1.jpg',

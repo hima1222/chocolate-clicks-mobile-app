@@ -8,6 +8,7 @@
     "dev": "nodemon server.js",
     "test": "jest --runInBand",
     "seed:events": "node seeds/seedEvents.js",
+    "sync:workshops": "node scripts/syncWorkshops.js",
     "smtp:verify": "node scripts/verifySmtp.js",
     "seed:products": "node seeds/seedProducts.js",
     "payhere:check": "node scripts/checkPayhere.js",

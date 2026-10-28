@@ -6,6 +6,7 @@ class MaskPaintingWorkshopScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ScheduledEventPage(
+    eventSlug: 'mask-painting-workshop',
     title: 'Mask Painting Workshop',
     subtitle: 'Colour your afternoon with a little creativity.',
     image: 'assets/images/workshops_bg.jpg',

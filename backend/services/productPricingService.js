@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
+const { parseCityFees } = require('../config/deliveryConfig');
 const { createError } = require('../middleware/errorMiddleware');
 function setting(name, fallback) {
   const value = Number(process.env[name] || fallback);
@@ -27,10 +28,7 @@ async function quoteProducts(items, city = '') {
     return { product: product._id, name: product.name, price: cents / 100, quantity };
   });
   const baseDelivery = setting('DELIVERY_FEE', 300);
-  let cityFees;
-  try { cityFees = JSON.parse(process.env.DELIVERY_CITY_FEES || '{}'); }
-  catch (_) { throw createError('Invalid DELIVERY_CITY_FEES configuration', 503); }
-  if (!cityFees || typeof cityFees !== 'object' || Array.isArray(cityFees)) throw createError('Invalid DELIVERY_CITY_FEES configuration', 503);
+  const cityFees = parseCityFees();
   const normalizeCity = (value) => String(value).trim().toLowerCase().replace(/[^a-z0-9]/g, '').replace(/^colombo0(\d)$/, 'colombo$1');
   const match = Object.entries(cityFees).find(([name]) => normalizeCity(name) === normalizeCity(city));
   const delivery = match ? Number(match[1]) : baseDelivery;

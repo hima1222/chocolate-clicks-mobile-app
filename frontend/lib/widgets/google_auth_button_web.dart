@@ -23,20 +23,26 @@ class _GoogleAuthButtonState extends State<GoogleAuthButton> {
     super.initState();
     _subscription = GoogleSignIn.instance.authenticationEvents.listen(
       (event) {
-        if (event is GoogleSignInAuthenticationEventSignIn)
+        if (event is GoogleSignInAuthenticationEventSignIn) {
           _complete(event.user);
+        }
       },
       onError: (Object error) {
-        if (mounted)
+        if (mounted) {
           _showError('Google sign-in could not complete. Please try again.');
+        }
       },
     );
     _initialization = AuthService().initializeGoogle();
   }
 
   Future<void> _complete(GoogleSignInAccount account) async {
-    if (!mounted || ModalRoute.of(context)?.isCurrent == false ||
-        _processing || widget.onPressed == null) return;
+    if (!mounted ||
+        ModalRoute.of(context)?.isCurrent == false ||
+        _processing ||
+        widget.onPressed == null) {
+      return;
+    }
     setState(() => _processing = true);
     widget.onBusyChanged?.call(true);
     try {
@@ -44,12 +50,13 @@ class _GoogleAuthButtonState extends State<GoogleAuthButton> {
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/welcome_profile');
     } catch (error) {
-      if (mounted)
+      if (mounted) {
         _showError(
           error is AuthException
               ? error.message
               : 'Unable to finish Google sign-in. Please try again.',
         );
+      }
     } finally {
       if (mounted) {
         setState(() => _processing = false);
@@ -99,9 +106,9 @@ class _GoogleAuthButtonState extends State<GoogleAuthButton> {
         ignoring: widget.onPressed == null,
         child: web.renderButton(
           configuration: web.GSIButtonConfiguration(
-            theme: web.GSIButtonTheme.filledBlack,
+            theme: web.GSIButtonTheme.outline,
             size: web.GSIButtonSize.large,
-            shape: web.GSIButtonShape.pill,
+            shape: web.GSIButtonShape.rectangular,
             text: web.GSIButtonText.continueWith,
           ),
         ),
