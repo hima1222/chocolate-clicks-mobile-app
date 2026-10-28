@@ -1,4 +1,5 @@
 import '../widgets/google_auth_button.dart';
+import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
