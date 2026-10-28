@@ -94,6 +94,63 @@ class _EventBookingButtonState extends State<EventBookingButton> {
     }
     return Navigator.of(context).push<int>(
       MaterialPageRoute(builder: (_) => EventParticipantsScreen(event: event)),
+    var quantity = 1;
+    final limit = event.remainingSeats.clamp(0, 100).toInt();
+    if (limit == 0) throw Exception('This session is fully booked.');
+    return Navigator.of(context).push<int>(
+      MaterialPageRoute(
+        builder: (context) => StatefulBuilder(
+          builder: (context, setPageState) => Scaffold(
+            appBar: AppBar(title: const Text('Event booking')),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      event.title,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 24),
+                    Text('Rs. ${event.price.toStringAsFixed(2)} per person'),
+                    const SizedBox(height: 16),
+                    const Text('Number of persons'),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: quantity > 1
+                              ? () => setPageState(() => quantity--)
+                              : null,
+                          icon: const Icon(Icons.remove),
+                        ),
+                        Text('$quantity'),
+                        IconButton(
+                          onPressed: quantity < limit
+                              ? () => setPageState(() => quantity++)
+                              : null,
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                    Text('$limit seats available'),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Total: Rs. ${(event.price * quantity).toStringAsFixed(2)}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, quantity),
+                      child: const Text('Continue to checkout'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
