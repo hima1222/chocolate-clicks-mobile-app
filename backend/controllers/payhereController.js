@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Event = require('../models/Event');
+const { syncWorkshops } = require('../services/workshopSyncService');
 const Booking = require('../models/Booking');
 const PaymentReceipt = require('../models/PaymentReceipt');
 const payhere = require('../services/payhereService');
@@ -23,6 +24,7 @@ async function createEventOrder(req, res, next) {
       throw createError('A valid eventId and quantity from 1 to 100 are required', 400);
     }
     const customer = customerFor(req.user, req.body.billing);
+    await syncWorkshops();
     let order;
     let reused = false;
     const session = await mongoose.startSession();
@@ -38,7 +40,7 @@ async function createEventOrder(req, res, next) {
           throw createError('You already booked this event', 409);
         }
         const event = await Event.findOneAndUpdate({
-          _id: eventId, startDate: { $gt: new Date() },
+          _id: eventId, sourcePublished: { $ne: false }, startDate: { $gt: new Date() },
           $expr: { $lte: [{ $add: ['$bookedCount', quantity] }, '$capacity'] },
         }, { $inc: { bookedCount: quantity } }, { new: true, session });
         if (!event) throw createError('Event is unavailable or does not have enough seats', 409);

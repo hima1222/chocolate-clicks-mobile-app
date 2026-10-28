@@ -3,6 +3,7 @@ class EventModel {
   final String subtitle, cardImage, schedule, duration;
   final List<String> gallery, included;
   final String id;
+  final String slug;
   final String title;
   final String description;
   final DateTime date;
@@ -14,6 +15,7 @@ class EventModel {
   final int remainingSeats;
 
   EventModel({
+    this.slug = '',
     this.subtitle = '',
     this.cardImage = '',
     this.schedule = '',
@@ -48,6 +50,7 @@ class EventModel {
     final rawId = json['_id'] ?? json['id'];
     final rawDate = json['startDate'] ?? json['date'];
     return EventModel(
+      slug: json['slug']?.toString() ?? '',
       subtitle: json['subtitle']?.toString() ?? '',
       cardImage: json['cardImage']?.toString() ?? '',
       schedule: json['schedule']?.toString() ?? '',

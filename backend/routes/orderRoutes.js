@@ -2,7 +2,6 @@ const express = require('express');
 const {
   getConfirmation,
   resendConfirmation,
-  createOrder,
   getUserOrders,
   getOrderById,
   cancelOrder,
@@ -15,12 +14,17 @@ const router = express.Router();
 
 router.post('/quote', require('../controllers/productCheckoutController').quoteProductOrder);
 router.use(protect);
-router.post('/', createOrder);
+router.post('/', (req, res, next) => {
+  if (Object.prototype.hasOwnProperty.call(req.body, 'eventId')) {
+    return require('../controllers/payhereController').createEventOrder(req, res, next);
+  }
+  return require('../controllers/productCheckoutController').createProductOrder(req, res, next);
+});
 router.post('/:id/checkout', require('../controllers/productCheckoutController').resumeCheckout);
 router.get('/', getUserOrders);
 router.get('/:id', getOrderById);
-//router.get('/:id/confirmation', getConfirmation);
-//router.post('/:id/resend-confirmation', resendConfirmation);
+router.get('/:id/confirmation', getConfirmation);
+router.post('/:id/resend-confirmation', resendConfirmation);
 router.put('/:id/cancel', cancelOrder);
 router.put('/:id/status', adminOnly, updateOrderStatus);
 

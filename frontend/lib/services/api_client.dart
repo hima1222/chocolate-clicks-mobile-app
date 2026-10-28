@@ -42,8 +42,10 @@ class ApiClient {
 //   return 'http://localhost:5000/api'; // iOS simulator / desktop
 // }
 
-static const String baseUrl =
-    'https://chocolate-clicks-backend.hostless.app/api';
+static const String baseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'https://chocolate-clicks-backend.hostless.app/api',
+);
 
   static const Duration timeout = Duration(seconds: 30);
 

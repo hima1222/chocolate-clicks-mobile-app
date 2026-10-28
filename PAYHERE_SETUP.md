@@ -138,3 +138,23 @@ DELIVERY_CITY_FEES='{"Colombo 06":300,"Mount Lavinia":500,"Maharagama":700}'
 
 Unquoted city names such as `{Colombo:300}` are invalid JSON. Restart the backend
 after editing this value so dotenv reloads the configuration.
+
+
+## Hosted delivery configuration
+
+Flutter defaults to https://chocolate-clicks-backend.hostless.app/api. Editing your
+local backend/.env does not update the hosting dashboard's environment or running
+service. Change DELIVERY_CITY_FEES in the hosted backend environment and restart or
+redeploy that backend to apply it. Dashboard values should be the JSON object itself,
+without an extra pair of shell quotes. A local .env can use single quotes around JSON.
+
+The versioned backend/config/delivery-city-fees.json now contains the existing city
+rates. After deploying this code, you can remove the DELIVERY_CITY_FEES override to
+use that file. Valid overrides retain priority. The parser also accepts legacy flat
+city tables with stripped key quotes and JSON-encoded dashboard strings, without eval
+or silently replacing invalid charges.
+
+To explicitly run Flutter against your local backend, use
+`flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5000/api`.
+This selects the local quote API; real PayHere confirmations still need the public
+notification endpoint.

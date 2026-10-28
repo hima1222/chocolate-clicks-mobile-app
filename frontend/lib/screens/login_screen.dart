@@ -114,243 +114,261 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Spacer(
-                    flex: 12,
-                  ), // Increased spacer to push content lower
-
-                  const Text(
-                    "Cafe Chocolate",
-                    style: TextStyle(
-                      fontSize: 32, // Reduced font size
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1.2,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black87,
-                          offset: Offset(2, 2),
-                          blurRadius: 6,
-                        ),
-                      ],
-                      fontFamily: 'kalnia', // Changed font
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  Text(
-                    "Welcome back! Please login to your account",
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.85),
-                      fontSize: 14, // Reduced font size
-                      fontFamily: 'Roboto',
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  const Spacer(flex: 2), // Reduced spacer
-
-                  Form(
-                    key: _formKey,
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        TextFormField(
-                          controller: _usernameController,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Roboto',
+                        const Spacer(
+                          flex: 12,
+                        ), // Increased spacer to push content lower
+
+                        const Text(
+                          "Cafe Chocolate",
+                          style: TextStyle(
+                            fontSize: 32, // Reduced font size
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 1.2,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black87,
+                                offset: Offset(2, 2),
+                                blurRadius: 6,
+                              ),
+                            ],
+                            fontFamily: 'kalnia', // Changed font
                           ),
-                          validator: (v) =>
-                              v == null || v.isEmpty ? 'Required' : null,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white.withValues(alpha: 0.92),
-                            hintText: "Username / Mobile Number / Email",
-                            hintStyle: const TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Roboto',
-                            ),
-                            prefixIcon: const Icon(
-                              Icons.person_outline,
-                              size: 20,
-                            ), // Smaller icon
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                8,
-                              ), // Smaller border radius
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, // Reduced padding
-                              horizontal: 16,
-                            ),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
+                          textAlign: TextAlign.center,
                         ),
 
-                        const SizedBox(height: 16), // Reduced spacing
+                        const SizedBox(height: 6),
 
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          style: const TextStyle(
-                            fontSize: 14,
+                        Text(
+                          "Welcome back! Please login to your account",
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.85),
+                            fontSize: 14, // Reduced font size
                             fontFamily: 'Roboto',
                           ),
-                          validator: (v) =>
-                              v == null || v.isEmpty ? 'Required' : null,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white.withValues(alpha: 0.92),
-                            hintText: "Password",
-                            hintStyle: const TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Roboto',
-                            ),
-                            prefixIcon: const Icon(
-                              Icons.lock_outline,
-                              size: 20,
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                                size: 20,
-                              ),
-                              onPressed: () => setState(
-                                () => _obscurePassword = !_obscurePassword,
-                              ),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 16,
-                            ),
-                          ),
+                          textAlign: TextAlign.center,
                         ),
 
-                        const SizedBox(height: 12),
+                        const Spacer(flex: 2), // Reduced spacer
 
-                        // Forgot Password
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const ForgotPasswordScreen(),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              TextFormField(
+                                controller: _usernameController,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Roboto',
                                 ),
-                              );
-                            },
-                            child: const Text(
-                              "Forgot your password?",
+                                validator: (v) =>
+                                    v == null || v.isEmpty ? 'Required' : null,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white.withValues(
+                                    alpha: 0.92,
+                                  ),
+                                  hintText: "Username / Mobile Number / Email",
+                                  hintStyle: const TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.person_outline,
+                                    size: 20,
+                                  ), // Smaller icon
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      8,
+                                    ), // Smaller border radius
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 12, // Reduced padding
+                                    horizontal: 16,
+                                  ),
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                textInputAction: TextInputAction.next,
+                              ),
+
+                              const SizedBox(height: 16), // Reduced spacing
+
+                              TextFormField(
+                                controller: _passwordController,
+                                obscureText: _obscurePassword,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Roboto',
+                                ),
+                                validator: (v) =>
+                                    v == null || v.isEmpty ? 'Required' : null,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white.withValues(
+                                    alpha: 0.92,
+                                  ),
+                                  hintText: "Password",
+                                  hintStyle: const TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.lock_outline,
+                                    size: 20,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscurePassword
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                      size: 20,
+                                    ),
+                                    onPressed: () => setState(
+                                      () =>
+                                          _obscurePassword = !_obscurePassword,
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 16,
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              // Forgot Password
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ForgotPasswordScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Forgot your password?",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                      fontFamily: 'Roboto',
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              // Login Button
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color.fromARGB(
+                                    159,
+                                    243,
+                                    102,
+                                    27,
+                                  ),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  elevation: 4,
+                                ),
+                                onPressed: _loading ? null : _submit,
+                                child: _loading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Text(
+                                        "LOGIN",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1.1,
+                                          fontFamily: 'Roboto',
+                                        ),
+                                      ),
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              // Google Sign-In Button
+                              GoogleAuthButton(
+                                onPressed: _loading ? null : _googleSignIn,
+                                onBusyChanged: (busy) {
+                                  if (mounted) setState(() => _loading = busy);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const Spacer(flex: 3),
+
+                        // Sign Up row
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(
+                              "Don't have an account?  ",
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 12,
                                 fontFamily: 'Roboto',
                               ),
                             ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        // Login Button
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                              159,
-                              243,
-                              102,
-                              27,
-                            ),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 4,
-                          ),
-                          onPressed: _loading ? null : _submit,
-                          child: _loading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text(
-                                  "LOGIN",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.1,
-                                    fontFamily: 'Roboto',
-                                  ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/register');
+                              },
+                              child: const Text(
+                                "Sign up here",
+                                style: TextStyle(
+                                  color: Color(0xFFFFC107),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  fontFamily: 'Roboto',
                                 ),
+                              ),
+                            ),
+                          ],
                         ),
 
-                        const SizedBox(height: 12),
-
-                        // Google Sign-In Button
-                        GoogleAuthButton(
-                          onPressed: _loading ? null : _googleSignIn,
-                          onBusyChanged: (busy) {
-                            if (mounted) setState(() => _loading = busy);
-                          },
-                        ),
+                        const SizedBox(height: 30),
                       ],
                     ),
                   ),
-
-                  const Spacer(flex: 3),
-
-                  // Sign Up row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have an account?  ",
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          fontFamily: 'Roboto',
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/register');
-                        },
-                        child: const Text(
-                          "Sign up here",
-                          style: TextStyle(
-                            color: Color(0xFFFFC107),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            fontFamily: 'Roboto',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 30),
-                ],
+                ),
               ),
             ),
           ),

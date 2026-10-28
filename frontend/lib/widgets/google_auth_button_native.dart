@@ -17,9 +17,13 @@ class GoogleAuthButton extends StatelessWidget {
     ),
     label: const Text('Continue with Google'),
     style: OutlinedButton.styleFrom(
-      foregroundColor: const Color(0xFFE6D3BD),
+      backgroundColor: Colors.white,
+      disabledBackgroundColor: Colors.white,
+      foregroundColor: const Color(0xFF202124),
+      disabledForegroundColor: Colors.grey,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       minimumSize: const Size(0, 48),
-      side: const BorderSide(color: Color(0xFFBDA892)),
+      side: const BorderSide(color: Colors.white),
     ),
   );
 }

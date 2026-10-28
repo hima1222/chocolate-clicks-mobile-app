@@ -9,8 +9,10 @@ EventModel session(
   int days = 2,
   int seats = 4,
   String title = 'Bake It Happen',
+  String slug = '',
 }) => EventModel(
   id: id,
+  slug: slug,
   title: title,
   description: '',
   date: DateTime.now().add(Duration(days: days)),
@@ -24,6 +26,7 @@ EventModel session(
 Widget detail(Future<List<EventModel>> Function() load) => MaterialApp(
   home: ScheduledEventPage(
     title: 'Bake It Happen',
+    eventSlug: 'bake-it-happen',
     subtitle: 'Create something sweet.',
     image: 'assets/images/bih1.jpg',
     gallery: const ['assets/images/bih2.jpeg'],
@@ -43,6 +46,32 @@ Future<void> showSessions(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets(
+    'Category slug finds website sessions with a different display title',
+    (tester) async {
+      await tester.pumpWidget(
+        detail(
+          () async => [
+            session(
+              'website',
+              title: 'Cake Baking Workshop',
+              slug: 'bake-it-happen',
+            ),
+            session(
+              'mask',
+              title: 'Wes Mask Painting Workshop',
+              slug: 'mask-painting-workshop',
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(bookButton(tester).onPressed, isNotNull);
+      await showSessions(tester);
+      expect(find.text('4 seats available'), findsOneWidget);
+      expect(find.byType(DropdownButtonFormField<String>), findsNothing);
+    },
+  );
   testWidgets(
     'Catalog always shows the two supported experiences without dated sessions',
     (tester) async {
