@@ -3,7 +3,7 @@ const express = require('express');
 jest.mock('../middleware/authMiddleware', () => ({ protect: (req, res, next) => next() }));
 jest.mock('../middleware/adminMiddleware', () => ({ adminOnly: (req, res, next) => next() }));
 jest.mock('../controllers/orderController', () => Object.fromEntries([
-  'getConfirmation', 'resendConfirmation', 'getUserOrders', 'getOrderById',
+  'deleteOrder', 'getConfirmation', 'resendConfirmation', 'getUserOrders', 'getOrderById',
   'cancelOrder', 'updateOrderStatus',
 ].map(name => [name, jest.fn()])));
 jest.mock('../controllers/productCheckoutController', () => ({

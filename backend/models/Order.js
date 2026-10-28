@@ -25,6 +25,7 @@ const orderSchema = new mongoose.Schema(
     orderNumber: { type: String, default: () => `CC-${new mongoose.Types.ObjectId().toHexString().toUpperCase()}`, required: true },
     eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
     eventTitle: String,
+    userDeletedAt: Date,
     checkoutKey: String,
     receiptQueued: { type: Boolean, default: false },
     fromCart: { type: Boolean, default: false },

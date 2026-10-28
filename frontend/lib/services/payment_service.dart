@@ -152,6 +152,13 @@ class PaymentService {
     return EventCheckoutResult(await pollOrder(order.id));
   }
 
+  static String nativePaymentError(String error) {
+    if (error.toLowerCase().contains('unauthorized domain')) {
+      return 'PayHere could not authorize this mobile app. Please use the web app or contact the shop.';
+    }
+    return 'Checkout error: $error';
+  }
+
   Future<String?> _launchPayment(Map<String, dynamic> checkout) async {
     if (kIsWeb) return startWebPayment(checkout);
     final completion = Completer<String?>();
@@ -163,7 +170,7 @@ class PaymentService {
       PayHere.startPayment(
         checkout,
         (_) => finish(null),
-        (error) => finish('Checkout error: $error'),
+        (error) => finish(nativePaymentError(error.toString())),
         () => finish('Checkout dismissed.'),
       );
     } catch (error) {

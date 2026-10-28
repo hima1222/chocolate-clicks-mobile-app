@@ -96,6 +96,16 @@ class OrderService {
     }
   }
 
+  Future<void> deleteOrder(String orderId) async {
+    await SessionManager().ready;
+    final token = AuthService().authToken;
+    if (token == null) throw Exception('Please log in to delete an order.');
+    await ApiClient().delete(
+      '/orders/$orderId',
+      headers: {'Authorization': 'Bearer $token'},
+    );
+  }
+
   /// Cancel an order
   Future<bool> cancelOrder(String orderId) async {
     try {

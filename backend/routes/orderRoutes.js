@@ -1,5 +1,6 @@
 const express = require('express');
 const {
+  deleteOrder,
   getConfirmation,
   resendConfirmation,
   getUserOrders,
@@ -23,6 +24,7 @@ router.post('/', (req, res, next) => {
 router.post('/:id/checkout', require('../controllers/productCheckoutController').resumeCheckout);
 router.get('/', getUserOrders);
 router.get('/:id', getOrderById);
+router.delete('/:id', deleteOrder);
 router.get('/:id/confirmation', getConfirmation);
 router.post('/:id/resend-confirmation', resendConfirmation);
 router.put('/:id/cancel', cancelOrder);

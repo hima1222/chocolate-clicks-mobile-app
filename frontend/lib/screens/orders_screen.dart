@@ -38,258 +38,288 @@ class _OrdersScreenState extends State<OrdersScreen> {
     } catch (_) {}
   }
 
+  void _backToProfile() {
+    final navigator = Navigator.of(context);
+    var foundProfile = false;
+    navigator.popUntil((route) {
+      foundProfile = route.settings.name == '/profile';
+      return foundProfile || route.isFirst;
+    });
+    if (!foundProfile) {
+      navigator.pushReplacementNamed('/profile');
+    }
+  }
+
   bool _active(Order order) =>
       order.status != OrderStatus.completed &&
       order.status != OrderStatus.cancelled;
   @override
-  Widget build(BuildContext context) => FutureBuilder<List<Order>>(
-    future: _orders,
-    builder: (context, snapshot) {
-      final orders = snapshot.data ?? [];
-      final filtered = orders
-          .where(
-            (order) =>
-                _filter == 0 ||
-                (_filter == 1
-                    ? _active(order)
-                    : order.status == OrderStatus.completed),
-          )
-          .toList();
-      return OrderPage(
-        title: 'Order Details',
-        subtitle: 'Your sweet moments, all in one place.',
-        onRefresh: _refresh,
-        children: [
-          ShopPanel(
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: shopGold.withValues(alpha: .13),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: const Icon(
-                    Icons.shopping_bag_outlined,
-                    color: shopGold,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Made for you',
-                        style: TextStyle(
-                          color: shopCream,
-                          fontSize: 21,
-                          fontFamily: 'serif',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        '${orders.length} ${orders.length == 1 ? 'order' : 'orders'}  /  ${orders.where(_active).length} in progress',
-                        style: const TextStyle(
-                          color: Colors.white60,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 10,
-            runSpacing: 8,
-            children: [
-              for (var i = 0; i < 3; i++)
-                ChoiceChip(
-                  label: Text(['All orders', 'In progress', 'Completed'][i]),
-                  selected: _filter == i,
-                  onSelected: (_) => setState(() => _filter = i),
-                  selectedColor: shopGold,
-                  backgroundColor: shopSurface,
-                  labelStyle: TextStyle(
-                    color: _filter == i ? shopBackground : shopCream,
-                  ),
-                  showCheckmark: false,
-                ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          if (snapshot.connectionState != ConnectionState.done)
-            const Padding(
-              padding: EdgeInsets.all(40),
-              child: Center(child: CircularProgressIndicator(color: shopGold)),
+  Widget build(BuildContext context) => PopScope(
+    canPop: false,
+    onPopInvokedWithResult: (didPop, result) {
+      if (!didPop) _backToProfile();
+    },
+    child: FutureBuilder<List<Order>>(
+      future: _orders,
+      builder: (context, snapshot) {
+        final orders = snapshot.data ?? [];
+        final filtered = orders
+            .where(
+              (order) =>
+                  _filter == 0 ||
+                  (_filter == 1
+                      ? _active(order)
+                      : order.status == OrderStatus.completed),
             )
-          else if (snapshot.hasError)
+            .toList();
+        return OrderPage(
+          title: 'Order Details',
+          onBack: _backToProfile,
+          subtitle: 'Your sweet moments, all in one place.',
+          onRefresh: _refresh,
+          children: [
             ShopPanel(
-              child: Column(
+              child: Row(
                 children: [
-                  const Icon(
-                    Icons.cloud_off_outlined,
-                    color: shopGold,
-                    size: 36,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Unable to load your orders.',
-                    style: TextStyle(color: shopCream),
-                  ),
-                  TextButton(
-                    onPressed: _refresh,
-                    child: const Text('Try again'),
-                  ),
-                ],
-              ),
-            )
-          else if (filtered.isEmpty)
-            ShopPanel(
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.bakery_dining_outlined,
-                    color: shopGold,
-                    size: 44,
-                  ),
-                  const SizedBox(height: 18),
-                  const Text(
-                    'A little sweetness awaits',
-                    style: TextStyle(
-                      color: shopCream,
-                      fontFamily: 'serif',
-                      fontSize: 21,
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: shopGold.withValues(alpha: .13),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: const Icon(
+                      Icons.shopping_bag_outlined,
+                      color: shopGold,
+                      size: 30,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    orders.isEmpty
-                        ? 'Your orders will appear here after checkout.'
-                        : 'No orders in this category yet.',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white60, height: 1.5),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Made for you',
+                          style: TextStyle(
+                            color: shopCream,
+                            fontSize: 21,
+                            fontFamily: 'serif',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          '${orders.length} ${orders.length == 1 ? 'order' : 'orders'}  /  ${orders.where(_active).length} in progress',
+                          style: const TextStyle(
+                            color: Colors.white60,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            )
-          else
-            for (final order in filtered)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Material(
-                  color: shopSurface,
-                  borderRadius: BorderRadius.circular(24),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(24),
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (_) => OrderDetailsScreen(order: order),
-                        ),
-                      );
-                      if (mounted) setState(_reload);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: shopGold.withValues(alpha: .2),
-                        ),
+            ),
+            const SizedBox(height: 20),
+            Wrap(
+              spacing: 10,
+              runSpacing: 8,
+              children: [
+                for (var i = 0; i < 3; i++)
+                  ChoiceChip(
+                    label: Text(['All orders', 'In progress', 'Completed'][i]),
+                    selected: _filter == i,
+                    onSelected: (_) => setState(() => _filter = i),
+                    selectedColor: shopGold,
+                    backgroundColor: shopSurface,
+                    labelStyle: TextStyle(
+                      color: _filter == i ? shopBackground : shopCream,
+                    ),
+                    showCheckmark: false,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            if (snapshot.connectionState != ConnectionState.done)
+              const Padding(
+                padding: EdgeInsets.all(40),
+                child: Center(
+                  child: CircularProgressIndicator(color: shopGold),
+                ),
+              )
+            else if (snapshot.hasError)
+              ShopPanel(
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.cloud_off_outlined,
+                      color: shopGold,
+                      size: 36,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Unable to load your orders.',
+                      style: TextStyle(color: shopCream),
+                    ),
+                    TextButton(
+                      onPressed: _refresh,
+                      child: const Text('Try again'),
+                    ),
+                  ],
+                ),
+              )
+            else if (filtered.isEmpty)
+              ShopPanel(
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.bakery_dining_outlined,
+                      color: shopGold,
+                      size: 44,
+                    ),
+                    const SizedBox(height: 18),
+                    const Text(
+                      'A little sweetness awaits',
+                      style: TextStyle(
+                        color: shopCream,
+                        fontFamily: 'serif',
+                        fontSize: 21,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  orderDate(order.createdAt),
-                                  style: const TextStyle(
-                                    color: Colors.white60,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      orders.isEmpty
+                          ? 'Your orders will appear here after checkout.'
+                          : 'No orders in this category yet.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white60,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              for (final order in filtered)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Material(
+                    color: shopSurface,
+                    borderRadius: BorderRadius.circular(24),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(24),
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (_) => OrderDetailsScreen(order: order),
+                          ),
+                        );
+                        if (mounted) setState(_reload);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: shopGold.withValues(alpha: .2),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    orderDate(order.createdAt),
+                                    style: const TextStyle(
+                                      color: Colors.white60,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                OrderBadge(
+                                  order.status.displayName,
+                                  good: order.status == OrderStatus.completed,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              order.eventTitle ??
+                                  (order.items.isEmpty
+                                      ? 'Chocolate Clicks order'
+                                      : order.items.first.name),
+                              style: const TextStyle(
+                                color: shopCream,
+                                fontSize: 19,
+                                fontFamily: 'serif',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              order.eventTitle != null
+                                  ? 'Reserved experience'
+                                  : '${order.items.fold<int>(0, (sum, item) => sum + item.quantity)} ${order.items.fold<int>(0, (sum, item) => sum + item.quantity) == 1 ? 'treat' : 'treats'} in your order',
+                              style: const TextStyle(
+                                color: Colors.white60,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    orderMoney(order.totalAmount),
+                                    style: const TextStyle(
+                                      color: shopGold,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const Text(
+                                  'View progress',
+                                  style: TextStyle(
+                                    color: shopCream,
                                     fontSize: 12,
                                   ),
                                 ),
-                              ),
-                              OrderBadge(
-                                order.status.displayName,
-                                good: order.status == OrderStatus.completed,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            order.eventTitle ??
-                                (order.items.isEmpty
-                                    ? 'Chocolate Clicks order'
-                                    : order.items.first.name),
-                            style: const TextStyle(
-                              color: shopCream,
-                              fontSize: 19,
-                              fontFamily: 'serif',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            order.eventTitle != null
-                                ? 'Reserved experience'
-                                : '${order.items.fold<int>(0, (sum, item) => sum + item.quantity)} ${order.items.fold<int>(0, (sum, item) => sum + item.quantity) == 1 ? 'treat' : 'treats'} in your order',
-                            style: const TextStyle(
-                              color: Colors.white60,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  orderMoney(order.totalAmount),
-                                  style: const TextStyle(
-                                    color: shopGold,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: shopGold,
+                                  size: 18,
                                 ),
-                              ),
-                              const Text(
-                                'View progress',
-                                style: TextStyle(
-                                  color: shopCream,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              const Icon(
-                                Icons.arrow_forward_rounded,
-                                color: shopGold,
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-        ],
-      );
-    },
+          ],
+        );
+      },
+    ),
   );
 }
 
 class OrderDetailsScreen extends StatefulWidget {
-  const OrderDetailsScreen({super.key, required this.order, this.loadOrder});
+  const OrderDetailsScreen({
+    super.key,
+    required this.order,
+    this.loadOrder,
+    this.deleteOrder,
+  });
   final Order order;
   final Future<Order?> Function(String)? loadOrder;
+  final Future<void> Function(String)? deleteOrder;
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
 }
@@ -298,10 +328,49 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   late Order _order = widget.order;
   bool _loading = false;
   bool _paying = false;
+  bool _deleting = false;
   @override
   void initState() {
     super.initState();
     _refresh();
+  }
+
+  Future<void> _deleteOrder() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete incomplete order?'),
+        content: const Text(
+          'Remove this order from your history? This does not cancel an active order or refund a payment.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep order'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete order'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() => _deleting = true);
+    try {
+      await (widget.deleteOrder?.call(_order.id) ??
+          OrderService().deleteOrder(_order.id));
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error.toString())));
+      }
+    } finally {
+      if (mounted) setState(() => _deleting = false);
+    }
   }
 
   Future<void> _retryPayment() async {
@@ -496,7 +565,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       onRefresh: _refresh,
       action: IconButton(
         tooltip: 'Refresh order',
-        onPressed: _loading || _paying ? null : _refresh,
+        onPressed: _loading || _paying || _deleting ? null : _refresh,
         icon: const Icon(Icons.refresh_rounded, color: shopGold),
       ),
       children: [
@@ -701,11 +770,20 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               foregroundColor: shopBackground,
               padding: const EdgeInsets.all(18),
             ),
-            onPressed: _paying || _loading ? null : _retryPayment,
+            onPressed: _paying || _loading || _deleting ? null : _retryPayment,
             icon: const Icon(Icons.lock_outline),
             label: Text(_paying ? 'Processing...' : 'Continue / Retry Payment'),
           ),
         if (paid) ShopPanel(child: ConfirmationEmailStatus(orderId: _order.id)),
+        if (_order.status != OrderStatus.completed) ...[
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: _loading || _paying || _deleting ? null : _deleteOrder,
+            icon: const Icon(Icons.delete_outline),
+            label: Text(_deleting ? 'Deleting...' : 'Delete incomplete order'),
+            style: OutlinedButton.styleFrom(foregroundColor: shopGold),
+          ),
+        ],
       ],
     );
   }

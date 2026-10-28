@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const PaymentReceipt = require('../models/PaymentReceipt');
 const Product = require('../models/Product');
@@ -60,7 +61,7 @@ const createOrder = async (req, res, next) => {
 
 const getUserOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.user._id })
+    const orders = await Order.find({ user: req.user._id, userDeletedAt: { $exists: false } })
       .sort({ createdAt: -1 })
       .populate('items.product');
 
@@ -73,6 +74,23 @@ const getUserOrders = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+// Remove an incomplete order from this customer's history. Retain the order
+// itself so delayed gateway notifications and active fulfilment remain valid.
+const deleteOrder = async (req, res, next) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) return next(createError('Invalid order ID', 400));
+    const order = await Order.findOneAndUpdate({
+      _id: req.params.id, user: req.user._id, status: { $ne: 'completed' },
+    }, { $set: { userDeletedAt: new Date() } }, { new: true });
+    if (!order) {
+      const owned = await Order.exists({ _id: req.params.id, user: req.user._id });
+      return next(createError(owned ? 'Completed orders cannot be deleted' : 'Order not found', owned ? 409 : 404));
+    }
+    res.set('Cache-Control', 'no-store');
+    res.json({ success: true, message: 'Order removed from your history' });
+  } catch (error) { next(error); }
 };
 
 const getOrderById = async (req, res, next) => {
@@ -289,6 +307,7 @@ const resendConfirmation = async (req, res, next) => {
 };
 
 module.exports = {
+  deleteOrder,
   createOrder,
   getUserOrders,
   getOrderById,
