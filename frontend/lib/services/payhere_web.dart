@@ -1,33 +1,38 @@
 import 'dart:async';
-import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
-@JS('payhere')
-external JSObject? get _payhere;
-@JS('payhere.onCompleted')
-external set _onCompleted(JSFunction callback);
-@JS('payhere.onDismissed')
-external set _onDismissed(JSFunction callback);
-@JS('payhere.onError')
-external set _onError(JSFunction callback);
-@JS('payhere.startPayment')
-external void _startPayment(JSObject payment);
-
-Future<String?> startWebPayment(Map<String, dynamic> payment) async {
-  if (_payhere == null) {
-    throw Exception(
-      'Unable to load PayHere. Check your connection and reload the page.',
+/// Use PayHere's documented form checkout. Unlike the popup SDK this does not
+/// depend on a synchronous cross-origin XMLHttpRequest to initialize payment.
+Future<String?> startWebPayment(Map<String, dynamic> payment) {
+  final returnUrl = Uri.base.replace(fragment: '/orders').toString();
+  final fields = <String, dynamic>{
+    ...payment,
+    'return_url': returnUrl,
+    'cancel_url': returnUrl,
+  }..remove('sandbox');
+  if (fields.containsKey('merchant_secret')) {
+    throw StateError(
+      'The server must sign web checkout without exposing a secret.',
     );
   }
-  final done = Completer<String?>();
-  void finish(String? message) {
-    if (!done.isCompleted) done.complete(message);
+  final form = web.HTMLFormElement()
+    ..method = 'POST'
+    ..action = payment['sandbox'] == true
+        ? 'https://sandbox.payhere.lk/pay/checkout'
+        : 'https://www.payhere.lk/pay/checkout';
+  form.style.display = 'none';
+  for (final field in fields.entries) {
+    if (field.value == null) continue;
+    form.appendChild(
+      web.HTMLInputElement()
+        ..type = 'hidden'
+        ..name = field.key
+        ..value = field.value.toString(),
+    );
   }
-
-  _onCompleted = ((JSAny? _) => finish(null)).toJS;
-  _onDismissed = (() => finish('Checkout dismissed.')).toJS;
-  _onError = ((JSAny? error) => finish(
-    'Checkout error: ${error.dartify()}',
-  )).toJS;
-  _startPayment(payment.jsify() as JSObject);
-  return done.future;
+  web.document.body!.appendChild(form);
+  form.submit();
+  // The browser leaves this page. Returning here would incorrectly advance the
+  // order flow before the shopper has selected a method and entered card data.
+  return Completer<String?>().future;
 }

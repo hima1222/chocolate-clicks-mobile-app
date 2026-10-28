@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/welcome_highlights.dart';
+import '../widgets/app_image.dart';
 
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
@@ -41,22 +42,29 @@ class AboutUsScreen extends StatelessWidget {
           style: TextStyle(color: welcomeMuted, fontSize: 15, height: 1.7),
         ),
         const SizedBox(height: 24),
-        _place(Icons.storefront_outlined, 'Colombo cafe', 'ORDERING BRANCH', [
-          const Text(
-            'No. 8, Stratford Avenue, Havelock Town, Colombo 06, Sri Lanka',
-            style: TextStyle(color: welcomeCream, height: 1.6),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Orders through this app are for our Colombo branch.',
-            style: TextStyle(color: welcomeMuted, height: 1.5),
-          ),
-        ]),
+        _place(
+          Icons.storefront_outlined,
+          'Colombo cafe',
+          'ORDERING BRANCH',
+          'assets/images/cafe_background.jpeg',
+          [
+            const Text(
+              'No. 8, Stratford Avenue, Havelock Town, Colombo 06, Sri Lanka',
+              style: TextStyle(color: welcomeCream, height: 1.6),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Orders through this app are for our Colombo branch.',
+              style: TextStyle(color: welcomeMuted, height: 1.5),
+            ),
+          ],
+        ),
         const SizedBox(height: 16),
         _place(
           Icons.palette_outlined,
           'Art Studio by Chocolate Clicks',
           'CREATE WITH US',
+          'assets/images/c1.jpeg',
           [
             const Text(
               'No. 17, Stratford Avenue, Colombo 06, Sri Lanka',
@@ -105,12 +113,23 @@ class AboutUsScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        _place(Icons.public, 'Gothenburg branch', 'SWEDEN', [
-          const Text(
-            'Gothenburg, Sweden',
-            style: TextStyle(color: welcomeCream, height: 1.6),
-          ),
-        ]),
+        _place(
+          Icons.public,
+          'Gothenburg branch',
+          'SWEDEN',
+          'assets/images/home3.jpg',
+          [
+            const Text(
+              'A taste of Chocolate Clicks',
+              style: TextStyle(color: welcomeAccent, height: 1.5),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Gothenburg, Sweden',
+              style: TextStyle(color: welcomeCream, height: 1.6),
+            ),
+          ],
+        ),
       ],
     ),
   );
@@ -119,9 +138,10 @@ class AboutUsScreen extends StatelessWidget {
     IconData icon,
     String title,
     String eyebrow,
+    String image,
     List<Widget> children,
   ) => Container(
-    padding: const EdgeInsets.all(20),
+    clipBehavior: Clip.antiAlias,
     decoration: BoxDecoration(
       color: welcomeSurface,
       borderRadius: BorderRadius.circular(22),
@@ -130,27 +150,41 @@ class AboutUsScreen extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: welcomeAccent, size: 26),
-        const SizedBox(height: 14),
-        Text(
-          eyebrow,
-          style: const TextStyle(
-            color: welcomeMuted,
-            fontSize: 10,
-            letterSpacing: 1.4,
+        AppImage.asset(
+          image,
+          width: double.infinity,
+          height: 200,
+          fit: BoxFit.cover,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(22),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, color: welcomeAccent, size: 26),
+              const SizedBox(height: 14),
+              Text(
+                eyebrow,
+                style: const TextStyle(
+                  color: welcomeMuted,
+                  fontSize: 10,
+                  letterSpacing: 1.4,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: welcomeCream,
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ...children,
+            ],
           ),
         ),
-        const SizedBox(height: 6),
-        Text(
-          title,
-          style: const TextStyle(
-            color: welcomeCream,
-            fontSize: 21,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 16),
-        ...children,
       ],
     ),
   );

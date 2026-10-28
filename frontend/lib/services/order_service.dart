@@ -46,6 +46,7 @@ class OrderService {
   /// Fetch all orders for a user
   Future<List<Order>> fetchUserOrders(String userId) async {
     try {
+      await SessionManager().ready;
       final authService = AuthService();
       final token = authService.authToken;
       if (token == null) {
@@ -73,6 +74,7 @@ class OrderService {
   /// Fetch single order by ID
   Future<Order?> fetchOrderById(String orderId) async {
     try {
+      await SessionManager().ready;
       final authService = AuthService();
       final token = authService.authToken;
       if (token == null) {
@@ -97,6 +99,7 @@ class OrderService {
   /// Cancel an order
   Future<bool> cancelOrder(String orderId) async {
     try {
+      await SessionManager().ready;
       final authService = AuthService();
       final token = authService.authToken;
       if (token == null) {

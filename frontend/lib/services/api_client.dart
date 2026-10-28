@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:chocolate_clicks/models/user_model.dart';
 import 'package:chocolate_clicks/services/storage_service.dart';
 
@@ -34,18 +33,18 @@ class ApiClient {
   factory ApiClient() => _instance;
   ApiClient._internal();
 
-// static String get baseUrl {
-//   if (kIsWeb) return 'http://localhost:5000/api'; // browser
-//   if (defaultTargetPlatform == TargetPlatform.android) {
-//   return 'http://10.0.2.2:5000/api'; // Android emulator change this for you IP adress if needed 
-//   }
-//   return 'http://localhost:5000/api'; // iOS simulator / desktop
-// }
+  // static String get baseUrl {
+  //   if (kIsWeb) return 'http://localhost:5000/api'; // browser
+  //   if (defaultTargetPlatform == TargetPlatform.android) {
+  //   return 'http://10.0.2.2:5000/api'; // Android emulator change this for you IP adress if needed
+  //   }
+  //   return 'http://localhost:5000/api'; // iOS simulator / desktop
+  // }
 
-static const String baseUrl = String.fromEnvironment(
-  'API_BASE_URL',
-  defaultValue: 'https://chocolate-clicks-backend.hostless.app/api',
-);
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'https://chocolate-clicks-backend.hostless.app/api',
+  );
 
   static const Duration timeout = Duration(seconds: 30);
 
@@ -227,9 +226,10 @@ class SessionManager {
   static final SessionManager _instance = SessionManager._internal();
   factory SessionManager() => _instance;
   SessionManager._internal() {
-    _loadStoredSession();
+    ready = _loadStoredSession();
   }
 
+  late final Future<void> ready;
   String? _token;
   String? _refreshToken;
   User? _user;

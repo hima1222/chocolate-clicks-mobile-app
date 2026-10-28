@@ -7,6 +7,8 @@ import '../models/order_pricing.dart';
 import 'storage_service.dart';
 import 'payhere_web_stub.dart' if (dart.library.js_interop) 'payhere_web.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import '../screens/secure_checkout_screen.dart';
 import 'package:payhere_mobilesdk_flutter/payhere_mobilesdk_flutter.dart';
 import 'api_client.dart';
 import 'auth_service.dart';
@@ -61,10 +63,11 @@ class PaymentService {
       },
     );
     final data = response['data'];
-    if (data is! Map || data['pricing'] is! Map)
+    if (data is! Map || data['pricing'] is! Map) {
       throw const FormatException(
         'Unable to load delivery charges. Restart the updated backend and reload prices.',
       );
+    }
     return OrderPricing.fromJson(Map<String, dynamic>.from(data['pricing']));
   }
 
@@ -89,6 +92,7 @@ class PaymentService {
     required void Function(String) onOrderCreated,
     required VoidCallback onProcessing,
     bool retryExisting = false,
+    required NavigatorState navigator,
   }) async {
     _checkPlatform();
     final response = await ApiClient().post(
@@ -106,6 +110,7 @@ class PaymentService {
       response,
       onProcessing: onProcessing,
       retryExisting: retryExisting,
+      navigator: navigator,
     );
   }
 
@@ -123,19 +128,32 @@ class PaymentService {
     Map<String, dynamic> response, {
     required VoidCallback onProcessing,
     bool retryExisting = false,
+    required NavigatorState navigator,
   }) async {
     final order = EventPaymentOrder.fromJson(orderData(response));
     if (order.status == 'paid') return EventCheckoutResult(order);
-    if (response['reused'] == true && !retryExisting) {
-      onProcessing();
-      return EventCheckoutResult(await pollOrder(order.id));
-    }
     final checkout = checkoutPayload(response);
-    if (kIsWeb) {
-      final message = await startWebPayment(checkout);
-      onProcessing();
-      return EventCheckoutResult(await pollOrder(order.id), message: message);
+    if (!navigator.mounted) {
+      throw Exception('Checkout was closed. You can continue from My Orders.');
     }
+    final message = await navigator.push<String>(
+      MaterialPageRoute(
+        builder: (_) =>
+            SecureCheckoutScreen(payment: checkout, launch: _launchPayment),
+      ),
+    );
+    if (message != 'submitted') {
+      throw Exception(
+        message ??
+            'Payment was not completed. Continue payment when you are ready.',
+      );
+    }
+    onProcessing();
+    return EventCheckoutResult(await pollOrder(order.id));
+  }
+
+  Future<String?> _launchPayment(Map<String, dynamic> checkout) async {
+    if (kIsWeb) return startWebPayment(checkout);
     final completion = Completer<String?>();
     void finish(String? message) {
       if (!completion.isCompleted) completion.complete(message);
@@ -156,12 +174,11 @@ class PaymentService {
       onTimeout: () =>
           'Checkout did not respond. Check your order status before retrying.',
     );
-    onProcessing();
-    // Neither SDK success nor dismissal is evidence of payment.
-    return EventCheckoutResult(await pollOrder(order.id), message: message);
+    return message;
   }
 
   Future<EventCheckoutResult> checkoutProducts({
+    required NavigatorState navigator,
     required List<CartItem> items,
     bool fromCart = false,
     required double expectedTotal,
@@ -218,7 +235,11 @@ class PaymentService {
       },
     );
     onOrderCreated(Order.fromJson(orderData(response)));
-    final result = await _finishCheckout(response, onProcessing: onProcessing);
+    final result = await _finishCheckout(
+      response,
+      onProcessing: onProcessing,
+      navigator: navigator,
+    );
     if (result.order.status == 'paid') await storage.delete(storageKey);
     return result;
   }
@@ -226,6 +247,7 @@ class PaymentService {
   Future<EventCheckoutResult> resumeCheckout(
     String orderId, {
     required VoidCallback onProcessing,
+    required NavigatorState navigator,
   }) async {
     _checkPlatform();
     final response = await ApiClient().post(
@@ -237,6 +259,7 @@ class PaymentService {
       response,
       onProcessing: onProcessing,
       retryExisting: true,
+      navigator: navigator,
     );
   }
 
