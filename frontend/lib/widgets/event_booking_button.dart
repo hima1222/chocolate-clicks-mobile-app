@@ -94,6 +94,7 @@ class _EventBookingButtonState extends State<EventBookingButton> {
     }
     return Navigator.of(context).push<int>(
       MaterialPageRoute(builder: (_) => EventParticipantsScreen(event: event)),
+    );
     var quantity = 1;
     final limit = event.remainingSeats.clamp(0, 100).toInt();
     if (limit == 0) throw Exception('This session is fully booked.');
