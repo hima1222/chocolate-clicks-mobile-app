@@ -158,3 +158,20 @@ To explicitly run Flutter against your local backend, use
 `flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5000/api`.
 This selects the local quote API; real PayHere confirmations still need the public
 notification endpoint.
+
+
+### Android phone connected by USB: Unauthorized domain
+
+`flutter run` on a USB-connected Android phone runs the native app and PayHere mobile SDK, even when you have not manually installed a release APK. A website-domain Merchant Secret does not authorize the Android package.
+
+1. In the matching PayHere sandbox/live account, open Integrations (or Settings ? Domains & Credentials), choose Add Domain/App, select **App**, and register **com.example.chocolate_clicks**. This is the current `applicationId` in `frontend/android/app/build.gradle.kts`.
+2. Copy the Merchant Secret for that **App** into the backend environment as `PAYHERE_APP_MERCHANT_SECRET`. Keep the working website secret in `PAYHERE_MERCHANT_SECRET` (or `PAYHERE_WEB_MERCHANT_SECRET`). Never put either secret into Flutter source or share it in chat.
+3. Apply the variable to the backend the phone actually calls (the default is the hosted Hostless backend), restart/redeploy it, and retry payment. Editing local `.env` does not update a deployed backend. PayHere Live registrations require approval.
+
+Native checkout uses `PAYHERE_APP_MERCHANT_SECRET` when set; the original `PAYHERE_MERCHANT_SECRET` remains a fallback for existing installations that already use it for the app. Signed notifications accept the configured app and website secrets. A debug build uses the same application ID in this project; USB connection does not change PayHere's registration requirements.
+
+Official setup: https://support.payhere.lk/api-%26-mobile-sdk/flutter-sdk (Step 4).
+
+### Deleting incomplete orders
+
+The customer can delete an incomplete order from Profile ? Order Details ? Order Progress. This removes it from their order history; completed orders cannot be removed. The backend retains the payment and fulfilment record for delayed PayHere notifications. Deleting from history does not cancel an active purchase, release booked event seats, or refund a payment. Continuing checkout on a removed order makes it visible again.

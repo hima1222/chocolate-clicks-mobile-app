@@ -1,6 +1,7 @@
 import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'package:flutter/material.dart';
 import '../widgets/favorite_button.dart';
+import '../services/payment_manager.dart';
 import 'package:chocolate_clicks/services/cart_service.dart';
 import 'package:chocolate_clicks/models/cart_item.dart';
 
@@ -18,7 +19,7 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
   String selectedSize = 'Medium';
   String selectedTopping = 'Cookies';
   String selectedFrosting = 'Chocolate';
-  final CartService _cart_service = CartService();
+  final CartService _cartService = CartService();
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +28,11 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
     final productImage =
         widget.product?['image'] as String? ??
         'assets/images/cookies_type1.jpg';
-    final productPrice = widget.product?['price'] as double? ?? 4200.0;
+    final productPrice =
+        (widget.product?['price'] as num?)?.toDouble() ?? 4200.0;
 
+    final stock = widget.product?['quantity'] as num?;
+    final inStock = stock == null || stock > 0;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F0E6),
       body: SafeArea(
@@ -51,11 +55,15 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
                             onPressed: () => Navigator.pop(context),
                           ),
                           const Spacer(),
-                          Text(
-                            productTitle,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          Flexible(
+                            child: Text(
+                              productTitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           const Spacer(),
@@ -208,7 +216,7 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, -2),
                   ),
@@ -218,21 +226,24 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () async {
-                        final item = CartItem(
-                          id:
-                              widget.product?['id'] as String? ??
-                              'cookies_${widget.index ?? 0}',
-                          name: productTitle,
-                          price: productPrice,
-                          quantity: 1,
-                          imageUrl: productImage,
-                        );
-                        await _cart_service.addOrUpdateItem(item);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Added to cart!')),
-                        );
-                      },
+                      onPressed: !inStock
+                          ? null
+                          : () async {
+                              final item = CartItem(
+                                id:
+                                    widget.product?['id'] as String? ??
+                                    'cookies_${widget.index ?? 0}',
+                                name: productTitle,
+                                price: productPrice,
+                                quantity: 1,
+                                imageUrl: productImage,
+                              );
+                              await _cartService.addOrUpdateItem(item);
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Added to cart!')),
+                              );
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown[700],
                         shape: RoundedRectangleBorder(
@@ -248,13 +259,27 @@ class _CookiesType1ScreenState extends State<CookiesType1Screen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Proceeding to checkout...'),
-                          ),
-                        );
-                      },
+                      onPressed: !inStock
+                          ? null
+                          : () {
+                              PaymentManager.initiatePayment(
+                                context,
+                                productPrice,
+                                items: [
+                                  CartItem(
+                                    id:
+                                        (widget.product?['id'] ??
+                                                widget.product?['_id'] ??
+                                                'cookies_${widget.index ?? 0}')
+                                            .toString(),
+                                    name: productTitle,
+                                    price: productPrice,
+                                    quantity: 1,
+                                    imageUrl: productImage,
+                                  ),
+                                ],
+                              );
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[600],
                         shape: RoundedRectangleBorder(

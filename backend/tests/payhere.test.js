@@ -177,3 +177,33 @@ test('multiple product orders and an event order coexist with legacy orderNumber
     expect(booked.body.checkout.hash).toBeDefined();
   } finally { await Product.deleteMany({}); }
 });
+
+
+test('deleting an incomplete order hides history but preserves delayed payment confirmation', async () => {
+  const { body } = await create().expect(201);
+  const id = body.data._id;
+  const other = await otherUser();
+  await request(app).delete(`/api/orders/${id}`).set('Authorization', auth(other)).expect(404);
+  await request(app).delete(`/api/orders/${id}`).expect(401);
+  await request(app).delete('/api/orders/invalid').set('Authorization', auth()).expect(400);
+  await request(app).delete(`/api/orders/${id}`).set('Authorization', auth()).expect(200);
+  const hidden = await request(app).get('/api/orders').set('Authorization', auth()).expect(200);
+  expect(hidden.body.data).toHaveLength(0);
+  expect(await Order.countDocuments()).toBe(1);
+  expect((await Event.findById(event.id)).bookedCount).toBe(2);
+  await notify(notice(body.data)).expect(200);
+  expect((await Order.findById(id)).payment_status).toBe('paid');
+  expect(await Booking.countDocuments()).toBe(1);
+});
+
+test('completed orders cannot be deleted and resuming an incomplete order restores its history', async () => {
+  const { body } = await create().expect(201);
+  const id = body.data._id;
+  await request(app).delete(`/api/orders/${id}`).set('Authorization', auth()).expect(200);
+  await request(app).post(`/api/orders/${id}/checkout`).set('Authorization', auth()).send({ platform: 'web' }).expect(200);
+  const visible = await request(app).get('/api/orders').set('Authorization', auth()).expect(200);
+  expect(visible.body.data.map(order => order._id)).toContain(id);
+  await Order.updateOne({ _id: id }, { $set: { status: 'completed' } });
+  await request(app).delete(`/api/orders/${id}`).set('Authorization', auth()).expect(409);
+  expect((await Order.findById(id)).userDeletedAt).toBeUndefined();
+});

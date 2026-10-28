@@ -34,6 +34,10 @@ async function createEventOrder(req, res, next) {
         reused = Boolean(order);
         if (order) {
           if (order.quantity !== quantity) throw createError('An order already exists for this event with a different quantity', 409);
+          if (order.userDeletedAt) {
+            order.userDeletedAt = undefined;
+            await order.save({ session });
+          }
           return;
         }
         if (await Booking.exists({ userId: req.user._id, eventId, status: 'CONFIRMED' }).session(session)) {
