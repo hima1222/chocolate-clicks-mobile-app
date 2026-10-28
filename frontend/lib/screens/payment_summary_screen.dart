@@ -92,13 +92,14 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
       final pricing =
           await (widget.quoteItems?.call(_items, _city.text.trim()) ??
               PaymentService().quoteProducts(_items, city: _city.text.trim()));
-      if (mounted && generation == _quoteGeneration)
+      if (mounted && generation == _quoteGeneration) {
         setState(() {
           _pricing = pricing;
           _error = null;
         });
+      }
     } catch (error) {
-      if (mounted && generation == _quoteGeneration)
+      if (mounted && generation == _quoteGeneration) {
         setState(() {
           _pricing = null;
           _error = error
@@ -106,9 +107,11 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
               .replaceFirst('Exception: ', '')
               .replaceFirst('FormatException: ', '');
         });
+      }
     } finally {
-      if (mounted && generation == _quoteGeneration)
+      if (mounted && generation == _quoteGeneration) {
         setState(() => _quoting = false);
+      }
     }
   }
 
@@ -134,29 +137,47 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
       _processing = true;
       _error = null;
     });
+    final navigator = Navigator.of(context);
     try {
-      final result = await PaymentService().checkoutProducts(
-        items: _items,
-        expectedTotal: _pricing!.totalAmount,
-        fromCart: PaymentManager.checkoutFromCart,
-        billing: {
-          'address': _address.text.trim(),
-          'city': _city.text.trim(),
-          'country': _country.text.trim(),
-        },
-        onOrderCreated: (order) {
-          _savedOrder = order;
-          if (order.fromCart) CartService().trackCheckout(order.id);
-          if (mounted) setState(() {});
-        },
-        onProcessing: () {
-          if (mounted) {
-            setState(() => _error = 'Verifying payment with PayHere...');
-          }
-        },
-      );
+      final result = _savedOrder != null
+          ? await PaymentService().resumeCheckout(
+              _savedOrder!.id,
+              navigator: navigator,
+              onProcessing: () {},
+            )
+          : await PaymentService().checkoutProducts(
+              navigator: navigator,
+              items: _items,
+              expectedTotal: _pricing!.totalAmount,
+              fromCart: PaymentManager.checkoutFromCart,
+              billing: {
+                'address': _address.text.trim(),
+                'city': _city.text.trim(),
+                'country': _country.text.trim(),
+              },
+              onOrderCreated: (order) {
+                _savedOrder = order;
+                if (order.fromCart) CartService().trackCheckout(order.id);
+                if (mounted) setState(() {});
+              },
+              onProcessing: () {
+                if (mounted) {
+                  setState(() => _error = 'Verifying payment with PayHere...');
+                }
+              },
+            );
       if (result.order.status == 'paid' && _savedOrder!.fromCart) {
         CartService().removePaidItems(result.order.id, _items);
+      }
+      if (result.order.status != 'paid') {
+        if (mounted) {
+          setState(
+            () => _error =
+                result.message ??
+                'Your payment is awaiting verification. Check payment status before retrying.',
+          );
+        }
+        return;
       }
       PaymentManager.checkoutItems = null;
       if (!mounted) return;
@@ -301,6 +322,13 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                     ),
                   if (_savedOrder != null)
                     FilledButton(
+                      onPressed: _processing ? null : _pay,
+                      child: Text(
+                        _processing ? 'Opening payment...' : 'Continue payment',
+                      ),
+                    ),
+                  if (_savedOrder != null)
+                    TextButton(
                       onPressed: _processing
                           ? null
                           : () => Navigator.pushReplacement(

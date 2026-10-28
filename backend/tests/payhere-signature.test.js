@@ -63,3 +63,18 @@ test('derives the callback from a public API base and reports a missing callback
   process.env.PUBLIC_API_URL = 'https://api.example.com/api/';
   expect(config().notifyUrl).toBe('https://api.example.com/api/payments/payhere/notify');
 });
+
+test('reports missing merchant credentials separately from a missing callback', () => {
+  delete process.env.PAYHERE_NOTIFY_URL;
+  expect(() => config()).toThrow('merchant credentials are configured');
+  delete process.env.PAYHERE_MERCHANT_SECRET;
+  expect(() => config()).toThrow('missing PAYHERE_MERCHANT_SECRET');
+});
+
+test('trims settings copied into environment configuration', () => {
+  process.env.PAYHERE_MERCHANT_ID = ' 12345 ';
+  process.env.PAYHERE_MERCHANT_SECRET = ' registered-app-secret ';
+  process.env.PAYHERE_NOTIFY_URL = ' https://chocolate-clicks-backend.hostless.app/api/payments/payhere/notify ';
+  expect(config()).toMatchObject({ merchantId: '12345', secret: 'registered-app-secret',
+    notifyUrl: 'https://chocolate-clicks-backend.hostless.app/api/payments/payhere/notify' });
+});

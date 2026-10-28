@@ -329,6 +329,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     try {
       final result = await PaymentService().resumeCheckout(
         _order.id,
+        navigator: Navigator.of(context),
         onProcessing: () {},
       );
       await _refresh();

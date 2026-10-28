@@ -21,6 +21,8 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    // Retain compatibility with databases that already enforce orderNumber_1.
+    orderNumber: { type: String, default: () => `CC-${new mongoose.Types.ObjectId().toHexString().toUpperCase()}`, required: true },
     eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
     eventTitle: String,
     checkoutKey: String,

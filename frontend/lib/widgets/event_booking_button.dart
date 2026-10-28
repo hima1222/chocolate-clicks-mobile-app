@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/event_participants_screen.dart';
 import 'package:chocolate_clicks/models/event_model.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 import 'package:chocolate_clicks/services/booking_service.dart';
@@ -88,6 +89,11 @@ class _EventBookingButtonState extends State<EventBookingButton> {
   }
 
   Future<int?> _participants(EventModel event) async {
+    if (event.remainingSeats <= 0) {
+      throw Exception('This session is fully booked.');
+    }
+    return Navigator.of(context).push<int>(
+      MaterialPageRoute(builder: (_) => EventParticipantsScreen(event: event)),
     var quantity = 1;
     final limit = event.remainingSeats.clamp(0, 100).toInt();
     if (limit == 0) throw Exception('This session is fully booked.');
@@ -197,7 +203,14 @@ class _EventBookingButtonState extends State<EventBookingButton> {
             ],
           ),
         );
-        if (confirmed != true) return;
+        if (confirmed != true || !mounted) return;
+        final result = await PaymentService().resumeCheckout(
+          _orderId!,
+          navigator: Navigator.of(context),
+          onProcessing: () => _showMessage('Verifying payment...'),
+        );
+        _displayOrder(result.order, checkoutMessage: result.message);
+        return;
       }
       final events = await EventsService().fetchUpcomingEvents();
       EventModel? event;
@@ -229,6 +242,7 @@ class _EventBookingButtonState extends State<EventBookingButton> {
       final quantity = await _participants(event);
       if (quantity == null || !mounted) return;
       final result = await PaymentService().checkoutEvent(
+        navigator: Navigator.of(context),
         eventId: event.id,
         quantity: quantity,
         retryExisting: retry,

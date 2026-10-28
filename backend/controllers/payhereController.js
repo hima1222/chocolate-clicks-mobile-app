@@ -60,7 +60,16 @@ async function createEventOrder(req, res, next) {
     res.status(201).json({ success: true, reused, data: order,
       checkout: order.payment_status === 'paid' ? null : payhere.checkout(order, req.body.platform) });
   } catch (error) {
-    if (error.code === 11000) return next(createError('An order already exists; retry to retrieve it', 409));
+    if (error.code === 11000 && error.keyPattern?.eventId) {
+      try {
+        const existing = await Order.findOne({ user: req.user._id, eventId: req.body.eventId });
+        if (existing && existing.quantity === (req.body.quantity || 1)) {
+          res.set('Cache-Control', 'no-store');
+          return res.status(200).json({ success: true, reused: true, data: existing,
+            checkout: existing.payment_status === 'paid' ? null : payhere.checkout(existing, req.body.platform) });
+        }
+      } catch (lookupError) { return next(lookupError); }
+    }
     next(error);
   }
 }
