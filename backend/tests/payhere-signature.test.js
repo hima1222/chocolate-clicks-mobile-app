@@ -1,5 +1,6 @@
 const { md5, verifyNotification, config } = require('../services/payhereService');
 beforeEach(() => {
+  delete process.env.PAYHERE_APP_MERCHANT_SECRET;
   delete process.env.PAYHERE_WEB_MERCHANT_SECRET;
   delete process.env.PUBLIC_API_URL;
   process.env.PAYHERE_MERCHANT_ID = '12345';
@@ -62,4 +63,33 @@ test('derives the callback from a public API base and reports a missing callback
   expect(() => config()).toThrow('PAYHERE_NOTIFY_URL');
   process.env.PUBLIC_API_URL = 'https://api.example.com/api/';
   expect(config().notifyUrl).toBe('https://api.example.com/api/payments/payhere/notify');
+});
+
+test('reports missing merchant credentials separately from a missing callback', () => {
+  delete process.env.PAYHERE_NOTIFY_URL;
+  expect(() => config()).toThrow('merchant credentials are configured');
+  delete process.env.PAYHERE_MERCHANT_SECRET;
+  expect(() => config()).toThrow('missing PAYHERE_MERCHANT_SECRET');
+});
+
+test('trims settings copied into environment configuration', () => {
+  process.env.PAYHERE_MERCHANT_ID = ' 12345 ';
+  process.env.PAYHERE_MERCHANT_SECRET = ' registered-app-secret ';
+  process.env.PAYHERE_NOTIFY_URL = ' https://chocolate-clicks-backend.hostless.app/api/payments/payhere/notify ';
+  expect(config()).toMatchObject({ merchantId: '12345', secret: 'registered-app-secret',
+    notifyUrl: 'https://chocolate-clicks-backend.hostless.app/api/payments/payhere/notify' });
+});
+
+
+test('uses the app-specific secret for native checkout while preserving the website hash', () => {
+  const { checkout } = require('../services/payhereService');
+  const order = { id: 'order-123', amount: '2500.50', currency: 'LKR', eventTitle: 'Workshop', toObject: () => ({ customer: {} }) };
+  const before = checkout(order, 'web').hash;
+  process.env.PAYHERE_APP_MERCHANT_SECRET = ' mobile-package-secret ';
+  expect(checkout(order, 'native').merchant_secret).toBe('mobile-package-secret');
+  expect(checkout(order, 'web').hash).toBe(before);
+  expect(checkout(order, 'web').merchant_secret).toBeUndefined();
+  const body = valid();
+  body.md5sig = md5(body.merchant_id + body.order_id + body.payhere_amount + body.payhere_currency + body.status_code + md5('mobile-package-secret'));
+  expect(() => verifyNotification(body)).not.toThrow();
 });

@@ -31,11 +31,13 @@ class OrderPage extends StatelessWidget {
     required this.subtitle,
     required this.children,
     this.onRefresh,
+    this.onBack,
     this.action,
   });
   final String title, subtitle;
   final List<Widget> children;
   final Future<void> Function()? onRefresh;
+  final VoidCallback? onBack;
   final Widget? action;
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class OrderPage extends StatelessWidget {
           children: [
             IconButton(
               tooltip: 'Back',
-              onPressed: () => Navigator.maybePop(context),
+              onPressed: onBack ?? () => Navigator.maybePop(context),
               style: IconButton.styleFrom(backgroundColor: shopSurface),
               icon: const Icon(Icons.arrow_back, color: shopCream),
             ),
@@ -251,4 +253,3 @@ class OrderPriceBreakdown extends StatelessWidget {
     ],
   );
 }
-

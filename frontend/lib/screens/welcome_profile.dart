@@ -1,3 +1,6 @@
+import '../widgets/database_catalog.dart';
+import '../widgets/welcome_highlights.dart';
+import '../services/product_service.dart';
 import 'package:chocolate_clicks/widgets/app_image.dart';
 import 'dart:async';
 import 'cake_type1.dart';
@@ -25,11 +28,11 @@ final List<Map<String, dynamic>> categories = [
 ];
 
 // Design tokens
-const _bg = Color(0xFF1A1410);
-const _surface = Color(0xFF2A2019);
-const _cream = Color(0xFFF6E6D7);
-const _accent = Color(0xFFE8B07A);
-const _muted = Color(0xFFC9B5A3);
+const _bg = welcomeBackground;
+const _surface = welcomeSurface;
+const _cream = welcomeCream;
+const _accent = welcomeAccent;
+const _muted = welcomeMuted;
 
 TextStyle _serif(double size, {Color color = _cream}) => GoogleFonts.fraunces(
   fontSize: size,
@@ -59,21 +62,34 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   int _offerIndex = 0;
   Timer? _offerTimer;
 
-  // Swap in your new photos here (add them to pubspec assets first).
   final List<Map<String, String>> _offeredEvents = const [
     {
-      'title': 'Mask Painting Workshops',
+      'title': 'Mask Painting Workshop',
       'image': 'assets/images/workshop_1.jpeg',
     },
-    {'title': 'Tasting LUXE', 'image': 'assets/images/cake7.jpg'},
-    {'title': 'Bake It Happen', 'image': 'assets/images/event_background.png'},
-    {'title': 'Summer Cake Picnics', 'image': 'assets/images/cake3.jpg'},
-    {'title': 'Cake Dates', 'image': 'assets/images/cake8.jpg'},
+    {'title': 'Bake It Happen', 'image': 'assets/images/bih1.jpg'},
     {
-      'title': 'Mask Painting Workshops',
+      'title': 'Mask Painting Workshop',
       'image': 'assets/images/workshop_2.jpeg',
     },
   ];
+
+  List<Map<String, dynamic>> _catalog = [];
+  Future<void> _loadCatalog() async {
+    try {
+      final products = await ProductService().fetchProducts();
+      if (!mounted) return;
+      setState(() => _catalog = products.map(productCardData).toList());
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Unable to load products.'),
+          action: SnackBarAction(label: 'Retry', onPressed: _loadCatalog),
+        ),
+      );
+    }
+  }
 
   String get _userName {
     final user = _authService.currentUser;
@@ -83,29 +99,18 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   }
 
   List<Map<String, dynamic>> get _recommendedItems {
-    final merged = <Map<String, dynamic>>[
-      ...CakeItemsScreen.cakeProducts.map(
-        (item) => {
-          ...item,
-          'category': 'Cake',
-          'screen': CakeType1Screen(product: item),
-        },
-      ),
-      ...BrowniesItemsScreen.brownieProducts.map(
-        (item) => {
-          ...item,
-          'category': 'Brownies',
-          'screen': BrowniesType1Screen(product: item),
-        },
-      ),
-      ...CookiesItemsScreen.cookieProducts.map(
-        (item) => {
-          ...item,
-          'category': 'Cookies',
-          'screen': CookiesType1Screen(product: item),
-        },
-      ),
-    ];
+    final merged = _catalog
+        .map(
+          (item) => {
+            ...item,
+            'screen': switch (item['category']) {
+              'Cakes' => CakeType1Screen(product: item),
+              'Brownies' => BrowniesType1Screen(product: item),
+              _ => CookiesType1Screen(product: item),
+            },
+          },
+        )
+        .toList();
 
     merged.sort((a, b) {
       final ratingCompare = (b['rating'] as double).compareTo(
@@ -130,6 +135,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _loadCatalog();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       setState(() => _animate = true);
@@ -241,108 +247,14 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
 
   Widget _buildOfferEventsCard(BuildContext context) {
     final event = _offeredEvents[_offerIndex];
-    return InkWell(
-      borderRadius: BorderRadius.circular(28),
+    return WelcomeEventBanner(
+      image: event['image']!,
+      title: event['title']!,
+      index: _offerIndex,
+      count: _offeredEvents.length,
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const EventsScreen()),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: SizedBox(
-          height: 280,
-          width: double.infinity,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
-                child: Image.asset(
-                  event['image']!,
-                  key: ValueKey<String>(event['image']!),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.center,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, _bg.withValues(alpha: 0.92)],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'FEATURED EVENT',
-                      style: _sans(
-                        12,
-                        color: _accent,
-                        w: FontWeight.w500,
-                      ).copyWith(letterSpacing: 1.2),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 350),
-                            transitionBuilder: (child, animation) =>
-                                FadeTransition(
-                                  opacity: animation,
-                                  child: SlideTransition(
-                                    position: Tween<Offset>(
-                                      begin: const Offset(0, 0.35),
-                                      end: Offset.zero,
-                                    ).animate(animation),
-                                    child: child,
-                                  ),
-                                ),
-                            child: Text(
-                              event['title']!,
-                              key: ValueKey<String>(event['title']!),
-                              style: _serif(22),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        const Icon(
-                          Icons.arrow_forward,
-                          color: _cream,
-                          size: 20,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: List.generate(_offeredEvents.length, (i) {
-                        final active = i == _offerIndex;
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          width: active ? 18 : 6,
-                          height: 6,
-                          margin: const EdgeInsets.only(right: 6),
-                          decoration: BoxDecoration(
-                            color: active
-                                ? _cream
-                                : _cream.withValues(alpha: 0.4),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        );
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -417,8 +329,8 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                           tooltip: 'View item',
                           onPressed: open,
                           style: IconButton.styleFrom(
-                            backgroundColor: _cream,
-                            foregroundColor: _bg,
+                            backgroundColor: const Color(0xFF4A3627),
+                            foregroundColor: _accent,
                             minimumSize: const Size(36, 36),
                           ),
                           icon: const Icon(Icons.arrow_forward, size: 18),
@@ -439,37 +351,19 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
     BuildContext context,
     Map<String, dynamic> category,
   ) {
-    final Widget? screen = category['screen'] as Widget?;
-    final enabled = screen != null;
-    return InkWell(
-      borderRadius: BorderRadius.circular(24),
-      onTap: enabled
-          ? () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => screen),
-            )
-          : () => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${category['name']} coming soon!')),
-            ),
-      child: Container(
-        height: 44,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: _cream.withValues(alpha: enabled ? 0.5 : 0.2),
-          ),
-        ),
-        child: Text(
-          category['name'],
-          style: _sans(
-            14,
-            color: enabled ? _cream : _cream.withValues(alpha: 0.6),
-            w: FontWeight.w500,
-          ),
-        ),
-      ),
+    final screen = category['screen'] as Widget?;
+    return WelcomeCategoryPill(
+      label: category['name'] as String,
+      available: screen != null,
+      onTap: () {
+        if (screen != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${category['name']} coming soon!')),
+          );
+        }
+      },
     );
   }
 
@@ -477,22 +371,18 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: _cream,
-        borderRadius: BorderRadius.circular(24),
+        color: _surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _muted.withValues(alpha: 0.22)),
       ),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              'Ready to place\nyour order?',
-              style: _serif(18, color: _bg),
-            ),
-          ),
+          Expanded(child: Text('Ready to place your order?', style: _sans(15))),
           ElevatedButton(
             onPressed: () => Navigator.pushNamed(context, '/categories'),
             style: ElevatedButton.styleFrom(
               elevation: 0,
-              backgroundColor: _bg,
+              backgroundColor: const Color(0xFF4A3627),
               foregroundColor: _cream,
               minimumSize: const Size(0, 48),
               padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -578,7 +468,7 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: items.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      separatorBuilder: (_, _) => const SizedBox(width: 12),
                       itemBuilder: (context, i) =>
                           _buildProductCard(context, items[i]),
                     ),
@@ -617,8 +507,10 @@ class _WelcomeProfileScreenState extends State<WelcomeProfileScreen> {
       tooltip: label,
       onPressed: () => setState(() => _currentIndex = index),
       style: IconButton.styleFrom(
-        backgroundColor: selected ? _cream : Colors.transparent,
-        foregroundColor: selected ? _bg : _muted,
+        backgroundColor: selected
+            ? const Color(0xFF4A3627)
+            : Colors.transparent,
+        foregroundColor: selected ? _accent : _muted,
         minimumSize: const Size(48, 48),
       ),
       icon: Icon(icon),

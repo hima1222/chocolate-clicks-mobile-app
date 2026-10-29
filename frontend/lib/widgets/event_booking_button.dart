@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/event_participants_screen.dart';
 import 'package:chocolate_clicks/models/event_model.dart';
 import 'package:chocolate_clicks/services/auth_service.dart';
 import 'package:chocolate_clicks/services/booking_service.dart';
@@ -73,7 +74,7 @@ class _EventBookingButtonState extends State<EventBookingButton> {
                   });
                 }
               },
-              child: const Text('Continue to payment'),
+              child: const Text('Continue'),
             ),
           ],
         ),
@@ -85,6 +86,72 @@ class _EventBookingButtonState extends State<EventBookingButton> {
       city.dispose();
       country.dispose();
     }
+  }
+
+  Future<int?> _participants(EventModel event) async {
+    if (event.remainingSeats <= 0) {
+      throw Exception('This session is fully booked.');
+    }
+    return Navigator.of(context).push<int>(
+      MaterialPageRoute(builder: (_) => EventParticipantsScreen(event: event)),
+    var quantity = 1;
+    final limit = event.remainingSeats.clamp(0, 100).toInt();
+    if (limit == 0) throw Exception('This session is fully booked.');
+    return Navigator.of(context).push<int>(
+      MaterialPageRoute(
+        builder: (context) => StatefulBuilder(
+          builder: (context, setPageState) => Scaffold(
+            appBar: AppBar(title: const Text('Event booking')),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      event.title,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 24),
+                    Text('Rs. ${event.price.toStringAsFixed(2)} per person'),
+                    const SizedBox(height: 16),
+                    const Text('Number of persons'),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: quantity > 1
+                              ? () => setPageState(() => quantity--)
+                              : null,
+                          icon: const Icon(Icons.remove),
+                        ),
+                        Text('$quantity'),
+                        IconButton(
+                          onPressed: quantity < limit
+                              ? () => setPageState(() => quantity++)
+                              : null,
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                    Text('$limit seats available'),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Total: Rs. ${(event.price * quantity).toStringAsFixed(2)}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, quantity),
+                      child: const Text('Continue to checkout'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _displayOrder(EventPaymentOrder order, {String? checkoutMessage}) {
@@ -136,7 +203,14 @@ class _EventBookingButtonState extends State<EventBookingButton> {
             ],
           ),
         );
-        if (confirmed != true) return;
+        if (confirmed != true || !mounted) return;
+        final result = await PaymentService().resumeCheckout(
+          _orderId!,
+          navigator: Navigator.of(context),
+          onProcessing: () => _showMessage('Verifying payment...'),
+        );
+        _displayOrder(result.order, checkoutMessage: result.message);
+        return;
       }
       final events = await EventsService().fetchUpcomingEvents();
       EventModel? event;
@@ -165,9 +239,12 @@ class _EventBookingButtonState extends State<EventBookingButton> {
       if (!mounted) return;
       final billing = await _billing();
       if (billing == null || !mounted) return;
+      final quantity = await _participants(event);
+      if (quantity == null || !mounted) return;
       final result = await PaymentService().checkoutEvent(
+        navigator: Navigator.of(context),
         eventId: event.id,
-        quantity: 1,
+        quantity: quantity,
         retryExisting: retry,
         billing: billing,
         onOrderCreated: (id) {

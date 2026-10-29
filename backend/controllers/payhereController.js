@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Event = require('../models/Event');
+const { syncWorkshops } = require('../services/workshopSyncService');
 const Booking = require('../models/Booking');
 const PaymentReceipt = require('../models/PaymentReceipt');
 const payhere = require('../services/payhereService');
@@ -23,6 +24,7 @@ async function createEventOrder(req, res, next) {
       throw createError('A valid eventId and quantity from 1 to 100 are required', 400);
     }
     const customer = customerFor(req.user, req.body.billing);
+    await syncWorkshops();
     let order;
     let reused = false;
     const session = await mongoose.startSession();
@@ -32,13 +34,17 @@ async function createEventOrder(req, res, next) {
         reused = Boolean(order);
         if (order) {
           if (order.quantity !== quantity) throw createError('An order already exists for this event with a different quantity', 409);
+          if (order.userDeletedAt) {
+            order.userDeletedAt = undefined;
+            await order.save({ session });
+          }
           return;
         }
         if (await Booking.exists({ userId: req.user._id, eventId, status: 'CONFIRMED' }).session(session)) {
           throw createError('You already booked this event', 409);
         }
         const event = await Event.findOneAndUpdate({
-          _id: eventId, startDate: { $gt: new Date() },
+          _id: eventId, sourcePublished: { $ne: false }, startDate: { $gt: new Date() },
           $expr: { $lte: [{ $add: ['$bookedCount', quantity] }, '$capacity'] },
         }, { $inc: { bookedCount: quantity } }, { new: true, session });
         if (!event) throw createError('Event is unavailable or does not have enough seats', 409);
@@ -58,7 +64,16 @@ async function createEventOrder(req, res, next) {
     res.status(201).json({ success: true, reused, data: order,
       checkout: order.payment_status === 'paid' ? null : payhere.checkout(order, req.body.platform) });
   } catch (error) {
-    if (error.code === 11000) return next(createError('An order already exists; retry to retrieve it', 409));
+    if (error.code === 11000 && error.keyPattern?.eventId) {
+      try {
+        const existing = await Order.findOne({ user: req.user._id, eventId: req.body.eventId });
+        if (existing && existing.quantity === (req.body.quantity || 1)) {
+          res.set('Cache-Control', 'no-store');
+          return res.status(200).json({ success: true, reused: true, data: existing,
+            checkout: existing.payment_status === 'paid' ? null : payhere.checkout(existing, req.body.platform) });
+        }
+      } catch (lookupError) { return next(lookupError); }
+    }
     next(error);
   }
 }

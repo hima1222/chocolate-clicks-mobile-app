@@ -79,3 +79,5 @@ yarn-error.log*
 **/.env
 **/.env.*
 !**/.env.example
+# Local isolated test binaries
+.tmp/

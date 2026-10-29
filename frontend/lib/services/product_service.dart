@@ -10,6 +10,16 @@ class ProductService {
   final List<Product> _products = [];
   final List<Category> _categories = [];
 
+  Future<List<Product>> fetchProducts() async {
+    final response = await ApiClient().get('/products');
+    if (response['success'] != true) {
+      throw Exception(response['message'] ?? 'Failed to fetch products');
+    }
+    return (response['data'] as List)
+        .map((p) => Product.fromJson(p as Map<String, dynamic>))
+        .toList();
+  }
+
   /// Fetch all categories
   Future<List<Category>> fetchCategories() async {
     try {

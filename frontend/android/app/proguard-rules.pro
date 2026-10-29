@@ -10,3 +10,7 @@
 -keep class lk.payhere.androidsdk.models.PaymentMethodResponse { *; }
 -keep class lk.payhere.androidsdk.models.** { *; }
 -keep class lk.payhere.androidsdk.** { *; }
+
+# Optional Conscrypt provider referenced by OkHttp
+-dontwarn org.conscrypt.Conscrypt
+-dontwarn org.conscrypt.OpenSSLProvider

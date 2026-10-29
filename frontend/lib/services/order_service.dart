@@ -46,6 +46,7 @@ class OrderService {
   /// Fetch all orders for a user
   Future<List<Order>> fetchUserOrders(String userId) async {
     try {
+      await SessionManager().ready;
       final authService = AuthService();
       final token = authService.authToken;
       if (token == null) {
@@ -73,6 +74,7 @@ class OrderService {
   /// Fetch single order by ID
   Future<Order?> fetchOrderById(String orderId) async {
     try {
+      await SessionManager().ready;
       final authService = AuthService();
       final token = authService.authToken;
       if (token == null) {
@@ -94,9 +96,20 @@ class OrderService {
     }
   }
 
+  Future<void> deleteOrder(String orderId) async {
+    await SessionManager().ready;
+    final token = AuthService().authToken;
+    if (token == null) throw Exception('Please log in to delete an order.');
+    await ApiClient().delete(
+      '/orders/$orderId',
+      headers: {'Authorization': 'Bearer $token'},
+    );
+  }
+
   /// Cancel an order
   Future<bool> cancelOrder(String orderId) async {
     try {
+      await SessionManager().ready;
       final authService = AuthService();
       final token = authService.authToken;
       if (token == null) {

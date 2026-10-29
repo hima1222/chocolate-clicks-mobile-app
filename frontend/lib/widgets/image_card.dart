@@ -13,6 +13,8 @@ class ProductCard extends StatelessWidget {
   final int reviewCount;
   final double price;
   final VoidCallback? onTap;
+  final String? productId;
+  final int? stockQuantity;
 
   const ProductCard({
     super.key,
@@ -22,6 +24,8 @@ class ProductCard extends StatelessWidget {
     required this.reviewCount,
     required this.price,
     this.onTap,
+    this.productId,
+    this.stockQuantity,
   });
 
   @override
@@ -123,21 +127,24 @@ class ProductCard extends StatelessWidget {
                           child: SizedBox(
                             height: 32,
                             child: ElevatedButton(
-                              onPressed: () {
-                                PaymentManager.initiatePayment(
-                                  context,
-                                  price,
-                                  items: [
-                                    CartItem(
-                                      id: imageAsset,
-                                      name: title,
-                                      price: price,
-                                      quantity: 1,
-                                      imageUrl: imageAsset,
-                                    ),
-                                  ],
-                                );
-                              },
+                              onPressed:
+                                  stockQuantity != null && stockQuantity! <= 0
+                                  ? null
+                                  : () {
+                                      PaymentManager.initiatePayment(
+                                        context,
+                                        price,
+                                        items: [
+                                          CartItem(
+                                            id: productId ?? imageAsset,
+                                            name: title,
+                                            price: price,
+                                            quantity: 1,
+                                            imageUrl: imageAsset,
+                                          ),
+                                        ],
+                                      );
+                                    },
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
                                 backgroundColor: const Color(0xFFCA7A2B),
@@ -147,8 +154,10 @@ class ProductCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: const Text(
-                                'Buy Now',
+                              child: Text(
+                                stockQuantity != null && stockQuantity! <= 0
+                                    ? 'Out of stock'
+                                    : 'Buy Now',
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
@@ -168,20 +177,27 @@ class ProductCard extends StatelessWidget {
                           ),
                           child: IconButton(
                             padding: EdgeInsets.zero,
-                            onPressed: () {
-                              CartService().addOrUpdateItem(
-                                CartItem(
-                                  id: imageAsset, // Use image path as unique ID
-                                  name: title,
-                                  price: price,
-                                  quantity: 1,
-                                  imageUrl: imageAsset,
-                                ),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Added to cart')),
-                              );
-                            },
+                            onPressed:
+                                stockQuantity != null && stockQuantity! <= 0
+                                ? null
+                                : () {
+                                    CartService().addOrUpdateItem(
+                                      CartItem(
+                                        id:
+                                            productId ??
+                                            imageAsset, // Use image path as unique ID
+                                        name: title,
+                                        price: price,
+                                        quantity: 1,
+                                        imageUrl: imageAsset,
+                                      ),
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Added to cart'),
+                                      ),
+                                    );
+                                  },
                             icon: const Icon(
                               Icons.add_shopping_cart,
                               size: 17,
@@ -201,4 +217,3 @@ class ProductCard extends StatelessWidget {
     );
   }
 }
-

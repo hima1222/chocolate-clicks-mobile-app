@@ -127,3 +127,51 @@ Stratford Avenue, Colombo 06. These are placeholder rates, not live distance or 
 time calculations. Unknown cities use the base delivery fee. Update the table when
 actual delivery zones and rates are finalized. Saved orders retain their original
 pricing snapshot; quote changes apply only to new checkouts.
+
+
+Keep DELIVERY_CITY_FEES as valid JSON with double-quoted city names. Wrap the entire
+JSON value in single quotes in .env, for example:
+
+```dotenv
+DELIVERY_CITY_FEES='{"Colombo 06":300,"Mount Lavinia":500,"Maharagama":700}'
+```
+
+Unquoted city names such as `{Colombo:300}` are invalid JSON. Restart the backend
+after editing this value so dotenv reloads the configuration.
+
+
+## Hosted delivery configuration
+
+Flutter defaults to https://chocolate-clicks-backend.hostless.app/api. Editing your
+local backend/.env does not update the hosting dashboard's environment or running
+service. Change DELIVERY_CITY_FEES in the hosted backend environment and restart or
+redeploy that backend to apply it. Dashboard values should be the JSON object itself,
+without an extra pair of shell quotes. A local .env can use single quotes around JSON.
+
+The versioned backend/config/delivery-city-fees.json now contains the existing city
+rates. After deploying this code, you can remove the DELIVERY_CITY_FEES override to
+use that file. Valid overrides retain priority. The parser also accepts legacy flat
+city tables with stripped key quotes and JSON-encoded dashboard strings, without eval
+or silently replacing invalid charges.
+
+To explicitly run Flutter against your local backend, use
+`flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5000/api`.
+This selects the local quote API; real PayHere confirmations still need the public
+notification endpoint.
+
+
+### Android phone connected by USB: Unauthorized domain
+
+`flutter run` on a USB-connected Android phone runs the native app and PayHere mobile SDK, even when you have not manually installed a release APK. A website-domain Merchant Secret does not authorize the Android package.
+
+1. In the matching PayHere sandbox/live account, open Integrations (or Settings ? Domains & Credentials), choose Add Domain/App, select **App**, and register **com.example.chocolate_clicks**. This is the current `applicationId` in `frontend/android/app/build.gradle.kts`.
+2. Copy the Merchant Secret for that **App** into the backend environment as `PAYHERE_APP_MERCHANT_SECRET`. Keep the working website secret in `PAYHERE_MERCHANT_SECRET` (or `PAYHERE_WEB_MERCHANT_SECRET`). Never put either secret into Flutter source or share it in chat.
+3. Apply the variable to the backend the phone actually calls (the default is the hosted Hostless backend), restart/redeploy it, and retry payment. Editing local `.env` does not update a deployed backend. PayHere Live registrations require approval.
+
+Native checkout uses `PAYHERE_APP_MERCHANT_SECRET` when set; the original `PAYHERE_MERCHANT_SECRET` remains a fallback for existing installations that already use it for the app. Signed notifications accept the configured app and website secrets. A debug build uses the same application ID in this project; USB connection does not change PayHere's registration requirements.
+
+Official setup: https://support.payhere.lk/api-%26-mobile-sdk/flutter-sdk (Step 4).
+
+### Deleting incomplete orders
+
+The customer can delete an incomplete order from Profile ? Order Details ? Order Progress. This removes it from their order history; completed orders cannot be removed. The backend retains the payment and fulfilment record for delayed PayHere notifications. Deleting from history does not cancel an active purchase, release booked event seats, or refund a payment. Continuing checkout on a removed order makes it visible again.

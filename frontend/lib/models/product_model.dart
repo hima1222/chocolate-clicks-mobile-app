@@ -77,7 +77,7 @@ class Product {
       price: (json['price'] as num).toDouble(),
       categoryId: json['categoryId'] as String,
       imageUrl: json['imageUrl'] as String,
-      quantity: json['quantity'] as int? ?? 0,
+      quantity: (json['quantity'] as num?)?.toInt() ?? 0,
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       reviewCount: json['reviewCount'] as int? ?? 0,
     );

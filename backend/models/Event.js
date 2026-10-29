@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const eventSchema = new mongoose.Schema(
   {
     slug: { type: String, index: true },
+    source: { type: String },
+    sourcePublished: { type: Boolean },
     subtitle: { type: String, default: '' },
     cardImage: { type: String, default: '' },
     gallery: { type: [String], default: [] },

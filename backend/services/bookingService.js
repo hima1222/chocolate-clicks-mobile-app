@@ -1,5 +1,6 @@
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
+const { syncWorkshops } = require('./workshopSyncService');
 
 const serviceError = (message, statusCode) => {
   const error = new Error(message);
@@ -12,6 +13,7 @@ const reserveEventSeat = (eventId) =>
     {
       _id: eventId,
       price: 0,
+      sourcePublished: { $ne: false },
       startDate: { $gt: new Date() },
       $expr: { $lt: ['$bookedCount', '$capacity'] },
     },
@@ -20,6 +22,7 @@ const reserveEventSeat = (eventId) =>
   );
 
 const createBooking = async (userId, eventId) => {
+  await syncWorkshops();
   const payableEvent = await Event.findById(eventId).select('price');
   if (payableEvent && payableEvent.price > 0) throw serviceError('Payment required: create an event order first', 402);
   const event = await reserveEventSeat(eventId);

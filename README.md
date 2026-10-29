@@ -285,3 +285,21 @@ Android builds require a configured Android SDK. Platform signing and deployment
 5. Commit your changes and open a pull request with a clear description.
 
 Additional backend documentation is available in [`backend/README.md`](backend/README.md).
+
+### Website workshops in the mobile app
+
+The mobile events API imports supported website workshops (`workshops`) into booking-compatible
+`events` records with the same IDs. Published future mask painting and Bake It Happen sessions
+are matched by slug, so titles such as "Wes Mask Painting Workshop" and "Cake Baking Workshop"
+work without renaming the website records. Category `priceInfo` supplies the price when the
+workshop has no numeric `price`. Existing mobile seat reservations are preserved on refresh.
+
+For evaluation with the existing hosted backend, sync the workshop records once from `backend`:
+
+```powershell
+node --use-system-ca scripts/syncWorkshops.js
+```
+
+Restart/rebuild the Flutter app to load the updated session matching. Its default API URL already
+points to the hosted backend. Deploy the backend changes for automatic synchronization on event
+refresh and before checkout; until then, rerun the sync command after website schedule changes.

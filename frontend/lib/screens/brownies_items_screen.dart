@@ -1,3 +1,4 @@
+import '../widgets/database_catalog.dart';
 import 'package:chocolate_clicks/widgets/app_image.dart';
 // lib/screens/brownies_items_screen.dart
 import 'package:flutter/material.dart';
@@ -61,122 +62,128 @@ class BrowniesItemsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: AppImage.asset(
-              'assets/images/brownies_type1.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xE615110F), Color(0xF0302017)],
+    return DatabaseCatalog(
+      category: 'Brownies',
+      builder: (context, brownieProducts) {
+        return Scaffold(
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: AppImage.asset(
+                  'assets/images/brownies_type1.jpg',
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
-                  child: Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Color(0xFFF6E6D7),
-                            size: 24,
-                          ),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Expanded(
-                        child: Text(
-                          'Brownies Collection',
-                          style: TextStyle(
-                            color: Color(0xFFF6E6D7),
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.2,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.18),
-                          ),
-                        ),
-                        child: const Text(
-                          '6 items',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
+              Positioned.fill(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0xE615110F), Color(0xF0302017)],
+                    ),
                   ),
                 ),
-                Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(14, 10, 14, 20),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: MediaQuery.sizeOf(context).width < 360
-                          ? 1
-                          : 2,
-                      mainAxisExtent: 270,
-                      mainAxisSpacing: 14,
-                      crossAxisSpacing: 12,
-                    ),
-                    itemCount: brownieProducts.length,
-                    itemBuilder: (context, index) {
-                      final product = brownieProducts[index];
-                      return ProductCard(
-                        imageAsset: product['image'],
-                        title: product['title'],
-                        rating: product['rating'],
-                        reviewCount: product['reviews'],
-                        price: product['price'],
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  BrowniesType1Screen(product: product),
+              ),
+              SafeArea(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+                      child: Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back,
+                                color: Color(0xFFF6E6D7),
+                                size: 24,
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          const Expanded(
+                            child: Text(
+                              'Brownies Collection',
+                              style: TextStyle(
+                                color: Color(0xFFF6E6D7),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.18),
+                              ),
+                            ),
+                            child: Text(
+                              '${brownieProducts.length} items',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(14, 10, 14, 20),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: MediaQuery.sizeOf(context).width < 360
+                              ? 1
+                              : 2,
+                          mainAxisExtent: 270,
+                          mainAxisSpacing: 14,
+                          crossAxisSpacing: 12,
+                        ),
+                        itemCount: brownieProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = brownieProducts[index];
+                          return ProductCard(
+                            imageAsset: product['image'],
+                            title: product['title'],
+                            rating: product['rating'],
+                            reviewCount: product['reviews'],
+                            price: product['price'],
+                            productId: product['id'],
+                            stockQuantity: product['quantity'],
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BrowniesType1Screen(product: product),
+                                ),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
-

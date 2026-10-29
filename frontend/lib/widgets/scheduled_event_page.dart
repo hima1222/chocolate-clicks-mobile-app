@@ -7,6 +7,7 @@ import 'shop_page.dart';
 
 class ScheduledEventPage extends StatefulWidget {
   final String title, subtitle, image, description;
+  final String? eventSlug;
   final List<String> gallery, included, details;
   final Future<List<EventModel>> Function()? loadSessions;
 
@@ -19,6 +20,7 @@ class ScheduledEventPage extends StatefulWidget {
     required this.gallery,
     required this.included,
     this.details = const [],
+    this.eventSlug,
     this.loadSessions,
   });
 
@@ -46,8 +48,10 @@ class _ScheduledEventPageState extends State<ScheduledEventPage>
     return events
         .where(
           (event) =>
-              event.title.trim().toLowerCase() ==
-                  widget.title.trim().toLowerCase() &&
+              (event.title.trim().toLowerCase() ==
+                      widget.title.trim().toLowerCase() ||
+                  (widget.eventSlug != null &&
+                      event.slug == widget.eventSlug)) &&
               event.date.isAfter(now),
         )
         .toList()
@@ -111,11 +115,15 @@ class _ScheduledEventPageState extends State<ScheduledEventPage>
           session != null &&
           _hasSeats(session);
       return EventDetailPage(
-        title: widget.title,
+        title: session?.title ?? widget.title,
         subtitle: widget.subtitle,
-        image: widget.image,
+        image: session != null && session.imageUrl.isNotEmpty
+            ? session.imageUrl
+            : widget.image,
         gallery: widget.gallery,
-        description: widget.description,
+        description: session != null && session.description.isNotEmpty
+            ? session.description
+            : widget.description,
         included: widget.included,
         details: widget.details,
         sessionDetails: ShopPanel(

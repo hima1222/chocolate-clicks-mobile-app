@@ -19,10 +19,40 @@ class AuthService {
     _storage = StorageService();
   }
 
-  // Use the WEB client ID from Google Cloud (not the Android one)
-  static const String _googleWebClientId =
-      '86612520610-58lvicvbj3o954p46egc7cgpm97ku4t1.apps.googleusercontent.com';
+  static const String _googleWebClientId = String.fromEnvironment(
+    'GOOGLE_WEB_CLIENT_ID',
+  );
   static bool _googleReady = false;
+  static Future<void>? _googleInitialization;
+
+  Future<void> initializeGoogle() {
+    if (_googleReady) return Future.value();
+    return _googleInitialization ??= _prepareGoogle().catchError((
+      Object error,
+    ) {
+      _googleInitialization = null;
+      throw error;
+    });
+  }
+
+  Future<void> _prepareGoogle() async {
+    var clientId = _googleWebClientId;
+    if (clientId.isEmpty) {
+      final config = await ApiClient().get('/auth/google/config');
+      clientId = config['data']?['clientId']?.toString() ?? '';
+    }
+    if (!clientId.endsWith('.apps.googleusercontent.com')) {
+      throw AuthException(
+        message: 'Google sign-in is not configured on the server.',
+        code: 'GOOGLE_CONFIG',
+      );
+    }
+    await GoogleSignIn.instance.initialize(
+      clientId: kIsWeb ? clientId : null,
+      serverClientId: kIsWeb ? null : clientId,
+    );
+    _googleReady = true;
+  }
 
   late SessionManager _session;
   late StorageService _storage;
@@ -95,14 +125,36 @@ class AuthService {
   /// the backend's own JWT the same way a normal login does
   Future<AuthResponse> loginWithGoogle() async {
     try {
-      if (!_googleReady) {
-        await GoogleSignIn.instance.initialize(
-          serverClientId: _googleWebClientId,
+      await initializeGoogle();
+      if (!GoogleSignIn.instance.supportsAuthenticate()) {
+        throw AuthException(
+          message: 'Use the Google sign-in button to continue.',
+          code: 'GOOGLE_WEB_BUTTON',
         );
-        _googleReady = true;
       }
-
       final account = await GoogleSignIn.instance.authenticate();
+      return completeGoogleSignIn(account);
+    } on GoogleSignInException catch (error) {
+      throw AuthException(
+        message: error.code == GoogleSignInExceptionCode.canceled
+            ? 'Google sign-in was cancelled'
+            : 'Google sign-in failed (${error.code.name})',
+        code: 'GOOGLE_FAILED',
+      );
+    } catch (error) {
+      if (error is AuthException) rethrow;
+      throw AuthException(
+        message: error is ApiException
+            ? error.message
+            : 'Unable to sign in with Google. Please try again.',
+        code: 'GOOGLE_FAILED',
+      );
+    }
+  }
+
+  /// Exchange a Google SDK credential for the backend session on every platform.
+  Future<AuthResponse> completeGoogleSignIn(GoogleSignInAccount account) async {
+    try {
       final idToken = account.authentication.idToken;
       if (idToken == null) {
         throw AuthException(
@@ -141,22 +193,12 @@ class AuthService {
           code: 'GOOGLE_FAILED',
         );
       }
-    } on GoogleSignInException catch (e) {
-      debugPrint(
-        'GOOGLE ERROR: code=${e.code} description=${e.description} details=${e.details}',
-      );
+    } catch (error) {
+      if (error is AuthException) rethrow;
       throw AuthException(
-        message: e.code == GoogleSignInExceptionCode.canceled
-            ? 'Google sign-in was cancelled'
-            : 'Google sign-in failed (${e.code.name})',
-        code: 'GOOGLE_FAILED',
-      );
-    } catch (e) {
-      if (e is AuthException) rethrow;
-      throw AuthException(
-        message: e is ApiException
-            ? e.message
-            : 'Unable to sign in with Google. Check your connection and try again.',
+        message: error is ApiException
+            ? error.message
+            : 'Unable to finish Google sign-in. Please try again.',
         code: 'GOOGLE_FAILED',
       );
     }
@@ -346,51 +388,56 @@ class AuthService {
     }
   }
 
-/// Step 1: request a reset code by email
-Future<void> requestPasswordReset(String email) async {
-  if (!_isValidEmail(email)) {
-    throw AuthException(message: 'Invalid email address', code: 'INVALID_EMAIL');
-  }
-  try {
-    await ApiClient().post('/auth/forgot-password', body: {'email': email});
-  } catch (e) {
-    if (e is AuthException) rethrow;
-    throw AuthException(message: e.toString(), code: 'PASSWORD_RESET_FAILED');
-  }
-}
-
-/// Step 2: submit email + code + new password
-Future<void> resetPasswordWithCode({
-  required String email,
-  required String code,
-  required String password,
-}) async {
-  if (code.length != 6) {
-    throw AuthException(message: 'Enter the 6-digit code', code: 'INVALID_CODE');
-  }
-  if (password.length < 6) {
-    throw AuthException(
-      message: 'Password must be at least 6 characters',
-      code: 'WEAK_PASSWORD',
-    );
-  }
-  try {
-    final response = await ApiClient().post('/auth/reset-password', body: {
-      'email': email,
-      'code': code,
-      'password': password,
-    });
-    if (response['success'] != true) {
+  /// Step 1: request a reset code by email
+  Future<void> requestPasswordReset(String email) async {
+    if (!_isValidEmail(email)) {
       throw AuthException(
-        message: response['message'] ?? 'Reset failed',
-        code: 'PASSWORD_RESET_FAILED',
+        message: 'Invalid email address',
+        code: 'INVALID_EMAIL',
       );
     }
-  } catch (e) {
-    if (e is AuthException) rethrow;
-    throw AuthException(message: e.toString(), code: 'PASSWORD_RESET_FAILED');
+    try {
+      await ApiClient().post('/auth/forgot-password', body: {'email': email});
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw AuthException(message: e.toString(), code: 'PASSWORD_RESET_FAILED');
+    }
   }
-}
+
+  /// Step 2: submit email + code + new password
+  Future<void> resetPasswordWithCode({
+    required String email,
+    required String code,
+    required String password,
+  }) async {
+    if (code.length != 6) {
+      throw AuthException(
+        message: 'Enter the 6-digit code',
+        code: 'INVALID_CODE',
+      );
+    }
+    if (password.length < 6) {
+      throw AuthException(
+        message: 'Password must be at least 6 characters',
+        code: 'WEAK_PASSWORD',
+      );
+    }
+    try {
+      final response = await ApiClient().post(
+        '/auth/reset-password',
+        body: {'email': email, 'code': code, 'password': password},
+      );
+      if (response['success'] != true) {
+        throw AuthException(
+          message: response['message'] ?? 'Reset failed',
+          code: 'PASSWORD_RESET_FAILED',
+        );
+      }
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw AuthException(message: e.toString(), code: 'PASSWORD_RESET_FAILED');
+    }
+  }
 
   /// Update user password
   /// Throws AuthException on failure

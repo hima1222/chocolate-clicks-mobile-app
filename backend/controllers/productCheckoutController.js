@@ -5,7 +5,11 @@ const payhere = require('../services/payhereService');
 const { customerFor } = require('./payhereController');
 const { createError } = require('../middleware/errorMiddleware');
 
-function sendCheckout(res, order, platform, reused = false) {
+async function sendCheckout(res, order, platform, reused = false) {
+  if (order.userDeletedAt) {
+    order.userDeletedAt = undefined;
+    await order.save();
+  }
   res.set('Cache-Control', 'no-store');
   return res.status(reused ? 200 : 201).json({ success: true, reused, data: order,
     checkout: order.payment_status === 'paid' ? null : payhere.checkout(order, platform) });
@@ -19,7 +23,7 @@ async function createProductOrder(req, res, next) {
       throw createError('A valid checkoutKey is required', 400);
     }
     const existing = await Order.findOne({ user: req.user._id, checkoutKey });
-    if (existing) return sendCheckout(res, existing, req.body.platform, true);
+    if (existing) return await sendCheckout(res, existing, req.body.platform, true);
     const customer = customerFor(req.user, billing);
     const quote = await quoteProducts(items, billing.city);
     const totalCents = Math.round(quote.pricing.totalAmount * 100);
@@ -39,9 +43,9 @@ async function createProductOrder(req, res, next) {
       if (error.code !== 11000) throw error;
       order = await Order.findOne({ user: req.user._id, checkoutKey });
       if (!order) throw error;
-      return sendCheckout(res, order, req.body.platform, true);
+      return await sendCheckout(res, order, req.body.platform, true);
     }
-    return sendCheckout(res, order, req.body.platform);
+    return await sendCheckout(res, order, req.body.platform);
   } catch (error) { next(error); }
 }
 
@@ -53,7 +57,7 @@ async function resumeCheckout(req, res, next) {
     if (!order) throw createError('Order not found', 404);
     if (!order.amount || !order.customer?.address) throw createError('This older order cannot be paid online. Please contact support.', 409);
     if (order.status === 'cancelled' || order.payment_status === 'chargedback') throw createError('This order requires support reconciliation.', 409);
-    return sendCheckout(res, order, req.body.platform, true);
+    return await sendCheckout(res, order, req.body.platform, true);
   } catch (error) { next(error); }
 }
 async function quoteProductOrder(req, res, next) {
